@@ -1,4 +1,4 @@
-import Command from '../Classes/Command.js';
+const Command = require('../Classes/Command.js');
 
 var command = new Command([], // aliases
 	"", // description
@@ -10,4 +10,4 @@ command.execute = (receivedMessage, state) => {
 	// Command specifications go here
 }
 
-export default command;
+module.exports = command;

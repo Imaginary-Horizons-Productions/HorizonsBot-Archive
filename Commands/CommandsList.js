@@ -1,9 +1,10 @@
 const fs = require('fs');
 const CommandSet = require('./../Classes/CommandSet.js');
 
-// Total commands (new CommandSet when exceeding 25): 5
+// Total commands (new CommandSet when exceeding 25): 6
 exports.commandSets = [
-	new CommandSet("HorizonsBot Commands", "Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!", ['about.js', 'help.js', 'support.js', 'datapolicy.js', 'addcampaign.js'])
+	new CommandSet("HorizonsBot Commands", "Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!",
+		['about.js', 'help.js', 'support.js', 'datapolicy.js', 'messageembed.js', 'embedsettitle.js'])
 ];
 
 var commandFileNames = [];

@@ -1,17 +1,21 @@
 const fs = require('fs');
 const { Client } = require('discord.js');
 const { commandDictionary } = require('./Commands/CommandsList.js');
+var helpers = require('./helpers.js');
 
 const client = new Client();
-
-// channelID: Topic/Campaign
-module.exports = channelList = {};
 
 login();
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
-    //TODO read channelList from file
+    fs.readFile('./data/embedsList.json', 'utf8', (error, data) => {
+        if (error) {
+            console.error(error);
+        } else {
+            helpers.embedsList = JSON.parse(data);
+        }
+    })
     client.user.setActivity("@HorizonsBot help", { type: "LISTENING" }).catch(console.error);
 })
 
