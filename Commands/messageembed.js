@@ -11,7 +11,7 @@ var command = new Command(["MessageEmbed"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Create a new MessageEmbed
 	if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
-		let embed = new MessageEmbed();
+		let embed = new MessageEmbed().setTimestamp();
 		receivedMessage.channel.send("Here's your new embed.", embed).then(message => {
 			embedsList[message.id] = message.channel.id;
 			saveObject(embedsList, "embedsList.json");

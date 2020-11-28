@@ -27,27 +27,29 @@ client.on('message', receivedMessage => {
     var messageArray = receivedMessage.content.split(" ").filter(element => {
         return element != "";
     });
-    let firstWord = messageArray.shift();
-    if (receivedMessage.guild) {
-        // Message from guild
-        firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-        if (messageArray.length > 0 && firstWord == client.user.id) { //TODO permissions role
-            let command = messageArray.shift();
-            let state = {
-                "command": command,
-                "messageArray": messageArray,
+    if (messageArray.length > 0) {
+        let firstWord = messageArray.shift();
+        if (receivedMessage.guild) {
+            // Message from guild
+            firstWord = firstWord.replace(/\D/g, ""); // bot mention required
+            if (messageArray.length > 0 && firstWord == client.user.id) { //TODO permissions role
+                let command = messageArray.shift();
+                let state = {
+                    "command": command,
+                    "messageArray": messageArray,
+                }
+    
+                if (commandDictionary[command]) {
+                    commandDictionary[command].execute(receivedMessage, state);
+                } else {
+                    receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
+                        .catch(console.error);
+                }
             }
-
-            if (commandDictionary[command]) {
-                commandDictionary[command].execute(receivedMessage, state);
-            } else {
-                receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
-                    .catch(console.error);
-            }
-        }
-    } else {
-        // Message from private message
-
+        } else {
+            // Message from private message
+    
+        }    
     }
 })
 
