@@ -3,10 +3,10 @@ const Campaign = require('../Classes/Campaign.js');
 const { Permissions } = require('discord.js');
 
 var command = new Command(["AddCampaign"],
-	"",
+	"Sets up a text channel and voice channel for a TRPG",
 	"Permission to Manage Channels",
-	["Usage"],
-	[]);
+	["__Example__ - replace ( ) with your settings"],
+	["`@HorizonsBot AddCampaign (mention the host)`"]);
 
 command.execute = (receivedMessage, state) => {
 	// Create a new campaign including a text and voice channel in the receiving channel's category and set the mentioned user as host

@@ -1,5 +1,7 @@
 module.exports = class CommandSet {
-	constructor(fileNamesInput) {
+	constructor(nameInput, descriptionInput, fileNamesInput) {
+		this.name = nameInput;
+		this.description = descriptionInput;
 		this.fileNames = fileNamesInput;
 	}
 }
