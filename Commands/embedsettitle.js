@@ -13,10 +13,16 @@ command.execute = (receivedMessage, state) => {
 	if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
 		let messageID = state.messageArray.shift();
 		if (helpers.embedsList[messageID]) {
-			receivedMessage.guild.channels.resolve(helpers.embedsList[messageID]).messages.fetch(messageID).then(message => {
-				let embed = message.embeds[0].setTitle(state.messageArray.join(' ')).setTimestamp();
-				message.edit("", embed);
-			})
+			let title = state.messageArray.join(' ');
+			if (title) {
+				receivedMessage.guild.channels.resolve(helpers.embedsList[messageID]).messages.fetch(messageID).then(message => {
+					let embed = message.embeds[0].setTitle(title).setTimestamp();
+					message.edit("", embed);
+				})
+			} else {
+				receivedMessage.author.send(`Your title for a \`${state.command}\` command could not be parsed.`)
+					.catch(console.error);
+			}
 		} else {
 			receivedMessage.author.send(`The embed you provided for a \`${state.command}\` command could not be found.`)
 				.catch(console.error);
