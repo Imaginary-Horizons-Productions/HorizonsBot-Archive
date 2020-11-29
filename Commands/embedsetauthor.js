@@ -2,25 +2,29 @@ const Command = require('../Classes/Command.js');
 const { Permissions } = require('discord.js');
 var helpers = require('../helpers.js');
 
-var command = new Command(["EmbedSetURL"], // aliases
-	"Assigns a url to an custom embed created by HorizonsBot", // description
+var command = new Command(["EmbedSetAuthor"], // aliases
+	"Assigns an author to an custom embed created by HorizonsBot", // description
 	"Permission to Manage Webhooks", // requirements
 	["Example - replace ( ) with your settings"], // headings
-	["`@HorizonsBot EmbedSetURL (message ID) (url)`"]); // texts (must match number of headings)
+	["`@HorizonsBot EmbedSetAuthor (message ID) (name),, [iconURL],, [url]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Set the title for the given embed
 	if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
 		let messageID = state.messageArray.shift();
 		if (helpers.embedsList[messageID]) {
-			let url = state.messageArray[0];
-			if (url) {
+			let url = state.messageArray.join(' ');
+			url = url.split(",, ");
+			let name = url.shift();
+			if (name) {
+				let iconURL = url.shift();
+				url = url.toString();
 				receivedMessage.guild.channels.resolve(helpers.embedsList[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setURL(url).setTimestamp();
+					let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
 					message.edit("", embed);
 				})
 			} else {
-				receivedMessage.author.send(`Your url for a \`${state.command}\` command could not be parsed.`)
+				receivedMessage.author.send(`Your author name for a \`${state.command}\` command could not be parsed.`)
 					.catch(console.error);
 			}
 		} else {
