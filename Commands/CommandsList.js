@@ -4,7 +4,7 @@ const CommandSet = require('./../Classes/CommandSet.js');
 // Total commands (new CommandSet when exceeding 25): 13
 exports.commandSets = [
 	new CommandSet("HorizonsBot Commands", "Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!",
-		['about.js', 'help.js', 'support.js', 'datapolicy.js', 'messageembed.js', 'embedsettitle.js', 'embedsetdescription.js', 'embedseturl.js', 'embedsetimage.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsetauthor.js'])
+		['about.js', 'help.js', 'support.js', 'datapolicy.js', 'messageembed.js', 'embedsettitle.js', 'embedsetdescription.js', 'embedseturl.js', 'embedsetimage.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsetauthor.js', 'embedsetfooter.js'])
 ];
 
 var commandFileNames = [];
