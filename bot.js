@@ -27,29 +27,39 @@ client.on('message', receivedMessage => {
     var messageArray = receivedMessage.content.split(" ").filter(element => {
         return element != "";
     });
+
+    let command;
     if (messageArray.length > 0) {
         let firstWord = messageArray.shift();
         if (receivedMessage.guild) {
             // Message from guild
             firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length > 0 && firstWord == client.user.id) { //TODO permissions role
-                let command = messageArray.shift();
-                let state = {
-                    "command": command,
-                    "messageArray": messageArray,
-                }
-    
-                if (commandDictionary[command]) {
-                    commandDictionary[command].execute(receivedMessage, state);
-                } else {
-                    receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
-                        .catch(console.error);
-                }
+            if (messageArray.length == 0 || firstWord != client.user.id) { //TODO permissions role
+                return;
             }
+            command = messageArray.shift();
         } else {
             // Message from private message
-    
-        }    
+            if (firstWord.replace(/\D/g, "") == client.user.id) {
+                command = messageArray.shift();
+            } else if (commandDictionary[firstWord]) {
+                command = firstWord;
+            } else {
+                return;
+            }
+        }
+
+        let state = {
+            "command": command,
+            "messageArray": messageArray,
+        }
+
+        if (commandDictionary[command]) {
+            commandDictionary[command].execute(receivedMessage, state);
+        } else {
+            receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
+                .catch(console.error);
+        }
     }
 })
 
