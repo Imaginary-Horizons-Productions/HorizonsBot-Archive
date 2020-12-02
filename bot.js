@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Client } = require('discord.js');
 const { commandDictionary } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
+var roleIDs = require('./roleIDs.json');
 
 const client = new Client();
 
@@ -34,7 +35,7 @@ client.on('message', receivedMessage => {
         if (receivedMessage.guild) {
             // Message from guild
             firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || firstWord != client.user.id) { //TODO permissions role
+            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != roleIDs.permissions)) {
                 return;
             }
             command = messageArray.shift();
