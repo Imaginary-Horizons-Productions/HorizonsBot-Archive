@@ -1,24 +1,24 @@
 const Command = require('../Classes/Command.js');
-const { MessageEmbed, Permissions } = require('discord.js');
-const { embedsList, saveObject } = require('../helpers.js');
+const { MessageEmbed } = require('discord.js');
+const { moderatorIDs, embedsList, saveObject } = require('../helpers.js');
 
 var command = new Command(["MessageEmbed"], // aliases
 	"Makes a new MessageEmbed, configurable with other commands", // description
-	"Permission to Manage Webhooks, must be used from a server channel", // requirements
+	"Moderator, must be used from a server channel", // requirements
 	["Example"], // headings
 	["`@HorizonsBot MessageEmbed`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Create a new MessageEmbed
 	if (receivedMessage.guild) {
-		if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+		if (moderatorIDs.includes(receivedMessage.author.id)) {
 			let embed = new MessageEmbed().setTimestamp();
 			receivedMessage.channel.send("Here's your new embed.", embed).then(message => {
 				embedsList[message.id] = message.channel.id;
 				saveObject(embedsList, "embedsList.json");
 			}).catch(console.error);
 		} else {
-			receivedMessage.author.send(`You need permission to manage webhooks to use the \`${state.command}\` command.`)
+			receivedMessage.author.send(`You must be a Moderator to use the \`${state.command}\` command.`)
 				.catch(console.error);
 		}
 	} else {

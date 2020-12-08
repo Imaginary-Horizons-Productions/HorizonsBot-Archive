@@ -2,7 +2,6 @@ const fs = require('fs');
 const { Client } = require('discord.js');
 const { commandDictionary } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
-var roleIDs = require('./roleIDs.json');
 
 const client = new Client();
 
@@ -10,13 +9,6 @@ login();
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
-    fs.readFile('./data/embedsList.json', 'utf8', (error, data) => {
-        if (error) {
-            console.error(error);
-        } else {
-            helpers.embedsList = JSON.parse(data);
-        }
-    })
     client.user.setActivity("@HorizonsBot help", { type: "LISTENING" }).catch(console.error);
 })
 
@@ -35,7 +27,7 @@ client.on('message', receivedMessage => {
         if (receivedMessage.guild) {
             // Message from guild
             firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != roleIDs.permissions)) {
+            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != helpers.roleIDs.permissions)) {
                 return;
             }
             command = messageArray.shift();

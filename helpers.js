@@ -1,7 +1,10 @@
 const fs = require('fs');
+exports.serverID = "353575133157392385";
+exports.roleIDs = require('./roleIDs.json');
 
+exports.moderatorIDs = require('./data/moderatorIDs.json');
 // messageID: channelID
-exports.embedsList = {};
+exports.embedsList = require('./data/embedsList.json');
 // channelID: Topic
 exports.topicList = {};
 // channelID: Campaign
