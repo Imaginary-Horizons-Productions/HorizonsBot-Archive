@@ -11,7 +11,7 @@ command.execute = (receivedMessage, state) => {
 	// Private message author with description of the bot and contributors
 	let embed = new MessageEmbed().setColor(`6b81eb`)
 		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `, `https://discord.gg/bcE3Syu `)
-		.setTitle(`HorizonsBot (version 1.0.1)`)
+		.setTitle(`HorizonsBot (version 1.0.2)`)
 		.setURL(`https://github.com/Imaginary-Horizons-Productions/TRPGTrackerBot `)
 		.setDescription(`HorizonsBot helps with channel management and other stuff on the Imaginary Horizons Community Discord.`)
 		.addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
