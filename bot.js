@@ -27,7 +27,11 @@ client.on('message', receivedMessage => {
         if (receivedMessage.guild) {
             // Message from guild
             firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != helpers.roleIDs.permissions)) {
+            console.log(messageArray.length == 0)
+            console.log(firstWord != client.user.id)
+            console.log(helpers.roleIDs.permissions != "")
+            console.log(firstWord != helpers.roleIDs.permissions)
+            if (messageArray.length == 0 || (firstWord != client.user.id || (helpers.roleIDs.permissions != "" && firstWord != helpers.roleIDs.permissions))) {
                 return;
             }
             command = messageArray.shift();
