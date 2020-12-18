@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || moderatorIDs.includes(receivedMessage.author.id)) {
 			let promotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (promotee) {
-				if (moderatorIDs.includes(promotee.id)) {
+				if (!moderatorIDs.includes(promotee.id)) {
 					promotee.roles.add(roleIDs.moderator);
 					moderatorIDs.push(promotee.id);
 					saveObject(moderatorIDs, "moderatorIDs.json");

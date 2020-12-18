@@ -1,4 +1,5 @@
 const Command = require('../Classes/Command.js');
+const { MessageEmbed } = require('discord.js');
 
 var command = new Command(["DataPolicy", "PrivacyPolicy"], // aliases
 	"Shows types of user data HorizonsBot collects and how it's used", // description

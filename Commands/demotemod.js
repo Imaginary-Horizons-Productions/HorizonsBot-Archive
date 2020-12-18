@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || moderatorIDs.includes(receivedMessage.author.id)) {
 			let demotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (demotee) {
-				if (!moderatorIDs.includes(demotee.id)) {
+				if (moderatorIDs.includes(demotee.id)) {
 					demotee.roles.remove(roleIDs.moderator);
 					moderatorIDs = moderatorIDs.filter(id => id != demotee.id);
 					saveObject(moderatorIDs, "moderatorIDs.json");
