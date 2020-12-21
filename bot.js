@@ -35,10 +35,8 @@ client.on('message', receivedMessage => {
             // Message from private message
             if (firstWord.replace(/\D/g, "") == client.user.id) {
                 command = messageArray.shift();
-            } else if (commandDictionary[firstWord]) {
-                command = firstWord;
             } else {
-                return;
+                command = firstWord;
             }
         }
 
@@ -46,9 +44,8 @@ client.on('message', receivedMessage => {
             "command": command,
             "messageArray": messageArray,
         }
-
-        if (commandDictionary[command]) {
-            commandDictionary[command].execute(receivedMessage, state);
+        if (commandDictionary[state.command]) {
+            commandDictionary[state.command].execute(receivedMessage, state);
         } else {
             receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
                 .catch(console.error);
