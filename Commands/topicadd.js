@@ -1,5 +1,4 @@
 const Command = require('../Classes/Command.js');
-const Topic = require('../Classes/Topic.js');
 const { Permissions } = require('discord.js');
 const { topicList, roleIDs, saveObject } = require('../helpers.js');
 
@@ -30,7 +29,7 @@ command.execute = (receivedMessage, state) => {
 				}
 			]
 		}).then(channel => {
-			topicList[channel.id] = new Topic(channel.id, channel.name);
+			topicList.push(channel.id);
 			saveObject(topicList, "topicList.json");
 		})
 	} else {

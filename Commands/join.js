@@ -2,16 +2,16 @@ const Command = require('../Classes/Command.js');
 const { topicList, campaignList } = require('../helpers.js');
 
 var command = new Command(["Join"], // aliases
-	"Join a opt-in channel or TRPG campaign", // description
+	"Join an opt-in channel or TRPG campaign", // description
 	"None", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot Join (channel ID)`]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Determine if user mentioned a topic or campaign, then provide appropriate permissions
-	let channelID = state.messageArray[0];
+	let channelID = state.messageArray[0]; // can't use mention because users can't mention channels that are invisible to them (even by constructing the mention manually)
 	if (channelID) {
-		if (Object.keys(topicList).includes(channelID)) {
+		if (topicList.includes(channelID)) {
 			let channel = receivedMessage.guild.channels.resolve(channelID);
 			channel.createOverwrite(receivedMessage.member, {
 				"VIEW_CHANNEL": true
