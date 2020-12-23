@@ -13,10 +13,13 @@ command.execute = (receivedMessage, state) => {
 	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels
 	if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_CHANNELS)) {
 		let topicName = state.messageArray.join('-');
-		let sourceChannel = receivedMessage.channel;
-		sourceChannel.clone({
+		receivedMessage.channel.clone({
 			"name": topicName,
 			"permissionOverwrites": [
+				{
+					"id":receivedMessage.client.user.id,
+					"allow": ["VIEW_CHANNEL"]
+				},
 				{
 					"id": receivedMessage.guild.id, // use the guild id for @everyone
 					"deny": ["VIEW_CHANNEL"]

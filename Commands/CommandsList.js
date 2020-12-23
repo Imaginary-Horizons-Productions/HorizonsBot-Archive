@@ -4,7 +4,7 @@ const CommandSet = require('./../Classes/CommandSet.js');
 // Total commands (new CommandSet when exceeding 25): 15
 exports.commandSets = [
 	new CommandSet("HorizonsBot Commands", "Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!",
-		['about.js', 'help.js', 'support.js', 'datapolicy.js']),
+		['about.js', 'help.js', 'support.js', 'datapolicy.js', "join.js"]),
 	new CommandSet("Custom Message Embeds", "To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select \"Copy ID\".",
 		['embedcreate.js', 'embedsetauthor.js', 'embedsettitle.js', 'embedseturl.js', 'embedsetcolor.js', 'embedsetdescription.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsplicefields.js', 'embedsetimage.js', 'embedsetfooter.js',]),
 	new CommandSet("Moderation Commands", "Commands for managing HorizonsBot's list of moderators.",
