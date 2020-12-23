@@ -6,7 +6,7 @@ exports.moderatorIDs = require('./data/moderatorIDs.json');
 // messageID: channelID
 exports.embedsList = require('./data/embedsList.json');
 // channelID: Topic
-exports.topicList = {};
+exports.topicList = require('./data/topicList.json');
 // channelID: Campaign
 exports.campaignList = {};
 

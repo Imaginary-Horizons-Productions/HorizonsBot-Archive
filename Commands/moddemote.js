@@ -2,30 +2,30 @@ const Command = require('../Classes/Command.js');
 const { Permissions } = require('discord.js');
 var { roleIDs, moderatorIDs, saveObject } = require('../helpers.js');
 
-var command = new Command(["PromoteMod", "AddMod"], // aliases
-	"Add a Moderator to HorizonsBot's list and give them the role", // description
+var command = new Command(["ModDemote"], // aliases
+	"Remove a Moderator from HorizonsBot's list and remove the role", // description
 	"Discord ADMINISTRATOR or Moderator, must be used from server channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
-	["`@HorizonsBot PromoteMod (user)`"]); // texts (must match number of headings)
+	["`@HorizonsBot ModDemote (user)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Add a Moderator: add to list, give role and channel permissions
+	// Remove a Moderator: remove from list, remove role and channel permissions
 	if (receivedMessage.guild) {
 		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || moderatorIDs.includes(receivedMessage.author.id)) {
-			let promotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
-			if (promotee) {
-				if (!moderatorIDs.includes(promotee.id)) {
-					promotee.roles.add(roleIDs.moderator);
-					moderatorIDs.push(promotee.id);
+			let demotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
+			if (demotee) {
+				if (moderatorIDs.includes(demotee.id)) {
+					demotee.roles.remove(roleIDs.moderator);
+					moderatorIDs = moderatorIDs.filter(id => id != demotee.id);
 					saveObject(moderatorIDs, "moderatorIDs.json");
-					receivedMessage.channel.send(`${promotee} has been promoted to Moderator.`)
+					receivedMessage.channel.send(`${demotee} has been demoted from Moderator.`)
 						.catch(console.error);
 				} else {
-					receivedMessage.author.send(`${promotee} is already a Moderator.`)
+					receivedMessage.author.send(`${demotee} is already not a Moderator.`)
 						.catch(console.error);
 				}
 			} else {
-				receivedMessage.author.send("Please mention a user to promote to Moderator.")
+				receivedMessage.author.send("Please mention a user to demote from Moderator.")
 					.catch(console.error);
 			}
 		} else {
