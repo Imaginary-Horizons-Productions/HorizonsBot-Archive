@@ -2,6 +2,7 @@ const fs = require('fs');
 const { Client } = require('discord.js');
 const { commandDictionary } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
+const { help } = require('./Commands/join.js');
 
 const client = new Client();
 
@@ -55,6 +56,16 @@ client.on('message', receivedMessage => {
 
 client.on('guildMemberRemove', member => {
 
+})
+
+client.on('channelDelete', channel => {
+    let channelID = channel.id;
+    helpers.topicList = helpers.topicList.filter(id => id != channelID);
+    helpers.saveObject(helpers.topicList, 'topicList.json')
+    if (Object.keys(helpers.campaignList).includes(channelID)) {
+        delete helpers.campaignList[channelID];
+        helpers.saveObject(helpers.campaignList, 'campaignList.json');
+    }
 })
 
 client.on('disconnect', (error, code) => {
