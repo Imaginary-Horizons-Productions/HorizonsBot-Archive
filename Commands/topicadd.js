@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { Permissions } = require('discord.js');
-const { topicList, roleIDs, saveObject } = require('../helpers.js');
+const { topicList, roleIDs, listMessages, topicListBuilder, saveObject } = require('../helpers.js');
 
 var command = new Command(["TopicAdd"], // aliases
 	"Sets up an opt-in text channel for the given topic", // description
@@ -30,6 +30,12 @@ command.execute = (receivedMessage, state) => {
 			]
 		}).then(channel => {
 			topicList.push(channel.id);
+			let messageData = listMessages.topics;
+			if (messageData) {
+				let channelManager = receivedMessage.guild.channels;
+				let message = channelManager.resolve(messageData.channelID).messages.resolve(messageData.messageID);
+				message.edit(topicListBuilder(channelManager));
+			}
 			saveObject(topicList, "topicList.json");
 		})
 	} else {
