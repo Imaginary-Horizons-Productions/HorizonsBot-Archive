@@ -21,9 +21,11 @@ command.execute = (receivedMessage, state) => {
 			})
 		} else if (Object.keys(campaignList).includes(channelID)) {
 			//TODO implement with campaign tracking
+		} else {
+			receivedMessage.author.send(`The ID you provided does not seem to be associated with a topic or campaign channel.`)
 		}
 	} else {
-		receivedMessage.author.send(`Please mention a channel to join using # mentioning.`)
+		receivedMessage.author.send(`Please mention the ID of a channel to join.`)
 			.catch(console.error);
 	}
 }
