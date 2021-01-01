@@ -16,6 +16,7 @@ exports.campaignList = require('./data/campaignList.json');
 exports.topicListBuilder = function (channelManager) {
     let embed = new MessageEmbed()
         .setTitle("Topic Channels")
+        .setDescription("Here's a list of the opt-in topic channels for the server. Join one by typing: `@HorizonsBot Join (channel ID)`")
         .setTimestamp();
 
     let loops = Math.min(exports.topicList.length, 25);
