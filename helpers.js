@@ -35,6 +35,16 @@ exports.campaignListBuilder = function () {
 
 }
 
+exports.deleteChannel = function (channel) {
+	let channelID = channel.id;
+	if (exports.topicList.includes(channelID)) {
+		exports.topicList = exports.topicList.filter(id => id != channelID);
+	} else if (Object.keys(exports.campaignList).includes(channelID)) {
+		//TODO implement for campaigns
+	}
+	channel.delete();
+}
+
 exports.saveObject = function (object, fileName) {
     var filePath = `./`;
     filePath += 'data/' + fileName;
