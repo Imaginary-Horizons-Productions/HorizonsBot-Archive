@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
-exports.serverID = "353575133157392385";
+exports.serverID;
 exports.roleIDs = require('./roleIDs.json');
 
 exports.moderatorIDs = require('./data/moderatorIDs.json');
@@ -12,6 +12,15 @@ exports.listMessages = require('./data/listMessageIDs.json');
 exports.topicList = require('./data/topicList.json');
 // channelID: Campaign
 exports.campaignList = require('./data/campaignList.json');
+
+exports.updateTopicList = function (channelManager) {
+    let messageData = exports.listMessages.topics;
+    if (messageData) {
+        let message = channelManager.resolve(messageData.channelID).messages.resolve(messageData.messageID);
+        message.edit(exports.topicListBuilder(channelManager))
+            .catch(console.error);
+    }
+}
 
 exports.topicListBuilder = function (channelManager) {
     let embed = new MessageEmbed()
@@ -35,14 +44,15 @@ exports.campaignListBuilder = function () {
 
 }
 
-exports.deleteChannel = function (channel) {
-	let channelID = channel.id;
-	if (exports.topicList.includes(channelID)) {
-		exports.topicList = exports.topicList.filter(id => id != channelID);
-	} else if (Object.keys(exports.campaignList).includes(channelID)) {
-		//TODO implement for campaigns
-	}
-	channel.delete();
+exports.deleteChannel = function (channel, channelManager) {
+    let channelID = channel.id;
+    if (exports.topicList.includes(channelID)) {
+        exports.topicList = exports.topicList.filter(id => id != channelID);
+        exports.updateTopicList(channelManager);
+    } else if (Object.keys(exports.campaignList).includes(channelID)) {
+        //TODO implement for campaigns
+    }
+    channel.delete();
 }
 
 exports.saveObject = function (object, fileName) {
