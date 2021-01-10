@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { Permissions } = require('discord.js');
-const { topicList, roleIDs, updateTopicList, saveObject } = require('../helpers.js');
+const { addChannel } = require('../helpers.js');
 
 var command = new Command(["TopicAdd"], // aliases
 	"Sets up an opt-in text channel for the given topic", // description
@@ -11,28 +11,7 @@ var command = new Command(["TopicAdd"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels
 	if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_CHANNELS)) {
-		let topicName = state.messageArray.join('-');
-		receivedMessage.channel.clone({
-			"name": topicName,
-			"permissionOverwrites": [
-				{
-					"id": receivedMessage.client.user.id,
-					"allow": ["VIEW_CHANNEL"]
-				},
-				{
-					"id": receivedMessage.guild.id, // use the guild id for @everyone
-					"deny": ["VIEW_CHANNEL"]
-				},
-				{
-					"id": roleIDs.moderator,
-					"allow": ["VIEW_CHANNEL"]
-				}
-			]
-		}).then(channel => {
-			topicList.push(channel.id);
-			updateTopicList(receivedMessage.guild.channels);
-			saveObject(topicList, "topicList.json");
-		})
+		addChannel(receivedMessage, state.messageArray.join('-'));
 	} else {
 		receivedMessage.author.send(`You need the MANAGE_CHANNELS permission to use the \`${state.command}\` command.`)
 			.catch(console.error);

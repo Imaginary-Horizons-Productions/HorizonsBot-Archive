@@ -10,6 +10,8 @@ exports.embedsList = require('./data/embedsList.json');
 exports.listMessages = require('./data/listMessageIDs.json');
 // [channelID]
 exports.topicList = require('./data/topicList.json');
+// name: [petitioner IDs]
+exports.petitionList = require('./data/petitionList.json');
 // channelID: Campaign
 exports.campaignList = require('./data/campaignList.json');
 
@@ -23,25 +25,57 @@ exports.updateTopicList = function (channelManager) {
 }
 
 exports.topicListBuilder = function (channelManager) {
+    let description = "Here's a list of the opt-in topic channels for the server. Join one by typing: `@HorizonsBot Join (channel ID)`\n\n";
     let embed = new MessageEmbed()
         .setTitle("Topic Channels")
-        .setDescription("Here's a list of the opt-in topic channels for the server. Join one by typing: `@HorizonsBot Join (channel ID)`")
         .setTimestamp();
 
-    let loops = Math.min(exports.topicList.length, 25);
-    if (loops > 0) {
-        for (let i = 0; i < loops; i += 1) {
-            let id = exports.topicList[i];
-            let channel = channelManager.resolve(id);
-            embed.addField(`${channel.name}`, `Channel ID: ${channel.id}`);
-        }
+    for (let i = 0; i < exports.topicList.length; i += 1) {
+        let id = exports.topicList[i];
+        let channel = channelManager.resolve(id);
+        description += `${channel.name}: ${channel.id}`;
     }
 
-    return embed;
+    let petitions = Object.keys(exports.petitionList);
+    if (petitions.length > 0) {
+        let petitionText = "Here are the topic channels that have been petitioned for. They will automatically be added when 5% of the server petitions for them.\n";
+        
+        petitions.forEach(topicName => {
+            petitionText += `\n${topicName}: ${exports.petitionList[topicName].length} petitioner(s) so far`;
+        })
+        embed.addField("Petitioned Channels", petitionText)
+    }
+
+    return embed.setDescription(description);
 }
 
 exports.campaignListBuilder = function () {
 
+}
+
+exports.addChannel = function (receivedMessage, topicName) {
+	return receivedMessage.channel.clone({
+		"name": topicName,
+		"permissionOverwrites": [
+			{
+				"id": receivedMessage.client.user.id,
+				"allow": ["VIEW_CHANNEL"]
+			},
+			{
+				"id": receivedMessage.guild.id, // use the guild id for @everyone
+				"deny": ["VIEW_CHANNEL"]
+			},
+			{
+				"id": exports.roleIDs.moderator,
+				"allow": ["VIEW_CHANNEL"]
+			}
+		]
+	}).then(channel => {
+		exports.topicList.push(channel.id);
+		exports.updateTopicList(receivedMessage.guild.channels);
+        exports.saveObject(exports.topicList, "topicList.json");
+        return channel;
+	})
 }
 
 exports.deleteChannel = function (channel, channelManager) {

@@ -14,7 +14,7 @@ client.on('ready', () => {
         helpers.serverID = "353575133157392385";
     }
     console.log(`Connected as ${client.user.tag}\n`);
-    client.user.setActivity("@HorizonsBot help")
+    client.user.setActivity(`"@HorizonsBot help"`)
         .catch(console.error);
 })
 
