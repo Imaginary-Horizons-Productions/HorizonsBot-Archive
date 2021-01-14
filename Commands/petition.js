@@ -8,7 +8,7 @@ var command = new Command(["Petition"], // aliases
 	[`@HorizonsBot Petition (topic name)`]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Command specifications go here
+	// Record a user's petition for a text channel, create channel if sufficient number of petitions
 	let topicName = state.messageArray.join('-');
 	if (!petitionList[topicName]) {
 		petitionList[topicName] = [];

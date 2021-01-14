@@ -8,11 +8,6 @@ const client = new Client();
 login();
 
 client.on('ready', () => {
-    if (client.user.id === "618233281019904010" || client.user.id === "538108287187550208") {
-        helpers.serverID = "393489099731763230";
-    } else {
-        helpers.serverID = "353575133157392385";
-    }
     console.log(`Connected as ${client.user.tag}\n`);
     client.user.setActivity(`"@HorizonsBot help"`)
         .catch(console.error);

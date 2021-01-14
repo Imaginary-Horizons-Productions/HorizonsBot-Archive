@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { serverID, topicListBuilder, campaignListBuilder } = require('../helpers.js');
+const {getGuildID, topicListBuilder, campaignListBuilder} = require('../helpers.js');
 
 var command = new Command(["List"], // aliases
 	"Provide a list of topic or campaign channels", // description
@@ -11,10 +11,11 @@ command.execute = (receivedMessage, state) => {
 	// Determine if user mentioned a topic or campaign, then provide appropriate permissions
 	if (state.messageArray.length > 0) {
 		let listType = state.messageArray[0].toLowerCase();
-		let guild = receivedMessage.client.guilds.resolve(serverID);
+		let guild = receivedMessage.client.guilds.resolve(getGuildID(receivedMessage.client.user.id));
 		if (listType == "topic" || listType == "topics") {
-			receivedMessage.author.send(topicListBuilder(guild.channels))
-				.catch(console.log);
+			topicListBuilder(guild.channels).then(embed => {
+				receivedMessage.author.send(embed);
+			}).catch(console.log);
 		} else if (listType == "campaign" || listType == "campaigns") {
 			//TODO impliment for campaigns
 		} else {

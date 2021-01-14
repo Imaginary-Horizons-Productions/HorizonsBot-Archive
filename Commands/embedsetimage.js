@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { serverID, embedsList, moderatorIDs } = require('../helpers.js');
+const { getGuildID, embedsList, moderatorIDs } = require('../helpers.js');
 
 var command = new Command(["EmbedSetImage"], // aliases
 	"Assigns an image to an custom embed created by HorizonsBot", // description
@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state) => {
 			if (url) {
 				let guild = receivedMessage.guild;
 				if (!guild) {
-					guild = receivedMessage.client.guilds.resolve(serverID);
+					guild = receivedMessage.client.guilds.resolve(receivedMessage.client.user.id);
 				}
 				guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
 					let embed = message.embeds[0].setImage(url).setTimestamp();
