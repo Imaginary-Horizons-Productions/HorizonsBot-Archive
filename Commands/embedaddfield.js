@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { getGuildID, embedsList, moderatorIDs } = require('../helpers.js');
+const { guildID, embedsList, moderatorIDs } = require('../helpers.js');
 
 var command = new Command(["EmbedAddField"], // aliases
 	"Adds a field to an custom embed created by HorizonsBot", // description
@@ -25,7 +25,7 @@ command.execute = (receivedMessage, state) => {
 					}
 					let guild = receivedMessage.guild;
 					if (!guild) {
-						guild = receivedMessage.client.guilds.resolve(getGuildID(receivedMessage.client.user.id));
+						guild = receivedMessage.client.guilds.resolve(guildID);
 					}
 					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].addField(header, text, inline).setTimestamp();

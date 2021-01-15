@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
+exports.guildID = require('./auth.json').guildID;
 exports.roleIDs = require('./roleIDs.json');
 
 exports.moderatorIDs = require('./data/moderatorIDs.json');
@@ -13,14 +14,6 @@ exports.topicList = require('./data/topicList.json');
 exports.petitionList = require('./data/petitionList.json');
 // channelID: Campaign
 exports.campaignList = require('./data/campaignList.json');
-
-exports.getGuildID = function (clientID) {
-    if (clientID === "618233281019904010" || clientID === "538108287187550208") {
-        return "393489099731763230";
-    } else {
-        return "353575133157392385";
-    }
-};
 
 exports.updateTopicList = function (channelManager) {
     let messageData = exports.listMessages.topics;

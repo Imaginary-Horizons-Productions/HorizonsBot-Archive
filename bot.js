@@ -83,13 +83,8 @@ client.on('error', (error) => {
 })
 
 function login() {
-    fs.readFile('./auth.json', 'utf8', (error, data) => {
-        if (error) {
-            console.error(error)
-        }
+    let { token } = require('./auth.json');
+    client.login(token)
+        .catch(console.error);
 
-        let token = JSON.parse(data).token;
-        client.login(token)
-            .catch(console.error);
-    })
 }
