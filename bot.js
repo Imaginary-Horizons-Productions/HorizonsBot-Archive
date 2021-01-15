@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { Client } = require('discord.js');
 const { commandDictionary } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
