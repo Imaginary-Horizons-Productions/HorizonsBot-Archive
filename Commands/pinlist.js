@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { moderatorIDs, listMessages, topicListBuilder, campaignListBuilder } = require('../helpers.js');
+const { moderatorIDs, listMessages, saveObject, topicListBuilder, campaignListBuilder } = require('../helpers.js');
 
 var command = new Command(["PinList"], // aliases
 	"Pins a list of topic channles or TRPG campaigns to the receiving channel", // description
@@ -21,6 +21,7 @@ command.execute = (receivedMessage, state) => {
 								"channelID": message.channel.id
 							}
 							message.pin();
+							saveObject(listMessages, "listMessageIDs.json");
 						})
 					}).catch(console.log);
 				} else if (listType == "campaign" || listType == "campaigns") {
