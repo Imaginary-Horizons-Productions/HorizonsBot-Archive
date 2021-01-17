@@ -2,11 +2,11 @@ const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 const { moderatorIDs, embedsList, saveObject } = require('../helpers.js');
 
-var command = new Command(["MessageEmbed"], // aliases
+var command = new Command(["EmbedCreate"], // aliases
 	"Makes a new MessageEmbed, configurable with other commands", // description
 	"Moderator, must be used from a server channel", // requirements
 	["Example"], // headings
-	["`@HorizonsBot MessageEmbed`"]); // texts (must match number of headings)
+	["`@HorizonsBot EmbedCreate`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Create a new MessageEmbed

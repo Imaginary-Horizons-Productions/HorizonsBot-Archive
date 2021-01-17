@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { Client } = require('discord.js');
 const { commandDictionary } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
@@ -9,7 +8,8 @@ login();
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
-    client.user.setActivity("@HorizonsBot help", { type: "LISTENING" }).catch(console.error);
+    client.user.setActivity(`"@HorizonsBot help"`)
+        .catch(console.error);
 })
 
 client.on('message', receivedMessage => {
@@ -35,10 +35,8 @@ client.on('message', receivedMessage => {
             // Message from private message
             if (firstWord.replace(/\D/g, "") == client.user.id) {
                 command = messageArray.shift();
-            } else if (commandDictionary[firstWord]) {
-                command = firstWord;
             } else {
-                return;
+                command = firstWord;
             }
         }
 
@@ -46,9 +44,8 @@ client.on('message', receivedMessage => {
             "command": command,
             "messageArray": messageArray,
         }
-
-        if (commandDictionary[command]) {
-            commandDictionary[command].execute(receivedMessage, state);
+        if (commandDictionary[state.command]) {
+            commandDictionary[state.command].execute(receivedMessage, state);
         } else {
             receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
                 .catch(console.error);
@@ -58,6 +55,16 @@ client.on('message', receivedMessage => {
 
 client.on('guildMemberRemove', member => {
 
+})
+
+client.on('channelDelete', channel => {
+    let channelID = channel.id;
+    helpers.topicList = helpers.topicList.filter(id => id != channelID);
+    helpers.saveObject(helpers.topicList, 'topicList.json')
+    if (Object.keys(helpers.campaignList).includes(channelID)) {
+        delete helpers.campaignList[channelID];
+        helpers.saveObject(helpers.campaignList, 'campaignList.json');
+    }
 })
 
 client.on('disconnect', (error, code) => {
@@ -75,13 +82,8 @@ client.on('error', (error) => {
 })
 
 function login() {
-    fs.readFile('./auth.json', 'utf8', (error, data) => {
-        if (error) {
-            console.error(error)
-        }
+    let { token } = require('./auth.json');
+    client.login(token)
+        .catch(console.error);
 
-        let token = JSON.parse(data).token;
-        client.login(token)
-            .catch(console.error);
-    })
 }

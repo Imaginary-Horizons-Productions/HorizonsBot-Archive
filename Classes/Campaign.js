@@ -1,6 +1,4 @@
-const Topic = require('./Topic.js');
-
-module.exports = class Campaign extends Topic {
+module.exports = class Campaign {
     constructor () {
         this.channelID = 0;
         this.voiceChannelID = 0;
