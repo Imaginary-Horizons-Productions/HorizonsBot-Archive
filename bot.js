@@ -59,8 +59,7 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    helpers.topicList = helpers.topicList.filter(id => id != channelID);
-    helpers.saveObject(helpers.topicList, 'topicList.json')
+    helpers.setTopicList(helpers.getTopicList().filter(id => id != channelID));
     if (Object.keys(helpers.campaignList).includes(channelID)) {
         delete helpers.campaignList[channelID];
         helpers.saveObject(helpers.campaignList, 'campaignList.json');

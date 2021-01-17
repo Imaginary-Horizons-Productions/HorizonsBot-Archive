@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { topicList, campaignList } = require('../helpers.js');
+const { getManagedChannels } = require('../helpers.js');
 
 var command = new Command(["Leave"], // aliases
 	"Leave an opt-in channel or TRPG campaign", // description
@@ -9,8 +9,7 @@ var command = new Command(["Leave"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Remove visibility of receiving channel from author
-	let leavableChannelIDs = topicList.concat(Object.keys(campaignList));
-	if (leavableChannelIDs.includes(receivedMessage.channel.id)) {
+	if (getManagedChannels().includes(receivedMessage.channel.id)) {
 		receivedMessage.channel.permissionOverwrites.get(receivedMessage.author.id).delete("HorizonsBot leave used")
 			.catch(console.error);
 	} else {

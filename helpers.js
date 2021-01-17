@@ -9,11 +9,24 @@ exports.embedsList = require('./data/embedsList.json');
 // type: {messageID: number, channelID: number}
 exports.listMessages = require('./data/listMessageIDs.json');
 // [channelID]
-exports.topicList = require('./data/topicList.json');
+let topicList = require('./data/topicList.json');
+exports.getTopicList = function () {
+    return topicList;
+}
+
+exports.setTopicList = function (topicListInput) {
+    topicList = topicListInput;
+    exports.saveObject(topicList, 'topicList.json');
+}
+
 // name: [petitioner IDs]
 exports.petitionList = require('./data/petitionList.json');
 // channelID: Campaign
 exports.campaignList = require('./data/campaignList.json');
+
+exports.getManagedChannels = function () {
+    return exports.getTopicList.concat(Object.keys(exports.campaignList));
+}
 
 exports.updateTopicList = function (channelManager) {
     let messageData = exports.listMessages.topics;
@@ -28,9 +41,10 @@ exports.updateTopicList = function (channelManager) {
 
 exports.topicListBuilder = function (channelManager) {
     let description = "Here's a list of the opt-in topic channels for the server. Join one by typing: `@HorizonsBot Join (channel ID)`\n";
+    let topicList = exports.getTopicList();
 
-    for (let i = 0; i < exports.topicList.length; i += 1) {
-        let id = exports.topicList[i];
+    for (let i = 0; i < topicList.length; i += 1) {
+        let id = topicList[i];
         let channel = channelManager.resolve(id);
         description += `\n${channel.name}: ${channel.id}`;
     }
@@ -101,17 +115,17 @@ exports.addChannel = function (receivedMessage, topicName) {
             }
         ]
     }).then(channel => {
-        exports.topicList.push(channel.id);
+        exports.setTopicList(exports.getTopicList().concat([channel.id]));
         exports.updateTopicList(receivedMessage.guild.channels);
-        exports.saveObject(exports.topicList, "topicList.json");
         return channel;
     })
 }
 
 exports.deleteChannel = function (channel, channelManager) {
     let channelID = channel.id;
-    if (exports.topicList.includes(channelID)) {
-        exports.topicList = exports.topicList.filter(id => id != channelID);
+    let topicList = exports.getTopicList();
+    if (topicList.includes(channelID)) {
+        exports.setTopicList(topicList.filter(id => id != channelID))
         exports.updateTopicList(channelManager);
     } else if (Object.keys(exports.campaignList).includes(channelID)) {
         //TODO implement for campaigns

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, topicList, campaignList } = require('../helpers.js');
+const { guildID, getTopicList, campaignList } = require('../helpers.js');
 
 var command = new Command(["Join"], // aliases
 	"Join an opt-in channel or TRPG campaign", // description
@@ -15,7 +15,7 @@ command.execute = (receivedMessage, state) => {
 		let channel = guild.channels.resolve(channelID);
 		let permissionOverwrite = channel.permissionOverwrites.get(receivedMessage.author.id);
 		if (!permissionOverwrite || !permissionOverwrite.deny.has("VIEW_CHANNEL", false)) {
-			if (topicList.includes(channelID)) {
+			if (getTopicList().includes(channelID)) {
 				channel.createOverwrite(receivedMessage.author, {
 					"VIEW_CHANNEL": true
 				}).then(() => {

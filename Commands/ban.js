@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { moderatorIDs, topicList, campaignList } = require('../helpers.js');
+const { moderatorIDs, getManagedChannels } = require('../helpers.js');
 
 var command = new Command(["Ban"], // aliases
 	"Bans the mentioned users from an opt-in channel or TRPG campaign", // description
@@ -10,8 +10,7 @@ var command = new Command(["Ban"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Remove visibility of receiving channel from mentioned user
 	if (moderatorIDs.includes(receivedMessage.author.id)) {
-		let leavableChannelIDs = topicList.concat(Object.keys(campaignList));
-		if (leavableChannelIDs.includes(receivedMessage.channel.id)) {
+		if (getManagedChannels().includes(receivedMessage.channel.id)) {
 			receivedMessage.mentions.users.keyArray().filter(id => id != receivedMessage.client.user.id).forEach(id => {
 				receivedMessage.channel.createOverwrite(id, { VIEW_CHANNEL: false }, `Banned by ${receivedMessage.author.tag}`);
 			})
