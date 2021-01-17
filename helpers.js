@@ -26,12 +26,12 @@ exports.updateTopicList = function (channelManager) {
 }
 
 exports.topicListBuilder = function (channelManager) {
-    let description = "Here's a list of the opt-in topic channels for the server. Join one by typing: `@HorizonsBot Join (channel ID)`\n\n";
+    let description = "Here's a list of the opt-in topic channels for the server. Join one by typing: `@HorizonsBot Join (channel ID)`\n";
 
     for (let i = 0; i < exports.topicList.length; i += 1) {
         let id = exports.topicList[i];
         let channel = channelManager.resolve(id);
-        description += `${channel.name}: ${channel.id}`;
+        description += `\n${channel.name}: ${channel.id}`;
     }
 
     let petitions = Object.keys(exports.petitionList);
