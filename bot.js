@@ -41,7 +41,7 @@ client.on('message', receivedMessage => {
         }
 
         let state = {
-            "command": command,
+            "command": command.toLowerCase(),
             "messageArray": messageArray,
         }
         if (commandDictionary[state.command]) {

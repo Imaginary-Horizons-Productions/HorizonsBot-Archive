@@ -19,9 +19,8 @@ command.execute = (receivedMessage, state) => {
 				channel.createOverwrite(receivedMessage.author, {
 					"VIEW_CHANNEL": true
 				}).then(() => {
-					channel.send(`Welcome to ${channel.name}, ${receivedMessage.author}!`)
-						.catch(console.log);
-				})
+					channel.send(`Welcome to ${channel.name}, ${receivedMessage.author}!`);
+				}).catch(console.log);
 			} else if (Object.keys(campaignList).includes(channelID)) {
 				//TODO implement with campaign tracking
 			} else {
