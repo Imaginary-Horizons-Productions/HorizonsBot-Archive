@@ -20,8 +20,8 @@ exports.updateTopicList = function (channelManager) {
     if (messageData) {
         channelManager.resolve(messageData.channelID).messages.fetch(messageData.messageID).then(message => {
             exports.topicListBuilder(channelManager).then(embed => {
-                message.edit(embed);            
-            }).catch(console.error);    
+                message.edit(embed);
+            }).catch(console.error);
         });
     }
 }
@@ -89,15 +89,15 @@ exports.addChannel = function (receivedMessage, topicName) {
         "permissionOverwrites": [
             {
                 "id": receivedMessage.client.user.id,
+                "allow": 268436480 // VIEW_CHANNEL and "Manage Permissions" set to true
+            },
+            {
+                "id": exports.roleIDs.moderator,
                 "allow": ["VIEW_CHANNEL"]
             },
             {
                 "id": receivedMessage.guild.id, // use the guild id for @everyone
                 "deny": ["VIEW_CHANNEL"]
-            },
-            {
-                "id": exports.roleIDs.moderator,
-                "allow": ["VIEW_CHANNEL"]
             }
         ]
     }).then(channel => {
