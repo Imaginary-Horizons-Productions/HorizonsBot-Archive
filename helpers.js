@@ -11,12 +11,12 @@ exports.isModerator = function (id) {
 
 exports.addModerator = function (id) {
     moderatorIDs.push(id);
-    saveObject(moderatorIDs, "moderatorIDs.json");
+    exports.saveObject(moderatorIDs, "moderatorIDs.json");
 }
 
 exports.removeModerator = function (removedID) {
     moderatorIDs.filter(id => id != removedID);
-    saveObject(moderatorIDs, "moderatorIDs.json");
+    exports.saveObject(moderatorIDs, "moderatorIDs.json");
 }
 
 // {messageID: channelID}
@@ -42,7 +42,7 @@ exports.petitionList = require('./data/petitionList.json');
 exports.campaignList = require('./data/campaignList.json');
 
 exports.getManagedChannels = function () {
-    return exports.getTopicList.concat(Object.keys(exports.campaignList));
+    return exports.getTopicList().concat(Object.keys(exports.campaignList));
 }
 
 exports.updateTopicList = function (channelManager) {
