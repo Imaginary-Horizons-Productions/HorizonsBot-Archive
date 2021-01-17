@@ -16,11 +16,11 @@ command.execute = (receivedMessage, state) => {
 				receivedMessage.channel.createOverwrite(id, { VIEW_CHANNEL: false }, `Banned by ${receivedMessage.author.tag}`);
 			})
 		} else {
-			receivedMessage.author.send(`Please use the \`leave\` command from a topic or campaign channel.`)
+			receivedMessage.author.send(`Please use the \`ban\` command from a topic or campaign channel.`)
 				.catch(console.error);
 		}
 	} else {
-		receivedMessage.author.send(`Kicking users from text channels is restricted to Moderators.`)
+		receivedMessage.author.send(`Banning users from text channels is restricted to Moderators.`)
 			.catch(console.error);
 	}
 }

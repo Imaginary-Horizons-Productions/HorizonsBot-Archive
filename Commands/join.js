@@ -33,7 +33,7 @@ command.execute = (receivedMessage, state) => {
 				.catch(console.error);
 		}
 	} else {
-		receivedMessage.author.send(`Please mention the ID of a channel to join.`)
+		receivedMessage.author.send(`Please provide the ID of a channel to join.`)
 			.catch(console.error);
 	}
 }
