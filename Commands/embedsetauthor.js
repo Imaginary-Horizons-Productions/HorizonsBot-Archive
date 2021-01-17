@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, moderatorIDs } = require('../helpers.js');
+const { guildID, embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetAuthor"], // aliases
 	"Assigns an author to an custom embed created by HorizonsBot", // description
@@ -9,7 +9,7 @@ var command = new Command(["EmbedSetAuthor"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Set the title for the given embed
-	if (moderatorIDs.includes(receivedMessage.author.id)) {
+	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
 		if (embedsList[messageID]) {
 			let url = state.messageArray.join(' ');

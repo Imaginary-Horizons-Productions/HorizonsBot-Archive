@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
-const { moderatorIDs, embedsList, saveObject } = require('../helpers.js');
+const { isModerator, embedsList, saveObject } = require('../helpers.js');
 
 var command = new Command(["EmbedCreate"], // aliases
 	"Makes a new MessageEmbed, configurable with other commands", // description
@@ -11,7 +11,7 @@ var command = new Command(["EmbedCreate"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Create a new MessageEmbed
 	if (receivedMessage.guild) {
-		if (moderatorIDs.includes(receivedMessage.author.id)) {
+		if (isModerator(receivedMessage.author.id)) {
 			let embed = new MessageEmbed().setTimestamp();
 			receivedMessage.channel.send("Here's your new embed.", embed).then(message => {
 				embedsList[message.id] = message.channel.id;

@@ -3,11 +3,28 @@ const { MessageEmbed } = require('discord.js');
 exports.guildID = require('./auth.json').guildID;
 exports.roleIDs = require('./roleIDs.json');
 
-exports.moderatorIDs = require('./data/moderatorIDs.json');
-// messageID: channelID
+// [userID]
+let moderatorIDs = require('./data/moderatorIDs.json');
+exports.isModerator = function (id) {
+    return moderatorIDs.includes(id);
+}
+
+exports.addModerator = function (id) {
+    moderatorIDs.push(id);
+    saveObject(moderatorIDs, "moderatorIDs.json");
+}
+
+exports.removeModerator = function (removedID) {
+    moderatorIDs.filter(id => id != removedID);
+    saveObject(moderatorIDs, "moderatorIDs.json");
+}
+
+// {messageID: channelID}
 exports.embedsList = require('./data/embedsList.json');
-// type: {messageID: number, channelID: number}
+
+// {type: {messageID: number, channelID: number}}
 exports.listMessages = require('./data/listMessageIDs.json');
+
 // [channelID]
 let topicList = require('./data/topicList.json');
 exports.getTopicList = function () {
@@ -19,9 +36,9 @@ exports.setTopicList = function (topicListInput) {
     exports.saveObject(topicList, 'topicList.json');
 }
 
-// name: [petitioner IDs]
+// {name: [petitioner IDs]}
 exports.petitionList = require('./data/petitionList.json');
-// channelID: Campaign
+// {channelID: Campaign}
 exports.campaignList = require('./data/campaignList.json');
 
 exports.getManagedChannels = function () {

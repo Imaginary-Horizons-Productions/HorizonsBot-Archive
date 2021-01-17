@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { Permissions } = require('discord.js');
-var { roleIDs, moderatorIDs, saveObject } = require('../helpers.js');
+var { roleIDs, isModerator, removeModerator } = require('../helpers.js');
 
 var command = new Command(["ModDemote"], // aliases
 	"Remove a Moderator from HorizonsBot's list and remove the role", // description
@@ -11,13 +11,12 @@ var command = new Command(["ModDemote"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Remove a Moderator: remove from list, remove role and channel permissions
 	if (receivedMessage.guild) {
-		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || moderatorIDs.includes(receivedMessage.author.id)) {
+		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || isModerator(receivedMessage.author.id)) {
 			let demotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (demotee) {
-				if (moderatorIDs.includes(demotee.id)) {
+				if (isModerator(demotee.id)) {
 					demotee.roles.remove(roleIDs.moderator);
-					moderatorIDs = moderatorIDs.filter(id => id != demotee.id);
-					saveObject(moderatorIDs, "moderatorIDs.json");
+					removeModerator(demotee.id);
 					receivedMessage.channel.send(`${demotee} has been demoted from Moderator.`)
 						.catch(console.error);
 				} else {

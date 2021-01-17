@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { moderatorIDs, getManagedChannels, deleteChannel } = require('../helpers.js');
+const { isModerator, getManagedChannels, deleteChannel } = require('../helpers.js');
 
 var command = new Command(["Delete"], // aliases
 	"Delete a topic or campaign channel, or set it to be deleted on a delay", // description
@@ -9,7 +9,7 @@ var command = new Command(["Delete"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Delete a topic or campaign channel, or set it to be deleted on a delay
-	if (moderatorIDs.includes(receivedMessage.author.id)) {
+	if (isModerator(receivedMessage.author.id)) {
 		if (getManagedChannels().includes(receivedMessage.channel.id)) {
 			let delay = parseFloat(state.messageArray[0]);
 			if (!isNaN(delay)) {

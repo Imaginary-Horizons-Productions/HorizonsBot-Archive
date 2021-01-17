@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { moderatorIDs, listMessages, saveObject, topicListBuilder, campaignListBuilder } = require('../helpers.js');
+const { isModerator, listMessages, saveObject, topicListBuilder, campaignListBuilder } = require('../helpers.js');
 
 var command = new Command(["PinList"], // aliases
 	"Pins a list of topic channles or TRPG campaigns to the receiving channel", // description
@@ -9,7 +9,7 @@ var command = new Command(["PinList"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Command specifications go here
-	if (moderatorIDs.includes(receivedMessage.author.id)) {
+	if (isModerator(receivedMessage.author.id)) {
 		if (receivedMessage.guild) {
 			if (state.messageArray.length > 0) {
 				let listType = state.messageArray[0].toLowerCase();
