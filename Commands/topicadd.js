@@ -11,7 +11,11 @@ var command = new Command(["TopicAdd"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels
 	if (receivedMessage.member.hasPermission(Permissions.FLAGS.MANAGE_CHANNELS)) {
-		addChannel(receivedMessage, state.messageArray.join('-'));
+		let channelName = state.messageArray.join('-');
+		if (channelName === "") {
+			channelName = "new-channel";
+		}
+		addChannel(receivedMessage, channelName);
 	} else {
 		receivedMessage.author.send(`You need the MANAGE_CHANNELS permission to use the \`${state.command}\` command.`)
 			.catch(console.error);
