@@ -18,10 +18,11 @@ exports.campaignList = require('./data/campaignList.json');
 exports.updateTopicList = function (channelManager) {
     let messageData = exports.listMessages.topics;
     if (messageData) {
-        let message = channelManager.resolve(messageData.channelID).messages.resolve(messageData.messageID);
-        exports.topicListBuilder(channelManager).then(embed => {
-            message.edit(embed);            
-        }).catch(console.error);
+        channelManager.resolve(messageData.channelID).messages.fetch(messageData.messageID).then(message => {
+            exports.topicListBuilder(channelManager).then(embed => {
+                message.edit(embed);            
+            }).catch(console.error);    
+        });
     }
 }
 
