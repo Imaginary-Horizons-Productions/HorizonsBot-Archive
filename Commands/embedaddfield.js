@@ -23,13 +23,11 @@ command.execute = (receivedMessage, state) => {
 					} else {
 						inline = false;
 					}
-					let guild = receivedMessage.guild;
-					if (!guild) {
-						guild = receivedMessage.client.guilds.resolve(guildID);
-					}
-					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
-						let embed = message.embeds[0].addField(header, text, inline).setTimestamp();
-						message.edit("", embed);
+					receivedMessage.client.guilds.fetch(guildID).then(guild => {
+						guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+							let embed = message.embeds[0].addField(header, text, inline).setTimestamp();
+							message.edit("", embed);
+						})
 					})
 				} else {
 					receivedMessage.author.send(`Your field value for a \`${state.command}\` command could not be parsed.`)

@@ -14,13 +14,11 @@ command.execute = (receivedMessage, state) => {
 		if (embedsList[messageID]) {
 			let colorCode = state.messageArray[0];
 			if (colorCode.match(/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)) {
-				let guild = receivedMessage.guild;
-				if (!guild) {
-					guild = receivedMessage.client.guilds.resolve(guildID);
-				}
-				guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setColor(colorCode).setTimestamp();
-					message.edit("", embed);
+				receivedMessage.client.guilds.fetch(guild => {
+					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+						let embed = message.embeds[0].setColor(colorCode).setTimestamp();
+						message.edit("", embed);
+					})
 				})
 			} else {
 				receivedMessage.author.send(`Please provide color in hex code format (#000000).`)

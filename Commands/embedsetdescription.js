@@ -14,13 +14,11 @@ command.execute = (receivedMessage, state) => {
 		if (embedsList[messageID]) {
 			let description = state.messageArray.join(' ');
 			if (description) {
-				let guild = receivedMessage.guild;
-				if (!guild) {
-					guild = receivedMessage.client.guilds.resolve(guildID);
-				}
-				guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setDescription(description).setTimestamp();
-					message.edit("", embed);
+				receivedMessage.client.guilds.fetch(guildID).then(guild => {
+					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+						let embed = message.embeds[0].setDescription(description).setTimestamp();
+						message.edit("", embed);
+					})
 				})
 			} else {
 				receivedMessage.author.send(`Your description for a \`${state.command}\` command could not be parsed.`)

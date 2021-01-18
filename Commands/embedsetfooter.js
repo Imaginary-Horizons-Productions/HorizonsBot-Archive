@@ -17,13 +17,11 @@ command.execute = (receivedMessage, state) => {
 			let text = iconURL.shift();
 			if (text) {
 				iconURL = iconURL.toString();
-				let guild = receivedMessage.guild;
-				if (!guild) {
-					guild = receivedMessage.client.guilds.resolve(guildID);
-				}
-				guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setFooter(text, iconURL).setTimestamp();
-					message.edit("", embed);
+				receivedMessage.client.guilds.fetch(guildID).then(guild => {
+					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+						let embed = message.embeds[0].setFooter(text, iconURL).setTimestamp();
+						message.edit("", embed);
+					})
 				})
 			} else {
 				receivedMessage.author.send(`Your footer text for a \`${state.command}\` command could not be parsed.`)

@@ -18,13 +18,11 @@ command.execute = (receivedMessage, state) => {
 			if (name) {
 				let iconURL = url.shift();
 				url = url.toString();
-				let guild = receivedMessage.guild;
-				if (!guild) {
-					guild = receivedMessage.client.guilds.resolve(guildID);
-				}
-				guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
-					message.edit("", embed);
+				receivedMessage.client.guilds.fetch(guild => {
+					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+						let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
+						message.edit("", embed);
+					})
 				})
 			} else {
 				receivedMessage.author.send(`Your author name for a \`${state.command}\` command could not be parsed.`)
