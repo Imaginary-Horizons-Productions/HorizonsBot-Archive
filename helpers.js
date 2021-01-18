@@ -127,6 +127,10 @@ exports.addChannel = function (receivedMessage, topicName) {
                 "allow": ["VIEW_CHANNEL"]
             },
             {
+                "id": "536330483852771348", // BountyBot
+                "allow": ["VIEW_CHANNEL"]
+            },
+            {
                 "id": receivedMessage.guild.id, // use the guild id for @everyone
                 "deny": ["VIEW_CHANNEL"]
             }
