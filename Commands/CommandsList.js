@@ -28,4 +28,6 @@ for (const file of commandFiles) {
 	})
 }
 
-exports.commandDictionary = commandDictionary;
+exports.getCommand = function (commandName) {
+	return commandDictionary[commandName];
+}

@@ -1,5 +1,5 @@
 const { Client } = require('discord.js');
-const { commandDictionary } = require('./Commands/CommandsList.js');
+const { getCommand } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
 
 const client = new Client();
@@ -44,8 +44,9 @@ client.on('message', receivedMessage => {
             "command": command.toLowerCase(),
             "messageArray": messageArray,
         }
-        if (commandDictionary[state.command]) {
-            commandDictionary[state.command].execute(receivedMessage, state);
+        let usedCommand = getCommand(state.command);
+        if (usedCommand) {
+            usedCommand.execute(receivedMessage, state);
         } else {
             receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
                 .catch(console.error);

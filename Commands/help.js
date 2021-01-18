@@ -9,11 +9,11 @@ var command = new Command(['Help', 'Commands'],
 
 command.execute = (receivedMessage, state) => {
     //TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set
-    const { commandSets, commandDictionary } = require(`./CommandsList.js`);
+    const { commandSets, getCommand } = require(`./CommandsList.js`);
 
     // Provides a summary about bot commands, or details about a given command
     if (state.messageArray.length > 0) {
-        var lookedUpCommand = commandDictionary[state.messageArray[0]];
+        var lookedUpCommand = getCommand(state.messageArray[0]);
         if (lookedUpCommand) {
             receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL()))
                 .catch(console.error);
