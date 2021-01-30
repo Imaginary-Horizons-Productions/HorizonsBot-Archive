@@ -166,6 +166,23 @@ exports.topicListBuilder = function (channelManager) {
     }
 }
 
+exports.pinTopicsList = function (channelManager, channel) {
+    exports.topicListBuilder(channelManager).then(embed => {
+        channel.send(embed).then(message => {
+            exports.listMessages.topics = {
+                "messageID": message.id,
+                "channelID": message.channel.id
+            }
+            exports.getTopicEmoji().forEach(emoji => {
+                message.react(emoji);
+            })
+            exports.createJoinCollector(message);
+            message.pin();
+            exports.saveObject(exports.listMessages, "listMessageIDs.json");
+        })
+    }).catch(console.log);
+}
+
 exports.campaignListBuilder = function () {
 
 }
