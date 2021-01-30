@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, listMessages, saveObject, topicListBuilder, campaignListBuilder } = require('../helpers.js');
+const { isModerator, listMessages, saveObject, topicListBuilder, getTopicEmoji, createJoinCollector, campaignListBuilder } = require('../helpers.js');
 
 var command = new Command(["PinList"], // aliases
 	"Pins a list of topic channles or TRPG campaigns to the receiving channel", // description
@@ -20,6 +20,10 @@ command.execute = (receivedMessage, state) => {
 								"messageID": message.id,
 								"channelID": message.channel.id
 							}
+							getTopicEmoji().forEach(emoji => {
+								message.react(emoji);
+							})
+							createJoinCollector(message);
 							message.pin();
 							saveObject(listMessages, "listMessageIDs.json");
 						})

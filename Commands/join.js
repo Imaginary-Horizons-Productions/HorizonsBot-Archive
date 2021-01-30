@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, getTopicList, campaignList } = require('../helpers.js');
+const { guildID, joinChannel } = require('../helpers.js');
 
 var command = new Command(["Join"], // aliases
 	"Join an opt-in channel or TRPG campaign", // description
@@ -13,24 +13,7 @@ command.execute = (receivedMessage, state) => {
 	if (channelID) {
 		receivedMessage.client.guilds.fetch(guildID).then(guild => {
 			let channel = guild.channels.resolve(channelID);
-			let permissionOverwrite = channel.permissionOverwrites.get(receivedMessage.author.id);
-			if (!permissionOverwrite || !permissionOverwrite.deny.has("VIEW_CHANNEL", false)) {
-				if (getTopicList().includes(channelID)) {
-					channel.createOverwrite(receivedMessage.author, {
-						"VIEW_CHANNEL": true
-					}).then(() => {
-						channel.send(`Welcome to ${channel.name}, ${receivedMessage.author}!`);
-					}).catch(console.log);
-				} else if (Object.keys(campaignList).includes(channelID)) {
-					//TODO implement with campaign tracking
-				} else {
-					receivedMessage.author.send(`The ID you provided does not seem to be associated with a topic or campaign channel.`)
-						.catch(console.error);
-				}
-			} else {
-				receivedMessage.author.send(`You are currently banned from ${channel.name}. Speak to a Moderator if you believe this is in error.`)
-					.catch(console.error);
-			}
+			joinChannel(channel, receivedMessage.author);
 		});
 	} else {
 		receivedMessage.author.send(`Please provide the ID of a channel to join.`)

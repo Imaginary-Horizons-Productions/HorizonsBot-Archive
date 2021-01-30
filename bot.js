@@ -10,6 +10,13 @@ client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
     client.user.setActivity(`"@HorizonsBot help"`)
         .catch(console.error);
+
+    // Update pinned lists
+    client.guilds.fetch(helpers.guildID).then(guild => {
+        helpers.updateTopicList(guild.channels).then(message => {
+            helpers.createJoinCollector(message);
+        });
+    })
 })
 
 client.on('message', receivedMessage => {
@@ -60,10 +67,13 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    helpers.setTopicList(helpers.getTopicList().filter(id => id != channelID));
-    if (Object.keys(helpers.campaignList).includes(channelID)) {
-        delete helpers.campaignList[channelID];
-        helpers.saveObject(helpers.campaignList, 'campaignList.json');
+    let topicList = helpers.getTopicList();
+    if (topicList.includes(channelID)) {
+        helpers.setTopicList(topicList.filter(id => id != channelID))
+        helpers.updateTopicList(channel.guild.channels);
+        helpers.removeTopicEmoji(channelID);
+    } else if (Object.keys(helpers.campaignList).includes(channelID)) {
+        //TODO implement for campaigns
     }
 })
 

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getManagedChannels, deleteChannel } = require('../helpers.js');
+const { isModerator, getManagedChannels } = require('../helpers.js');
 
 var command = new Command(["Delete"], // aliases
 	"Delete a topic or campaign channel, or set it to be deleted on a delay", // description
@@ -15,9 +15,11 @@ command.execute = (receivedMessage, state) => {
 			if (!isNaN(delay)) {
 				receivedMessage.channel.send(`This channel has been scheduled to be deleted in ${delay} hour(s).`)
 					.catch(console.error);
-				setTimeout(deleteChannel, delay * 3600000, receivedMessage.channel, receivedMessage.guild.channels)
+				setTimeout(() => {
+					receivedMessage.channel.delete()
+				}, delay * 3600000)
 			} else {
-				deleteChannel(receivedMessage.channel, receivedMessage.guild.channels);
+				receivedMessage.channel.delete().catch(console.log);
 			}
 		} else {
 			receivedMessage.author.send("The delete command can only be used on topic or campaign channels.")
