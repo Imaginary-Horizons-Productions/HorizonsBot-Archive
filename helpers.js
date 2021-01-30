@@ -230,9 +230,6 @@ exports.joinChannel = function (channel, user) {
                 }).catch(console.log);
             } else if (Object.keys(exports.campaignList).includes(channelID)) {
                 //TODO implement with campaign tracking
-            } else {
-                user.send(`The ID you provided does not seem to be associated with a topic or campaign channel.`)
-                    .catch(console.error);
             }
         } else {
             user.send(`You are currently banned from ${channel.name}. Speak to a Moderator if you believe this is in error.`)
