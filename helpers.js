@@ -27,7 +27,6 @@ exports.listMessages = require('./data/listMessageIDs.json');
 
 // [channelID]
 let topicList = require('./data/topicList.json');
-const { DH_UNABLE_TO_CHECK_GENERATOR } = require('constants');
 exports.getTopicList = function () {
     return topicList;
 }
@@ -90,8 +89,8 @@ exports.updateTopicList = function (channelManager) {
         return channelManager.resolve(messageData.channelID).messages.fetch(messageData.messageID).then(message => {
             exports.topicListBuilder(channelManager).then(embed => {
                 message.edit(embed);
-                exports.getTopicEmoji().forEach(emoji => {
-                    message.react(emoji);
+                exports.getTopicEmoji().forEach(async emoji => {
+                    await message.react(emoji);
                 })
             }).catch(console.error);
             return message;
