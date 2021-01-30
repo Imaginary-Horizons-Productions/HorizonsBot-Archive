@@ -27,6 +27,7 @@ exports.listMessages = require('./data/listMessageIDs.json');
 
 // [channelID]
 let topicList = require('./data/topicList.json');
+const { DH_UNABLE_TO_CHECK_GENERATOR } = require('constants');
 exports.getTopicList = function () {
     return topicList;
 }
@@ -61,6 +62,9 @@ exports.getTopicEmoji = function () {
 }
 
 exports.addTopicEmoji = function (emoji, channelID) {
+    if (exports.getTopicByEmoji(emoji.name) != -1) {
+        exports.removeTopicEmoji(channelID)
+    }
     topicEmoji.set(emoji.name, channelID);
     exports.saveObject(topicEmoji, "topicEmoji.json");
 }
