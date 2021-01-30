@@ -74,7 +74,15 @@ exports.removeTopicEmoji = function (channelID) {
 }
 
 // {name: [petitioner IDs]}
-exports.petitionList = require('./data/petitionList.json');
+let petitionList = require('./data/petitionList.json');
+exports.getPetitionList = function () {
+    return petitionList;
+}
+
+exports.setPetitionList = function (petitionListInput) {
+    petitionList = petitionListInput;
+    exports.saveObject(petitionList, 'petitionList.json');
+}
 
 // {channelID: Campaign}
 exports.campaignList = require('./data/campaignList.json');
@@ -114,11 +122,11 @@ exports.topicListBuilder = function (channelManager) {
         }
     }
 
-    let petitions = Object.keys(exports.petitionList);
+    let petitions = Object.keys(petitionList);
     let petitionText = "Here are the topic channels that have been petitioned for. They will automatically be added when 5% of the server petitions for them.\n";
     if (petitions.length > 0) {
         petitions.forEach(topicName => {
-            petitionText += `\n${topicName}: ${exports.petitionList[topicName].length} petitioner(s) so far`;
+            petitionText += `\n${topicName}: ${petitionList[topicName].length} petitioner(s) so far`;
         })
     }
 

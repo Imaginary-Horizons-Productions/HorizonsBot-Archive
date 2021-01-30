@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { petitionList, addChannel, updateTopicList, saveObject } = require('../helpers.js');
+const { getPetitionList, setPetitionList, addChannel, updateTopicList, saveObject } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
@@ -10,6 +10,7 @@ var command = new Command(["Petition"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions
 	let topicName = state.messageArray.join('-');
+	let petitionList = getPetitionList();
 	if (!petitionList[topicName]) {
 		petitionList[topicName] = [];
 	}
@@ -31,9 +32,11 @@ command.execute = (receivedMessage, state) => {
 			delete petitionList[topicName];
 		}
 		updateTopicList(receivedMessage.guild.channels);
-		saveObject(petitionList, 'petitionList.json');
-	} else {
+		setPetitionList(petitionList);
 		receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
+			.catch(console.error)
+	} else {
+		receivedMessage.author.send(`You have already petitioned for ${topicName}.`)
 			.catch(console.error)
 	}
 }
