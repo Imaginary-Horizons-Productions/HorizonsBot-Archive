@@ -163,13 +163,13 @@ exports.campaignListBuilder = function () {
 
 }
 
-exports.addChannel = function (receivedMessage, topicName) {
-    return receivedMessage.guild.members.fetch("536330483852771348").then(bountyBot => { // Creating permissionOverwrites by string doesn't seem to be working at time of writing
-        return receivedMessage.channel.clone({
-            "name": topicName,
+exports.addChannel = function (channelManager, categoryID, topicName) {
+    return channelManager.guild.members.fetch("536330483852771348").then(bountyBot => { // Creating permissionOverwrites by string doesn't seem to be working at time of writing
+        return channelManager.create(topicName, {
+            "parent": categoryID,
             "permissionOverwrites": [
                 {
-                    "id": receivedMessage.client.user.id,
+                    "id": channelManager.client.user.id,
                     "allow": 268436480 // VIEW_CHANNEL and "Manage Permissions" set to true
                 },
                 {
@@ -181,13 +181,13 @@ exports.addChannel = function (receivedMessage, topicName) {
                     "allow": ["VIEW_CHANNEL"]
                 },
                 {
-                    "id": receivedMessage.guild.id, // use the guild id for @everyone
+                    "id": channelManager.guild.id, // use the guild id for @everyone
                     "deny": ["VIEW_CHANNEL"]
                 }
             ]
         }).then(channel => {
             exports.setTopicList(exports.getTopicList().concat([channel.id]));
-            exports.updateTopicList(receivedMessage.guild.channels);
+            exports.updateTopicList(channelManager.guild.channels);
             return channel;
         }).catch(console.log);
     })

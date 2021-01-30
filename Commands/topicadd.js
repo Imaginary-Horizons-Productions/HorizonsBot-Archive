@@ -15,7 +15,7 @@ command.execute = (receivedMessage, state) => {
 		if (channelName === "") {
 			channelName = "new-channel";
 		}
-		addChannel(receivedMessage, channelName);
+		addChannel(receivedMessage.guild.channels, receivedMessage.channel.parent.id, channelName);
 	} else {
 		receivedMessage.author.send(`You need the MANAGE_CHANNELS permission to use the \`${state.command}\` command.`)
 			.catch(console.error);

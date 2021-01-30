@@ -19,7 +19,7 @@ command.execute = (receivedMessage, state) => {
 		if (petitionList[topicName].length > memberCount * 0.05) {
 			let petitionersIDs = petitionList[topicName];
 			let unveilingText = "This channel has been created thanks to: ";
-			addChannel(receivedMessage, topicName).then(channel => {
+			addChannel(receivedMessage.guild.channels, receivedMessage.channel.parent.id, topicName).then(channel => {
 				petitionersIDs.forEach(id => {
 					unveilingText += `<@${id}> `;
 					channel.createOverwrite(id, {
