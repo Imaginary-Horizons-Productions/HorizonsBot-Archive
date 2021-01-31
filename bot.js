@@ -24,7 +24,7 @@ let topicBuriedness = 0;
 client.on('message', receivedMessage => {
     if (receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;
-        if (topicBuriedness > 29) {
+        if (topicBuriedness > 19) {
             receivedMessage.guild.channels.resolve(helpers.listMessages.topics.channelID).messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
                 oldMessage.delete({ "reason": "bump topics pin" });
             })

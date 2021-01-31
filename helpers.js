@@ -84,9 +84,18 @@ exports.setPetitionList = function (petitionListInput) {
     exports.saveObject(petitionList, 'petitionList.json');
 }
 
-// {channelID: Campaign}
-exports.campaignList = require('./data/campaignList.json');
+// {textChannelID: Campaign}
+let campaignList = require('./data/campaignList.json');
+exports.getCampaignList = function () {
+    return campaignList;
+}
 
+exports.setCampaignList = function (campaignListInput) {
+    campaignList = campaignListInput;
+    exports.saveObject(campaignList, 'campaignList.json');
+}
+
+// Functions
 exports.getManagedChannels = function () {
     return exports.getTopicList().concat(Object.keys(exports.campaignList));
 }
