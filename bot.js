@@ -1,5 +1,5 @@
 const { Client } = require('discord.js');
-const { commandDictionary } = require('./Commands/CommandsList.js');
+const { getCommand } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
 
 const client = new Client();
@@ -10,9 +10,28 @@ client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
     client.user.setActivity(`"@HorizonsBot help"`)
         .catch(console.error);
+
+    // Update pinned lists
+    client.guilds.fetch(helpers.guildID).then(guild => {
+        helpers.updateTopicList(guild.channels).then(message => {
+            helpers.createJoinCollector(message);
+        });
+    })
 })
 
+let topicBuriedness = 0;
+
 client.on('message', receivedMessage => {
+    if (receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
+        topicBuriedness += 1;
+        if (topicBuriedness > 29) {
+            receivedMessage.guild.channels.resolve(helpers.listMessages.topics.channelID).messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
+                oldMessage.delete({ "reason": "bump topics pin" });
+            })
+            helpers.pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
+            topicBuriedness = 0;
+        }
+    }
     if (receivedMessage.author.bot) {
         return;
     }
@@ -44,8 +63,9 @@ client.on('message', receivedMessage => {
             "command": command.toLowerCase(),
             "messageArray": messageArray,
         }
-        if (commandDictionary[state.command]) {
-            commandDictionary[state.command].execute(receivedMessage, state);
+        let usedCommand = getCommand(state.command);
+        if (usedCommand) {
+            usedCommand.execute(receivedMessage, state);
         } else {
             receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
                 .catch(console.error);
@@ -59,10 +79,13 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    helpers.setTopicList(helpers.getTopicList().filter(id => id != channelID));
-    if (Object.keys(helpers.campaignList).includes(channelID)) {
-        delete helpers.campaignList[channelID];
-        helpers.saveObject(helpers.campaignList, 'campaignList.json');
+    let topicList = helpers.getTopicList();
+    if (topicList.includes(channelID)) {
+        helpers.setTopicList(topicList.filter(id => id != channelID))
+        helpers.updateTopicList(channel.guild.channels);
+        helpers.removeTopicEmoji(channelID);
+    } else if (Object.keys(helpers.campaignList).includes(channelID)) {
+        //TODO implement for campaigns
     }
 })
 

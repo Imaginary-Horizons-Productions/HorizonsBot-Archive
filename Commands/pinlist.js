@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, listMessages, saveObject, topicListBuilder, campaignListBuilder } = require('../helpers.js');
+const { isModerator, pinTopicsList, campaignListBuilder } = require('../helpers.js');
 
 var command = new Command(["PinList"], // aliases
 	"Pins a list of topic channles or TRPG campaigns to the receiving channel", // description
@@ -14,16 +14,7 @@ command.execute = (receivedMessage, state) => {
 			if (state.messageArray.length > 0) {
 				let listType = state.messageArray[0].toLowerCase();
 				if (listType == "topic" || listType == "topics") {
-					topicListBuilder(receivedMessage.guild.channels).then(embed => {
-						receivedMessage.channel.send(embed).then(message => {
-							listMessages.topics = {
-								"messageID": message.id,
-								"channelID": message.channel.id
-							}
-							message.pin();
-							saveObject(listMessages, "listMessageIDs.json");
-						})
-					}).catch(console.log);
+					pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
 				} else if (listType == "campaign" || listType == "campaigns") {
 					//TODO impliment for campaigns
 				} else {
