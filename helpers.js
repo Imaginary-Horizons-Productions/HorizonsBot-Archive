@@ -161,9 +161,10 @@ exports.topicListBuilder = function (channelManager) {
         })
     } else {
         let embed = new MessageEmbed()
-            .setAuthor("Visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+            .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
             .setTitle("Topic Channels")
             .setDescription(description)
+            .setFooter("Please do not make bounties to vote for your petitions.")
             .setTimestamp();
 
         if (petitions.length > 0) {

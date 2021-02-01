@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { getPetitionList, setPetitionList, addChannel, updateTopicList, saveObject } = require('../helpers.js');
+const { getPetitionList, setPetitionList, addChannel, updateTopicList } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
