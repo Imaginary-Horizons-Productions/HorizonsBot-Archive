@@ -100,16 +100,22 @@ exports.getManagedChannels = function () {
     return exports.getTopicList().concat(Object.keys(exports.campaignList));
 }
 
-exports.updateTopicList = function (channelManager) {
-    let messageData = exports.listMessages.topics;
+exports.updateList = function (channelManager, listType) {
+    let messageData = exports.listMessages[listType];
     if (messageData) {
         return channelManager.resolve(messageData.channelID).messages.fetch(messageData.messageID).then(message => {
-            exports.topicListBuilder(channelManager).then(embed => {
-                message.edit(embed);
-                exports.getTopicEmoji().forEach(async emoji => {
-                    await message.react(emoji);
-                })
-            }).catch(console.error);
+            if (listType == "topics") {
+                exports.topicListBuilder(channelManager).then(embed => {
+                    message.edit(embed);
+                    exports.getTopicEmoji().forEach(async emoji => {
+                        await message.react(emoji);
+                    })
+                }).catch(console.error);
+            } else {
+                exports.campaignListBuilder(channelManager).then(embed => {
+                    message.edit(embed);
+                }).catch(console.error)
+            }
             return message;
         });
     }
@@ -117,14 +123,14 @@ exports.updateTopicList = function (channelManager) {
 
 exports.topicListBuilder = function (channelManager) {
     let description = "Here's a list of the opt-in topic channels for the server, their IDs, and associated emoji. Join one by typing `@HorizonsBot Join (channel ID)` or by reacting with their emoji.\n";
-    let topicList = exports.getTopicList();
+    let topics = exports.getTopicList();
 
-    for (let i = 0; i < topicList.length; i += 1) {
-        let id = topicList[i];
+    for (let i = 0; i < topics.length; i += 1) {
+        let id = topics[i];
         let channel = channelManager.resolve(id);
         if (channel) {
             let channelEmote = "";
-            if (Object.values(topicList).includes(id)) {
+            if (Object.values(topics).includes(id)) {
                 channelEmote = exports.getEmojiByChannelID(id);
             }
             description += `\n${channelEmote ? channelEmote + " " : ""}${channel.name}: ${channel.id}`;
@@ -140,11 +146,12 @@ exports.topicListBuilder = function (channelManager) {
     }
 
     if (description.length > 2048 || petitionText.length > 1024) {
-        let fileText = description;
-        if (petitions.length > 0) {
-            fileText += `\n\n${petitionText}`
-        }
         return new Promise((resolve, reject) => {
+            let fileText = description;
+            if (petitions.length > 0) {
+                fileText += `\n\n${petitionText}`
+            }
+
             fs.writeFile("data/TopicChannels.txt", fileText, "utf8", error => {
                 if (error) {
                     console.log(error);
@@ -160,18 +167,17 @@ exports.topicListBuilder = function (channelManager) {
             }
         })
     } else {
-        let embed = new MessageEmbed()
-            .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
-            .setTitle("Topic Channels")
-            .setDescription(description)
-            .setFooter("Please do not make bounties to vote for your petitions.")
-            .setTimestamp();
-
-        if (petitions.length > 0) {
-            embed.addField("Petitioned Channels", petitionText)
-        }
-
         return new Promise((resolve, reject) => {
+            let embed = new MessageEmbed()
+                .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+                .setTitle("Topic Channels")
+                .setDescription(description)
+                .setFooter("Please do not make bounties to vote for your petitions.")
+                .setTimestamp();
+
+            if (petitions.length > 0) {
+                embed.addField("Petitioned Channels", petitionText)
+            }
             resolve(embed);
         })
     }
@@ -194,8 +200,56 @@ exports.pinTopicsList = function (channelManager, channel) {
     }).catch(console.log);
 }
 
-exports.campaignListBuilder = function () {
+exports.campaignListBuilder = function (channelManager) {
+    let description = "Here's a list of the TRPG campaigns for the server. Join one by typing `@HorizonsBot Join (campaign name)`.\n";
+    let campaigns = exports.getCampaignList();
 
+    Object.keys(campaigns).forEach(id => {
+        let campaign = campaigns[id];
+        let channel = channelManager.resolve(id);
+        let occupiedSeats = channel.permissionOverwrites.array().length - 4;
+        description += `\n${campaign.name} (${occupiedSeats}/${campaign.seats} Players)\n**Host**: <@${campaign.hostID}>\n**System**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n${campaign.description}`;
+    })
+
+    if (description.length > 2048) {
+        return new Promise((resolve, reject) => {
+            let fileText = description;
+            fs.writeFile("data/CampaignChannels.txt", fileText, "utf8", error => {
+                if (error) {
+                    console.log(error);
+                }
+            });
+            resolve();
+        }).then(() => {
+            return {
+                files: [{
+                    attachment: "data/CampaignChannels.txt",
+                    name: "CampaignChannels.txt"
+                }]
+            }
+        })
+    } else {
+        return new Promise((resolve, reject) => {
+            resolve(new MessageEmbed()
+                .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+                .setTitle("TRPG Campaigns")
+                .setDescription(description)
+                .setTimestamp());
+        })
+    }
+}
+
+exports.pinCampaignsList = function (channelManager, channel) {
+    exports.campaignListBuilder(channelManager).then(embed => {
+        channel.send(embed).then(message => {
+            exports.listMessages.campaigns = {
+                "messageID": message.id,
+                "channelID": message.channel.id
+            }
+            message.pin();
+            exports.saveObject(exports.listMessages, "listMessageIDs.json");
+        })
+    }).catch(console.log);
 }
 
 exports.addChannel = function (channelManager, categoryID, topicName) {
@@ -222,7 +276,7 @@ exports.addChannel = function (channelManager, categoryID, topicName) {
             ]
         }).then(channel => {
             exports.setTopicList(exports.getTopicList().concat([channel.id]));
-            exports.updateTopicList(channelManager.guild.channels);
+            exports.updateList(channelManager.guild.channels, "topics");
             return channel;
         }).catch(console.log);
     })

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { getPetitionList, setPetitionList, addChannel, updateTopicList } = require('../helpers.js');
+const { getPetitionList, setPetitionList, addChannel, updateList } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
@@ -31,7 +31,7 @@ command.execute = (receivedMessage, state) => {
 			})
 			delete petitionList[topicName];
 		}
-		updateTopicList(receivedMessage.guild.channels);
+		updateList(receivedMessage.guild.channels, "topics");
 		setPetitionList(petitionList);
 		receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
 			.catch(console.error)

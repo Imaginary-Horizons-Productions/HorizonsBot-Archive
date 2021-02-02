@@ -13,23 +13,36 @@ client.on('ready', () => {
 
     // Update pinned lists
     client.guilds.fetch(helpers.guildID).then(guild => {
-        helpers.updateTopicList(guild.channels).then(message => {
+        let channelManager = guild.channels;
+        helpers.updateList(channelManager, "topics").then(message => {
             helpers.createJoinCollector(message);
         });
+        helpers.updateList(channelManager, "campaigns");
     })
 })
 
 let topicBuriedness = 0;
+let campaignBuriedness = 0;
 
 client.on('message', receivedMessage => {
     if (receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;
         if (topicBuriedness > 19) {
-            receivedMessage.guild.channels.resolve(helpers.listMessages.topics.channelID).messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
+            receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
                 oldMessage.delete({ "reason": "bump topics pin" });
             })
             helpers.pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
             topicBuriedness = 0;
+        }
+    }
+    if (receivedMessage.channel.id == helpers.listMessages.campaigns.channelID) {
+        campaignBuriedness += 1;
+        if (campaignBuriedness > 19) {
+            receivedMessage.channel.messages.fetch(helpers.listMessages.campaigns.messageID).then(oldMessage => {
+                oldMessage.delete({ "reason": "bump campaigns pin" });
+            })
+            helpers.pinCampaignsList(receivedMessage.guild.channels, receivedMessage.channel);
+            campaignBuriedness = 0;
         }
     }
     if (receivedMessage.author.bot) {
@@ -82,7 +95,7 @@ client.on('channelDelete', channel => {
     let topicList = helpers.getTopicList();
     if (topicList.includes(channelID)) {
         helpers.setTopicList(topicList.filter(id => id != channelID))
-        helpers.updateTopicList(channel.guild.channels);
+        helpers.updateList(channel.guild.channels, "topics");
         helpers.removeTopicEmoji(channelID);
     } else if (Object.keys(helpers.campaignList).includes(channelID)) {
         //TODO implement for campaigns
