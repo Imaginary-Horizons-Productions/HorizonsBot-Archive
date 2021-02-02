@@ -23,7 +23,7 @@ command.execute = (receivedMessage, state) => {
 				.catch(console.error);
 		}
 	} else {
-		receivedMessage.author.send(`Renaming a campaign is restricted to the host of that campaign or Moderators.`)
+		receivedMessage.author.send(`Renaming a campaign is restricted to the host of that campaign or Moderators from that campaign channel.`)
 			.catch(console.error);
 	}
 }
