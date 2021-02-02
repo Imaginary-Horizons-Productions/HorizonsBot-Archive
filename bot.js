@@ -92,13 +92,27 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    let topicList = helpers.getTopicList();
-    if (topicList.includes(channelID)) {
-        helpers.setTopicList(topicList.filter(id => id != channelID))
-        helpers.updateList(channel.guild.channels, "topics");
+    let topics = helpers.getTopicList();
+    let campaigns = helpers.getCampaignList();
+    if (topics && topics.includes(channelID)) {
         helpers.removeTopicEmoji(channelID);
-    } else if (Object.keys(helpers.campaignList).includes(channelID)) {
-        //TODO implement for campaigns
+        helpers.setTopicList(topics.filter(id => id != channelID))
+        helpers.updateList(channel.guild.channels, "topics");
+    } else if (campaigns) {
+        if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
+            for (campaign of Object.values(campaigns)) {
+                if (campaign.voiceChannelID == channelID) {
+                    channelID = campaign.channelID;
+                    break;
+                }
+            }
+        } else if (!Object.keys(campaigns).includes(channelID)) {
+            return;
+        }
+        channel.guild.channels.resolve(channelID).delete();
+        delete campaigns[channelID];
+        helpers.setCampaignList(campaigns);
+        helpers.updateList(channel.guild.channels, "campaigns");
     }
 })
 
