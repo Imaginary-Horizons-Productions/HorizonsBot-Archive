@@ -208,7 +208,7 @@ exports.campaignListBuilder = function (channelManager) {
         let campaign = campaigns[id];
         let channel = channelManager.resolve(id);
         let occupiedSeats = channel.permissionOverwrites.array().length - 4;
-        description += `\n${campaign.name} (${occupiedSeats}/${campaign.seats} Players)\n**Host**: <@${campaign.hostID}>\n**System**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n${campaign.description}`;
+        description += `\n${campaign.name} (${occupiedSeats}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**Host**: <@${campaign.hostID}>\n**System**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n${campaign.description}`;
     })
 
     if (description.length > 2048) {
