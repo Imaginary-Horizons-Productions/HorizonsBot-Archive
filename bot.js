@@ -102,15 +102,17 @@ client.on('channelDelete', channel => {
         if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
             for (campaign of Object.values(campaigns)) {
                 if (campaign.voiceChannelID == channelID) {
-                    channelID = campaign.channelID;
+                    channel.guild.channels.resolve(campaign.channelID).delete();
+                    delete campaigns[campaign.channelID];
                     break;
                 }
             }
-        } else if (!Object.keys(campaigns).includes(channelID)) {
+        } else if (Object.keys(campaigns).includes(channelID)) {
+            channel.guild.channels.resolve(campaigns[channelID].voiceChannelID).delete();
+            delete campaigns[channelID];
+        } else {
             return;
         }
-        channel.guild.channels.resolve(channelID).delete();
-        delete campaigns[channelID];
         helpers.setCampaignList(campaigns);
         helpers.updateList(channel.guild.channels, "campaigns");
     }
