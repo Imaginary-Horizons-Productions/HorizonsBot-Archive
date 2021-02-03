@@ -10,6 +10,12 @@ var command = new Command(["CampaignSetTimeSlot"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
 	let campaigns = getCampaignList();
+	if (campaigns[receivedMessage.channel.id]) {
+
+	} else {
+		receivedMessage.author.send(`Please set campaign settings from the camapaign channel.`)
+			.catch(console.error);
+	}
 	if (isModerator(receivedMessage.author.id) || (campaigns[receivedMessage.channel.id] && receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID)) {
 		let timeSlot = state.messageArray.join(' ');
 		if (timeSlot) {

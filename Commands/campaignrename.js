@@ -10,20 +10,25 @@ var command = new Command(["CampaignRename"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Rename the text voice channels associated with receiving channel
 	let campaigns = getCampaignList();
-	if (isModerator(receivedMessage.author.id) || (campaigns[receivedMessage.channel.id] && receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID)) {
-		let newName = state.messageArray.join('-');
-		if (newName) {
-			campaigns[receivedMessage.channel.id].name = newName;
-			receivedMessage.channel.setName(newName);
-			receivedMessage.guild.channels.resolve(campaigns[receivedMessage.channel.id].voiceChannelID).setName(newName + " Voice");
-			setCampaignList(campaigns);
-			updateList(receivedMessage.guild.channels, "campaigns");
+	if (campaigns[receivedMessage.channel.id]) {
+		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID) {
+			let newName = state.messageArray.join('-');
+			if (newName) {
+				campaigns[receivedMessage.channel.id].name = newName;
+				receivedMessage.channel.setName(newName);
+				receivedMessage.guild.channels.resolve(campaigns[receivedMessage.channel.id].voiceChannelID).setName(newName + " Voice");
+				setCampaignList(campaigns);
+				updateList(receivedMessage.guild.channels, "campaigns");
+			} else {
+				receivedMessage.author.send(`Please provide the new name for the campaign.`)
+					.catch(console.error);
+			}
 		} else {
-			receivedMessage.author.send(`Please provide the new name for the campaign.`)
+			receivedMessage.author.send(`Renaming a campaign is restricted to the host of that campaign or Moderators.`)
 				.catch(console.error);
 		}
 	} else {
-		receivedMessage.author.send(`Renaming a campaign is restricted to the host of that campaign or Moderators from that campaign channel.`)
+		receivedMessage.author.send(`Please set campaign settings from the camapaign channel.`)
 			.catch(console.error);
 	}
 }

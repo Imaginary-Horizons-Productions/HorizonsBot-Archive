@@ -1,29 +1,30 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, getCampaignList, setCampaignList, updateList } = require("../helpers.js");
 
-var command = new Command(["CampaignSetDescription"], // aliases
-	"Sets the description for a campaign", // description
+var command = new Command(["CampaignSetSeats"], // aliases
+	"Sets the max number of players for a campaign", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["__Example__ - replace ( ) with your settings"], // headings
-	["`@HorizonsBot CampaignSetDecription (description)`"]); // texts (must match number of headings)
+	["`@HorizonsBot CampaignSetSeats (number)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
 	let campaigns = getCampaignList();
 	if (campaigns[receivedMessage.channel.id]) {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID) {
-			let description = state.messageArray.join(' ');
-			if (description) {
-				campaigns[receivedMessage.channel.id].description = description;
-				receivedMessage.channel.setTopic(description);
+			let seats = parseInt(state.messageArray[0]);
+			if (!isNaN(seats)) {
+				campaigns[receivedMessage.channel.id].seats = seats;
 				setCampaignList(campaigns);
+				receivedMessage.author.send(`${campaigns[receivedMessage.channel.id].name}'s max player count has been set as ${seats}.`)
+					.catch(console.error);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
-				receivedMessage.author.send(`Please provide the description for the campaign.`)
+				receivedMessage.author.send(`Please provide the max player count for the campaign.`)
 					.catch(console.error);
 			}
 		} else {
-			receivedMessage.author.send(`Setting a campaign description is restricted to the host of that campaign or Moderators.`)
+			receivedMessage.author.send(`Setting a campaign max player count is restricted to the host of that campaign or Moderators.`)
 				.catch(console.error);
 		}
 	} else {
