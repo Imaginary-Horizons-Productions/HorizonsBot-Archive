@@ -206,9 +206,7 @@ exports.campaignListBuilder = function (channelManager) {
 
     Object.keys(campaigns).forEach(id => {
         let campaign = campaigns[id];
-        let channel = channelManager.resolve(id);
-        let occupiedSeats = channel.permissionOverwrites.array().length - 4;
-        description += `\n${campaign.name} (${occupiedSeats}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**Host**: <@${campaign.hostID}>\n**System**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n${campaign.description}`;
+        description += `\n${campaign.name} (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**Join ID**: ${campaign.channelID}\n**Host**: <@${campaign.hostID}>\n**System**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n${campaign.description}`;
     })
 
     if (description.length > 2048) {
@@ -293,8 +291,28 @@ exports.joinChannel = function (channel, user) {
                 }).then(() => {
                     channel.send(`Welcome to ${channel.name}, ${user}!`);
                 }).catch(console.log);
-            } else if (Object.keys(exports.campaignList).includes(channelID)) {
-                //TODO implement with campaign tracking
+            } else if (Object.keys(exports.getCampaignList()).includes(channelID)) {
+                let campaigns = exports.getCampaignList();
+                if (campaigns[channelID].seats == 0 || campaigns[channelID].userIDs.length < campaigns[channelID].seats) {
+                    if (campaigns[channelID].hostID != user.id && !campaigns[channelID].userIDs.includes(user.id)) {
+                        campaigns[channelID].userIDs.push(user.id);
+                        channel.createOverwrite(user, {
+                            "VIEW_CHANNEL": true
+                        }).then(() => {
+                            channel.guild.channels.resolve(campaigns[channelID].voiceChannelID).createOverwrite(user, {
+                                "VIEW_CHANNEL": true
+                            })
+                            channel.send(`Welcome to ${channel.name}, ${user}!`);
+                        })
+                        exports.setCampaignList(campaigns);
+                    } else {
+                        user.send(`You are already in ${campaigns[channelID].name}.`)
+                            .catch(console.error);
+                    }
+                } else {
+                    user.send(`${campaigns[channelID].name} is already full on players.`)
+                        .catch(console.error);
+                }
             }
         } else {
             user.send(`You are currently banned from ${channel.name}. Speak to a Moderator if you believe this is in error.`)
