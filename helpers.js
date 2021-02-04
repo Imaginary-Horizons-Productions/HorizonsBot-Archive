@@ -133,7 +133,7 @@ exports.topicListBuilder = function (channelManager) {
             if (Object.values(topics).includes(id)) {
                 channelEmote = exports.getEmojiByChannelID(id);
             }
-            description += `\n${channelEmote ? channelEmote + " " : ""}${channel.name}: ${channel.id}`;
+            description += `\n${channel.name} (Channel ID: *${channel.id}*${channelEmote ? `, or react with ${channelEmote} to join` : ""})`;
         }
     }
 
