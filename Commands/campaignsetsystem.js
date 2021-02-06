@@ -4,7 +4,7 @@ const { isModerator, getCampaignList, updateCampaign, updateList } = require("..
 var command = new Command(["CampaignSetSystem"], // aliases
 	"Sets the system for a campaign", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetSystem (system)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state) => {
 			if (system) {
 				campaign.system = system;
 				updateCampaign(campaign);
-				receivedMessage.author.send(`${campaign.name}'s system has been set as ${system}.`)
+				receivedMessage.author.send(`${campaign.title}'s system has been set as ${system}.`)
 					.catch(console.error);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {

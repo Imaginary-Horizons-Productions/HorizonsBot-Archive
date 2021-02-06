@@ -4,7 +4,7 @@ const { isModerator, getPetitionList, setPetitionList, updateList } = require('.
 var command = new Command(["TopicVeto"], // aliases
 	"Vetos an open petition", // description
 	"Moderator", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot TopicVeto (channel name)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {

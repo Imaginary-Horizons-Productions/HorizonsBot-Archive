@@ -61,7 +61,7 @@ command.execute = (receivedMessage, state) => {
 					type: "voice"
 				}).then(voiceChannel => {
 					let campaign = new Campaign();
-					campaign.name = "new campaign";
+					campaign.title = "new campaign";
 					campaign.hostID = hostID;
 					campaign.channelID = textChannel.id;
 					campaign.voiceChannelID = voiceChannel.id;

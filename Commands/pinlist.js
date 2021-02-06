@@ -4,7 +4,7 @@ const { isModerator, pinTopicsList, pinCampaignsList } = require('../helpers.js'
 var command = new Command(["PinList"], // aliases
 	"Pins a list of topic channles or TRPG campaigns to the receiving channel", // description
 	"Moderator, must be used from server channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot PinList (topic or campaign)`]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {

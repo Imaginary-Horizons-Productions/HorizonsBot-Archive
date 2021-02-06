@@ -4,7 +4,7 @@ const { isModerator, getCampaignList, updateCampaign, updateList } = require("..
 var command = new Command(["CampaignSetSeats"], // aliases
 	"Sets the max number of players for a campaign", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetSeats (number)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state) => {
 			if (!isNaN(seats)) {
 				campaign.seats = seats;
 				updateCampaign(campaign);
-				receivedMessage.author.send(`${campaign.name}'s max player count has been set as ${seats}.`)
+				receivedMessage.author.send(`${campaign.title}'s max player count has been set as ${seats}.`)
 					.catch(console.error);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {

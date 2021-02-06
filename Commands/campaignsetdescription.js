@@ -4,7 +4,7 @@ const { isModerator, getCampaignList, updateCampaign, updateList } = require("..
 var command = new Command(["CampaignSetDescription"], // aliases
 	"Sets the description for a campaign", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetDecription (description)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {

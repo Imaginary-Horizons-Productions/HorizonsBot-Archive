@@ -94,6 +94,7 @@ client.on('guildMemberRemove', member => {
             member.guild.channels.resolve(campaign.channelID).delete("Campaign host left server");
         } else if (campaign.userIDs.includes(memberID)) {
             campaign.userIDs = campaign.userIDs.filter(id => id != memberID);
+            helpers.updateList(member.guild.channels, "campaigns");
         }
     }
 })

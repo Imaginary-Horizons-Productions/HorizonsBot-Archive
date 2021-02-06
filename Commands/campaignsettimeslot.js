@@ -4,7 +4,7 @@ const { isModerator, getCampaignList, updateCampaign, updateList } = require("..
 var command = new Command(["CampaignSetTimeSlot"], // aliases
 	"Sets the time slot for a campaign", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetTimeSlot (time slot)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state) => {
 			if (timeSlot) {
 				campaign.timeslot = timeSlot;
 				updateCampaign(campaign);
-				receivedMessage.author.send(`${campaign.name}'s time slot has been set as ${timeSlot}.`)
+				receivedMessage.author.send(`${campaign.title}'s time slot has been set as ${timeSlot}.`)
 					.catch(console.error);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {

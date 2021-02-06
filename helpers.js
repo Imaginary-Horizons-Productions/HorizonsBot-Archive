@@ -206,12 +206,12 @@ exports.pinTopicsList = function (channelManager, channel) {
 }
 
 exports.campaignListBuilder = function (channelManager) {
-    let description = "Here's a list of the TRPG campaigns for the server. Join one by typing `@HorizonsBot Join (campaign name)`.\n";
+    let description = "Here's a list of the TRPG campaigns for the server. Learn more about one by typing `@HorizonsBot CampaignDetails (campaign ID)`.\n";
     let campaigns = exports.getCampaignList();
 
     Object.keys(campaigns).forEach(id => {
         let campaign = campaigns[id];
-        description += `\n${campaign.name} (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**Join ID**: ${campaign.channelID}\n**Host**: <@${campaign.hostID}>\n**System**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n${campaign.description}`;
+        description += `\n__**${campaign.title}**__ (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**ID**: ${campaign.channelID}\n**Host**: <@${campaign.hostID}>\n**Timeslot**: ${campaign.timeslot}\n`;
     })
 
     if (description.length > 2048) {
@@ -310,12 +310,13 @@ exports.joinChannel = function (channel, user) {
                             channel.send(`Welcome to ${channel.name}, ${user}!`);
                         })
                         exports.updateCampaign(campaign);
+                        updateList(channel.guild.channels, "campaigns");
                     } else {
-                        user.send(`You are already in ${campaign.name}.`)
+                        user.send(`You are already in ${campaign.title}.`)
                             .catch(console.error);
                     }
                 } else {
-                    user.send(`${campaign.name} is already full on players.`)
+                    user.send(`${campaign.title} is already full on players.`)
                         .catch(console.error);
                 }
             }

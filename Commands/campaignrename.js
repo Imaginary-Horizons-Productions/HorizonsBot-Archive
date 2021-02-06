@@ -4,7 +4,7 @@ const { isModerator, getCampaignList, updateCampaign, updateList } = require("..
 var command = new Command(["CampaignRename"], // aliases
 	"Renames the text and voice chats of a campaign", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignRename (new name)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let newName = state.messageArray.join('-');
 			if (newName) {
-				campaign.name = newName;
+				campaign.title = newName;
 				receivedMessage.channel.setName(newName);
 				receivedMessage.guild.channels.resolve(campaign.voiceChannelID).setName(newName + " Voice");
 				updateCampaign(campaign);
