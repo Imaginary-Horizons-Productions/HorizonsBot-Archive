@@ -87,8 +87,15 @@ client.on('message', receivedMessage => {
 })
 
 client.on('guildMemberRemove', member => {
-    // if member was a campaign host, delete campaign
-    // if member was a campaign player, clean player list
+    let campaigns = Object.values(helpers.getCampaignList());
+    let memberID = member.id;
+    for (campaign of campaigns) {
+        if (memberID == campaign.hostID) {
+            member.guild.channels.resolve(campaign.channelID).delete("Campaign host left server");
+        } else if (campaign.userIDs.includes(memberID)) {
+            campaign.userIDs = campaign.userIDs.filter(id => id != memberID);
+        }
+    }
 })
 
 client.on('channelDelete', channel => {

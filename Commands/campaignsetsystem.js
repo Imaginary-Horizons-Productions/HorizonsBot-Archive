@@ -28,7 +28,7 @@ command.execute = (receivedMessage, state) => {
 				.catch(console.error);
 		}
 	} else {
-		receivedMessage.author.send(`Please set campaign settings from the camapaign channel.`)
+		receivedMessage.author.send(`Please set campaign settings from the campaign channel.`)
 			.catch(console.error);
 	}
 }
