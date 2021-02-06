@@ -25,8 +25,8 @@ function dataPolicyBuilder(footerURL) {
 		.setTitle(`HorizonsBot Data Policy`)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/782019073562378298/shaking-hands.png')
 		.setDescription(`If you leave Imaginary Horizons, your data will be deleted.`)
-		.addField(`Data Collected (version 1.0)`, `HorizonsBot does not collect user data at this time.`)
-		.addField(`Data Usage (version 1.0)`, `Imaginary Horizons does not use uncollected user data at this time.`)
+		.addField(`Data Collected (version 1.3)`, `HorizonsBot stores user submitted topics, petitions, and campaign details.`)
+		.addField(`Data Usage (version 1.3)`, `Imaginary Horizons does not use any user data at this time.`)
 		.setFooter(``, footerURL)
 		.setTimestamp();
 }

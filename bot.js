@@ -87,7 +87,8 @@ client.on('message', receivedMessage => {
 })
 
 client.on('guildMemberRemove', member => {
-
+    // if member was a campaign host, delete campaign
+    // if member was a campaign player, clean player list
 })
 
 client.on('channelDelete', channel => {
