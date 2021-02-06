@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, setCampaignList, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSystem"], // aliases
 	"Sets the system for a campaign", // description
@@ -9,14 +9,14 @@ var command = new Command(["CampaignSetSystem"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaigns = getCampaignList();
-	if (campaigns[receivedMessage.channel.id]) {
-		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID) {
+	let campaign = getCampaignList()[receivedMessage.channel.id];
+	if (campaign) {
+		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let system = state.messageArray.join(' ');
 			if (system) {
-				campaigns[receivedMessage.channel.id].system = system;
-				setCampaignList(campaigns);
-				receivedMessage.author.send(`${campaigns[receivedMessage.channel.id].name}'s system has been set as ${system}.`)
+				campaign.system = system;
+				updateCampaign(campaign);
+				receivedMessage.author.send(`${campaign.name}'s system has been set as ${system}.`)
 					.catch(console.error);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {

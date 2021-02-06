@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, setCampaignList, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
 
 var command = new Command(["CampaignSetDescription"], // aliases
 	"Sets the description for a campaign", // description
@@ -9,14 +9,14 @@ var command = new Command(["CampaignSetDescription"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaigns = getCampaignList();
-	if (campaigns[receivedMessage.channel.id]) {
-		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID) {
+	let campaign = getCampaignList()[receivedMessage.channel.id];
+	if (campaign) {
+		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let description = state.messageArray.join(' ');
 			if (description) {
-				campaigns[receivedMessage.channel.id].description = description;
+				campaign.description = description;
 				receivedMessage.channel.setTopic(description);
-				setCampaignList(campaigns);
+				updateCampaign(campaign);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
 				receivedMessage.author.send(`Please provide the description for the campaign.`)

@@ -90,14 +90,19 @@ exports.getCampaignList = function () {
     return campaignList;
 }
 
-exports.setCampaignList = function (campaignListInput) {
-    campaignList = campaignListInput;
+exports.updateCampaign = function (campaign) {
+    campaignList[campaign.channelID] = campaign;
+    exports.saveObject(campaignList, 'campaignList.json');
+}
+
+exports.removeCampaign = function (id) {
+    delete campaignList[id];
     exports.saveObject(campaignList, 'campaignList.json');
 }
 
 // Functions
 exports.getManagedChannels = function () {
-    return exports.getTopicList().concat(Object.keys(exports.campaignList));
+    return exports.getTopicList().concat(Object.keys(exports.getCampaignList()));
 }
 
 exports.updateList = function (channelManager, listType) {
@@ -292,25 +297,25 @@ exports.joinChannel = function (channel, user) {
                     channel.send(`Welcome to ${channel.name}, ${user}!`);
                 }).catch(console.log);
             } else if (Object.keys(exports.getCampaignList()).includes(channelID)) {
-                let campaigns = exports.getCampaignList();
-                if (campaigns[channelID].seats == 0 || campaigns[channelID].userIDs.length < campaigns[channelID].seats) {
-                    if (campaigns[channelID].hostID != user.id && !campaigns[channelID].userIDs.includes(user.id)) {
-                        campaigns[channelID].userIDs.push(user.id);
+                let campaign = exports.getCampaignList()[channelID];
+                if (campaign.seats == 0 || campaign.userIDs.length < campaign.seats) {
+                    if (campaign.hostID != user.id && !campaign.userIDs.includes(user.id)) {
+                        campaign.userIDs.push(user.id);
                         channel.createOverwrite(user, {
                             "VIEW_CHANNEL": true
                         }).then(() => {
-                            channel.guild.channels.resolve(campaigns[channelID].voiceChannelID).createOverwrite(user, {
+                            channel.guild.channels.resolve(campaign.voiceChannelID).createOverwrite(user, {
                                 "VIEW_CHANNEL": true
                             })
                             channel.send(`Welcome to ${channel.name}, ${user}!`);
                         })
-                        exports.setCampaignList(campaigns);
+                        exports.updateCampaign(campaign);
                     } else {
-                        user.send(`You are already in ${campaigns[channelID].name}.`)
+                        user.send(`You are already in ${campaign.name}.`)
                             .catch(console.error);
                     }
                 } else {
-                    user.send(`${campaigns[channelID].name} is already full on players.`)
+                    user.send(`${campaign.name} is already full on players.`)
                         .catch(console.error);
                 }
             }

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, setCampaignList, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
 
 var command = new Command(["CampaignRename"], // aliases
 	"Renames the text and voice chats of a campaign", // description
@@ -9,15 +9,15 @@ var command = new Command(["CampaignRename"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Rename the text voice channels associated with receiving channel
-	let campaigns = getCampaignList();
-	if (campaigns[receivedMessage.channel.id]) {
-		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID) {
+	let campaign = getCampaignList()[receivedMessage.channel.id];
+	if (campaign) {
+		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let newName = state.messageArray.join('-');
 			if (newName) {
-				campaigns[receivedMessage.channel.id].name = newName;
+				campaign.name = newName;
 				receivedMessage.channel.setName(newName);
-				receivedMessage.guild.channels.resolve(campaigns[receivedMessage.channel.id].voiceChannelID).setName(newName + " Voice");
-				setCampaignList(campaigns);
+				receivedMessage.guild.channels.resolve(campaign.voiceChannelID).setName(newName + " Voice");
+				updateCampaign(campaign);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
 				receivedMessage.author.send(`Please provide the new name for the campaign.`)

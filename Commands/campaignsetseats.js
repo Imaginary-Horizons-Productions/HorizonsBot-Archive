@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, setCampaignList, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSeats"], // aliases
 	"Sets the max number of players for a campaign", // description
@@ -9,14 +9,14 @@ var command = new Command(["CampaignSetSeats"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaigns = getCampaignList();
-	if (campaigns[receivedMessage.channel.id]) {
-		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaigns[receivedMessage.channel.id].hostID) {
+	let campaign = getCampaignList()[receivedMessage.channel.id];
+	if (campaign) {
+		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let seats = parseInt(state.messageArray[0]);
 			if (!isNaN(seats)) {
-				campaigns[receivedMessage.channel.id].seats = seats;
-				setCampaignList(campaigns);
-				receivedMessage.author.send(`${campaigns[receivedMessage.channel.id].name}'s max player count has been set as ${seats}.`)
+				campaign.seats = seats;
+				updateCampaign(campaign);
+				receivedMessage.author.send(`${campaign.name}'s max player count has been set as ${seats}.`)
 					.catch(console.error);
 				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
