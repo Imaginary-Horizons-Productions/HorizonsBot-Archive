@@ -16,10 +16,12 @@ command.execute = (receivedMessage, state) => {
 				receivedMessage.channel.send(`This channel has been scheduled to be deleted in ${delay} hour(s).`)
 					.catch(console.error);
 				setTimeout(() => {
-					receivedMessage.channel.delete();
+					receivedMessage.channel.delete()
+						.catch(console.log);
 				}, delay * 3600000)
 			} else {
-				receivedMessage.channel.delete().catch(console.log);
+				receivedMessage.channel.delete()
+					.catch(console.log);
 			}
 		} else {
 			receivedMessage.author.send("The delete command can only be used on topic or campaign channels.")

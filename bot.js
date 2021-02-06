@@ -103,14 +103,20 @@ client.on('channelDelete', channel => {
         if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
             for (campaign of Object.values(campaigns)) {
                 if (campaign.voiceChannelID == channelID) {
-                    channel.guild.channels.resolve(campaign.channelID).delete();
-                    helpers.removeCampaign(channelID);
+                    let textChannel = channel.guild.channels.resolve(campaign.channelID);
+                    if (textChannel) {
+                        textChannel.delete();
+                        helpers.removeCampaign(campaign.channelID);
+                    }
                     break;
                 }
             }
         } else if (Object.keys(campaigns).includes(channelID)) {
-            channel.guild.channels.resolve(campaigns[channelID].voiceChannelID).delete();
-            helpers.removeCampaign(channelID);
+            let voiceChannel = channel.guild.channels.resolve(campaigns[channelID].voiceChannelID);
+            if (voiceChannel) {
+                voiceChannel.delete();
+                helpers.removeCampaign(channelID);
+            }
         } else {
             return;
         }
