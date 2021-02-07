@@ -26,7 +26,7 @@ let campaignBuriedness = 0;
 
 client.on('message', receivedMessage => {
     // Count messages for pin bumping
-    if (receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
+    if (helpers.listMessages.topics && receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;
         if (topicBuriedness > 19) {
             receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
@@ -36,7 +36,7 @@ client.on('message', receivedMessage => {
             topicBuriedness = 0;
         }
     }
-    if (receivedMessage.channel.id == helpers.listMessages.campaigns.channelID) {
+    if (helpers.listMessages.campaigns && receivedMessage.channel.id == helpers.listMessages.campaigns.channelID) {
         campaignBuriedness += 1;
         if (campaignBuriedness > 19) {
             receivedMessage.channel.messages.fetch(helpers.listMessages.campaigns.messageID).then(oldMessage => {
