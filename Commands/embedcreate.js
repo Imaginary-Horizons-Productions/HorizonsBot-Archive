@@ -5,7 +5,7 @@ const { isModerator, embedsList, saveObject } = require('../helpers.js');
 var command = new Command(["EmbedCreate"], // aliases
 	"Makes a new MessageEmbed, configurable with other commands", // description
 	"Moderator, must be used from a server channel", // requirements
-	["Example"], // headings
+	["Usage"], // headings
 	["`@HorizonsBot EmbedCreate`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {

@@ -1,10 +1,10 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, pinTopicsList, campaignListBuilder } = require('../helpers.js');
+const { isModerator, pinTopicsList, pinCampaignsList } = require('../helpers.js');
 
 var command = new Command(["PinList"], // aliases
 	"Pins a list of topic channles or TRPG campaigns to the receiving channel", // description
 	"Moderator, must be used from server channel", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot PinList (topic or campaign)`]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -16,7 +16,7 @@ command.execute = (receivedMessage, state) => {
 				if (listType == "topic" || listType == "topics") {
 					pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
 				} else if (listType == "campaign" || listType == "campaigns") {
-					//TODO impliment for campaigns
+					pinCampaignsList(receivedMessage.guild.channels, receivedMessage.channel);
 				} else {
 					receivedMessage.author.send(`Please specify either \`topic\` or \`campaign\` for the type of list to pin.`)
 						.catch(console.log);

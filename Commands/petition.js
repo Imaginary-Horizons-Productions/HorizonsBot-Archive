@@ -1,10 +1,10 @@
 const Command = require('../Classes/Command.js');
-const { getPetitionList, setPetitionList, addChannel, updateTopicList, saveObject } = require('../helpers.js');
+const { getPetitionList, setPetitionList, addChannel, updateList } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
 	"None", // requirements
-	["__Example__ - replace ( ) with your settings"], // headers
+	["Example - replace ( ) with your settings"], // headers
 	[`@HorizonsBot Petition (topic name)`]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -31,7 +31,7 @@ command.execute = (receivedMessage, state) => {
 			})
 			delete petitionList[topicName];
 		}
-		updateTopicList(receivedMessage.guild.channels);
+		updateList(receivedMessage.guild.channels, "topics");
 		setPetitionList(petitionList);
 		receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
 			.catch(console.error)

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, removeTopicEmoji, addTopicEmoji, updateTopicList } = require('../helpers.js');
+const { isModerator, removeTopicEmoji, addTopicEmoji, updateList } = require('../helpers.js');
 
 var command = new Command(["SetChannelEmoji", "SetChannelEmote"], // aliases
 	"Associate an emoji with a channel for joining via reaction", // description
@@ -20,7 +20,7 @@ command.execute = (receivedMessage, state) => {
 				} else {
 					addTopicEmoji(reaction.emoji, receivedMessage.channel.id);
 				}
-				updateTopicList(receivedMessage.guild.channels);
+				updateList(receivedMessage.guild.channels, "topics");
 				message.edit(`Channel emoji configuration complete.`)
 					.catch(console.error);
 			})

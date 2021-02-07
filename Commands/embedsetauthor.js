@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetAuthor"], // aliases
 	"Assigns an author to an custom embed created by HorizonsBot", // description

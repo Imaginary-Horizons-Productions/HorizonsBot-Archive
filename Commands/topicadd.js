@@ -5,7 +5,7 @@ const { addChannel } = require('../helpers.js');
 var command = new Command(["TopicAdd"], // aliases
 	"Sets up an opt-in text channel for the given topic", // description
 	"Permission to Manage Channels, use the command from a server channel in the category to creat the new channel in", // requirements
-	["__Example__ - replace ( ) with your settings"], // headers
+	["Example - replace ( ) with your settings"], // headers
 	[`@HorizonsBot TopicAdd (topic name)`]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {

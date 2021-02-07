@@ -1,10 +1,10 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getPetitionList, setPetitionList, updateTopicList } = require('../helpers.js');
+const { isModerator, getPetitionList, setPetitionList, updateList } = require('../helpers.js');
 
 var command = new Command(["TopicVeto"], // aliases
 	"Vetos an open petition", // description
 	"Moderator", // requirements
-	["__Example__ - replace ( ) with your settings"], // headings
+	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot TopicVeto (channel name)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
@@ -26,7 +26,7 @@ command.execute = (receivedMessage, state) => {
 					} else if (reaction.emoji.name == "✅") {
 						delete petitionList[vetoedPetition];
 						setPetitionList(petitionList);
-						updateTopicList(receivedMessage.guild.channels);
+						updateList(receivedMessage.guild.channels, "topics");
 						message.edit(`The petition for ${vetoedPetition} has been vetoed.`)
 							.catch(console.error);
 					}

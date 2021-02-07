@@ -17,9 +17,11 @@ command.execute = (receivedMessage, state) => {
 					.catch(console.error);
 				setTimeout(() => {
 					receivedMessage.channel.delete()
+						.catch(console.log);
 				}, delay * 3600000)
 			} else {
-				receivedMessage.channel.delete().catch(console.log);
+				receivedMessage.channel.delete()
+					.catch(console.log);
 			}
 		} else {
 			receivedMessage.author.send("The delete command can only be used on topic or campaign channels.")

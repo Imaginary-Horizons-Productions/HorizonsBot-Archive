@@ -13,25 +13,46 @@ client.on('ready', () => {
 
     // Update pinned lists
     client.guilds.fetch(helpers.guildID).then(guild => {
-        helpers.updateTopicList(guild.channels).then(message => {
+        let channelManager = guild.channels;
+        helpers.updateList(channelManager, "topics").then(message => {
             helpers.createJoinCollector(message);
         });
+        helpers.updateList(channelManager, "campaigns");
     })
 })
 
 let topicBuriedness = 0;
+let campaignBuriedness = 0;
 
 client.on('message', receivedMessage => {
+    // Count messages for pin bumping
     if (receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;
-        if (topicBuriedness > 29) {
-            receivedMessage.guild.channels.resolve(helpers.listMessages.topics.channelID).messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
+        if (topicBuriedness > 19) {
+            receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
                 oldMessage.delete({ "reason": "bump topics pin" });
             })
             helpers.pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
             topicBuriedness = 0;
         }
     }
+    if (receivedMessage.channel.id == helpers.listMessages.campaigns.channelID) {
+        campaignBuriedness += 1;
+        if (campaignBuriedness > 19) {
+            receivedMessage.channel.messages.fetch(helpers.listMessages.campaigns.messageID).then(oldMessage => {
+                oldMessage.delete({ "reason": "bump campaigns pin" });
+            })
+            helpers.pinCampaignsList(receivedMessage.guild.channels, receivedMessage.channel);
+            campaignBuriedness = 0;
+        }
+    }
+
+    // Publish stream notifications
+    if (receivedMessage.author.id == "106122478715150336" && receivedMessage.channel.id == "768639980770820136" && receivedMessage.content.includes("Arcane_ish")) {
+        receivedMessage.crosspost();
+    }
+
+    // Process commands
     if (receivedMessage.author.bot) {
         return;
     }
@@ -74,18 +95,48 @@ client.on('message', receivedMessage => {
 })
 
 client.on('guildMemberRemove', member => {
-
+    let campaigns = Object.values(helpers.getCampaignList());
+    let memberID = member.id;
+    for (campaign of campaigns) {
+        if (memberID == campaign.hostID) {
+            member.guild.channels.resolve(campaign.channelID).delete("Campaign host left server");
+        } else if (campaign.userIDs.includes(memberID)) {
+            campaign.userIDs = campaign.userIDs.filter(id => id != memberID);
+            helpers.updateList(member.guild.channels, "campaigns");
+        }
+    }
 })
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    let topicList = helpers.getTopicList();
-    if (topicList.includes(channelID)) {
-        helpers.setTopicList(topicList.filter(id => id != channelID))
-        helpers.updateTopicList(channel.guild.channels);
+    let topics = helpers.getTopicList();
+    let campaigns = helpers.getCampaignList();
+    if (topics && topics.includes(channelID)) {
         helpers.removeTopicEmoji(channelID);
-    } else if (Object.keys(helpers.campaignList).includes(channelID)) {
-        //TODO implement for campaigns
+        helpers.setTopicList(topics.filter(id => id != channelID))
+        helpers.updateList(channel.guild.channels, "topics");
+    } else if (campaigns) {
+        if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
+            for (campaign of Object.values(campaigns)) {
+                if (campaign.voiceChannelID == channelID) {
+                    let textChannel = channel.guild.channels.resolve(campaign.channelID);
+                    if (textChannel) {
+                        textChannel.delete();
+                        helpers.removeCampaign(campaign.channelID);
+                    }
+                    break;
+                }
+            }
+        } else if (Object.keys(campaigns).includes(channelID)) {
+            let voiceChannel = channel.guild.channels.resolve(campaigns[channelID].voiceChannelID);
+            if (voiceChannel) {
+                voiceChannel.delete();
+                helpers.removeCampaign(channelID);
+            }
+        } else {
+            return;
+        }
+        helpers.updateList(channel.guild.channels, "campaigns");
     }
 })
 
