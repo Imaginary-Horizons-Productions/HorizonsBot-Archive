@@ -21,8 +21,8 @@ command.execute = (receivedMessage, state) => {
 			.setTitle(`__**${campaign.title}**__ (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)`)
 			.setDescription(campaign.description)
 			.addField("Campaign Host", `<@${campaign.hostID}>`)
-			.addField("System", campaign.system ? campaign.system : "\u200B")
-			.addField("Time Slot", campaign.timeslot ? campaign.timeslot : "\u200B")
+			.addField("System", campaign.system)
+			.addField("Time Slot", campaign.timeslot)
 			.setImage(campaign.imageURL)
 			.setFooter("React with 🎲 to join! (5 minute time limit)");
 		recipients.forEach(recipient => {
