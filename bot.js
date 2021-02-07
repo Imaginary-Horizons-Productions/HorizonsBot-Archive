@@ -25,6 +25,7 @@ let topicBuriedness = 0;
 let campaignBuriedness = 0;
 
 client.on('message', receivedMessage => {
+    // Count messages for pin bumping
     if (receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;
         if (topicBuriedness > 19) {
@@ -45,6 +46,13 @@ client.on('message', receivedMessage => {
             campaignBuriedness = 0;
         }
     }
+
+    // Publish stream notifications
+    if (receivedMessage.author.id == "106122478715150336" && receivedMessage.channel.id == "768639980770820136" && receivedMessage.content.includes("Arcane_ish")) {
+        receivedMessage.crosspost();
+    }
+
+    // Process commands
     if (receivedMessage.author.bot) {
         return;
     }
