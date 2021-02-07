@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 		receivedMessage.client.guilds.fetch(guildID).then(guild => {
 			if (listType == "topic" || listType == "topics") {
 				topicListBuilder(guild.channels).then(embed => {
-					receivedMessage.author.send(embed);
+					receivedMessage.author.send(embed.setFooter("Note: joining by reaction not enabled for \"list\" command."));
 				}).catch(console.log);
 			} else if (listType == "campaign" || listType == "campaigns") {
 				campaignListBuilder(guild.channels).then(embed => {
