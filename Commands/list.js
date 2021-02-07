@@ -17,7 +17,9 @@ command.execute = (receivedMessage, state) => {
 					receivedMessage.author.send(embed);
 				}).catch(console.log);
 			} else if (listType == "campaign" || listType == "campaigns") {
-				//TODO impliment for campaigns
+				campaignListBuilder(guild.channels).then(embed => {
+					receivedMessage.author.send(embed);
+				})
 			} else {
 				receivedMessage.author.send(`Please specify either \`topic\` or \`campaign\` for the type of list.`)
 					.catch(console.log);
