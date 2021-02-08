@@ -5,7 +5,7 @@ var command = new Command(['Help', 'Commands'],
 "Lists all HorizonsBot commands; add a command at the end to get give examples and more details on that command",
 "None",
 ["Example: list HorizonBot's commands", "Example: get command specific info - replace ( ) with your settings"],
-["`@HorizonsBot ${alias}`", "`@HorizonsBot ${alias} (command)`"]);
+["`@HorizonsBot Help`", "`@HorizonsBot Help (command)`"]);
 
 command.execute = (receivedMessage, state) => {
     //TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set

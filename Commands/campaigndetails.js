@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 const { getCampaignList, joinChannel, guildID } = require('./../helpers.js');
 
-var command = new Command(["CampaignDetails"], // aliases
+var command = new Command(["CampaignDetails", "CampaignInvite"], // aliases
 	"Provide full details on the given campaign", // description
 	"None", // requirements
 	["Example - replace ( ) with your settings"], // headings
@@ -29,7 +29,7 @@ command.execute = (receivedMessage, state) => {
 			recipient.send(embed).then(message => {
 				message.react("🎲");
 				message.react("🚫");
-				let collector = message.createReactionCollector((reaction, user) => { return user.id == receivedMessage.author.id }, { "max": 1, "time": 300000 });
+				let collector = message.createReactionCollector((reaction, user) => { return reaction.emoji.name == "🚫" || reaction.emoji.name == "🎲" }, { "max": 1, "time": 300000 });
 
 				collector.on("collect", (reaction) => {
 					if (reaction.emoji.name == "🚫") {
