@@ -17,7 +17,7 @@ command.execute = (receivedMessage, state) => {
 			receivedMessage.channel.send(`${petitionersIDs.length} server member(s) have petitioned for ${vetoedPetition}.\nReally veto? :white_check_mark: for yes, :no_entry_sign: for no.`).then(message => {
 				message.react("✅");
 				message.react("🚫");
-				let collector = message.createReactionCollector((reaction, user) => { return user.id == receivedMessage.author.id }, { "max": 1 });
+				let collector = message.createReactionCollector((reaction, user) => { return user.id == receivedMessage.author.id && (reaction.emoji.name == "🚫" || reaction.emoji.name == "✅") }, { "max": 1 });
 
 				collector.on("collect", (reaction) => {
 					if (reaction.emoji.name == "🚫") {
