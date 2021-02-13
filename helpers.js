@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Collection, MessageEmbed } = require('discord.js');
+const { Collection, MessageEmbed, GuildEmoji } = require('discord.js');
 exports.guildID = require('./auth.json').guildID;
 exports.roleIDs = require('./roleIDs.json');
 
@@ -61,10 +61,14 @@ exports.getTopicEmoji = function () {
 }
 
 exports.addTopicEmoji = function (emoji, channelID) {
-    if (exports.getTopicByEmoji(emoji.name) != -1) {
+    let emojiName = emoji.name;
+    if (emoji instanceof GuildEmoji) {
+        emojiName = `<:${emoji.name}:${emoji.id}>`;
+    }
+if (exports.getTopicByEmoji(emojiName) != -1) {
         exports.removeTopicEmoji(channelID)
     }
-    topicEmoji.set(emoji.name, channelID);
+    topicEmoji.set(emojiName, channelID);
     exports.saveObject(topicEmoji, "topicEmoji.json");
 }
 
@@ -138,7 +142,7 @@ exports.topicListBuilder = function (channelManager) {
             if (Object.values(topics).includes(id)) {
                 channelEmote = exports.getEmojiByChannelID(id);
             }
-            description += `\n${channel.name} (Channel ID: *${channel.id}*${channelEmote ? `, or react with ${channelEmote} to join` : ""})`;
+            description += `\n__${channel.name}__ (Channel ID: *${channel.id}*${channelEmote ? `, or react with ${channelEmote} to join` : ""})`;
         }
     }
 
