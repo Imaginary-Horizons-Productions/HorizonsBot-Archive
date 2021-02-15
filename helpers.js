@@ -51,7 +51,8 @@ exports.createJoinCollector = function (message) {
         return !user.bot && topicEmoji.keyArray().includes(reaction.emoji.name);
     });
     collector.on("collect", (reaction, user) => {
-        let channel = message.guild.channels.resolve(exports.getTopicByEmoji(reaction.emoji.name));
+        console.log(emojiString(reaction.emoji));
+        let channel = message.guild.channels.resolve(exports.getTopicByEmoji(emojiString(reaction.emoji)));
         exports.joinChannel(channel, user);
     })
 }
@@ -61,11 +62,8 @@ exports.getTopicEmoji = function () {
 }
 
 exports.addTopicEmoji = function (emoji, channelID) {
-    let emojiName = emoji.name;
-    if (emoji instanceof GuildEmoji) {
-        emojiName = `<:${emoji.name}:${emoji.id}>`;
-    }
-if (exports.getTopicByEmoji(emojiName) != -1) {
+    let emojiName = emojiString(emoji);
+    if (exports.getTopicByEmoji(emojiName) != -1) {
         exports.removeTopicEmoji(channelID)
     }
     topicEmoji.set(emojiName, channelID);
@@ -105,6 +103,14 @@ exports.removeCampaign = function (id) {
 }
 
 // Functions
+function emojiString(emoji) {
+    if (emoji instanceof GuildEmoji) {
+        return `<:${emoji.name}:${emoji.id}>`;
+    } else {
+        return emoji.name;
+    }
+}
+
 exports.getManagedChannels = function () {
     return exports.getTopicList().concat(Object.keys(exports.getCampaignList()));
 }
@@ -199,8 +205,8 @@ exports.pinTopicsList = function (channelManager, channel) {
                 "messageID": message.id,
                 "channelID": message.channel.id
             }
-            exports.getTopicEmoji().forEach(emoji => {
-                message.react(emoji);
+            exports.getTopicEmoji().forEach(async emoji => {
+                await message.react(emoji);
             })
             exports.createJoinCollector(message);
             message.pin();

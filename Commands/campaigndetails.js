@@ -26,9 +26,9 @@ command.execute = (receivedMessage, state) => {
 			.setImage(campaign.imageURL)
 			.setFooter("React with 🎲 to join! (5 minute time limit)");
 		recipients.forEach(recipient => {
-			recipient.send(embed).then(message => {
-				message.react("🎲");
-				message.react("🚫");
+			recipient.send(embed).then(async message => {
+				await message.react("🎲");
+				await message.react("🚫");
 				let collector = message.createReactionCollector((reaction, user) => { return reaction.emoji.name == "🚫" || reaction.emoji.name == "🎲" }, { "max": 1, "time": 300000 });
 
 				collector.on("collect", (reaction) => {

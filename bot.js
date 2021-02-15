@@ -14,10 +14,15 @@ client.on('ready', () => {
     // Update pinned lists
     client.guilds.fetch(helpers.guildID).then(guild => {
         let channelManager = guild.channels;
-        helpers.updateList(channelManager, "topics").then(message => {
-            helpers.createJoinCollector(message);
-        });
-        helpers.updateList(channelManager, "campaigns");
+        if (helpers.listMessages.topics) {
+            helpers.updateList(channelManager, "topics").then(message => {
+                helpers.createJoinCollector(message);
+            });
+        }
+
+        if (helpers.listMessages.campaigns) {
+            helpers.updateList(channelManager, "campaigns");
+        }
     })
 })
 
