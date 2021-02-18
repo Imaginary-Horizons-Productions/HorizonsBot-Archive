@@ -10,7 +10,7 @@ var command = new Command(["Leave"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Remove visibility of receiving channel from author
 	let channelsToLeave = [];
-	
+
 	// Written IDs
 	state.messageArray.forEach(word => {
 		if (!/\D/.test(word)) {
@@ -43,7 +43,7 @@ command.execute = (receivedMessage, state) => {
 							} else if (reaction.emoji.name == "✅") {
 								message.edit(`Campaign left.`)
 									.catch(console.error);
-								receivedMessage.channel.delete("Host of campaign left")
+								receivedMessage.guild.channels.resolve(channelID).delete("Host of campaign left")
 									.catch(console.error);
 							}
 						})
