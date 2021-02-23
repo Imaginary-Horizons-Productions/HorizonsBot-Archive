@@ -92,8 +92,9 @@ exports.getCampaignList = function () {
     return campaignList;
 }
 
-exports.updateCampaign = function (campaign) {
+exports.updateCampaign = function (campaign, channelManager) {
     campaignList[campaign.channelID] = campaign;
+    exports.updateList(channelManager, "campaigns");
     exports.saveObject(campaignList, 'campaignList.json');
 }
 
@@ -319,8 +320,7 @@ exports.joinChannel = function (channel, user) {
                             })
                             channel.send(`Welcome to ${channel.name}, ${user}!`);
                         })
-                        exports.updateCampaign(campaign);
-                        updateList(channel.guild.channels, "campaigns");
+                        exports.updateCampaign(campaign, channel.guild.channels);
                     } else {
                         user.send(`You are already in ${campaign.title}.`)
                             .catch(console.error);

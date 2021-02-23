@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetTimeSlot"], // aliases
 	"Sets the time slot for a campaign", // description
@@ -15,10 +15,9 @@ command.execute = (receivedMessage, state) => {
 			let timeSlot = state.messageArray.join(' ');
 			if (timeSlot) {
 				campaign.timeslot = timeSlot;
-				updateCampaign(campaign);
+				updateCampaign(campaign, receivedMessage.guild.channels);
 				receivedMessage.author.send(`${campaign.title}'s time slot has been set as ${timeSlot}.`)
 					.catch(console.error);
-				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
 				receivedMessage.author.send(`Please provide the time slot for the campaign.`)
 					.catch(console.error);

@@ -15,10 +15,9 @@ command.execute = (receivedMessage, state) => {
 			let seats = parseInt(state.messageArray[0]);
 			if (!isNaN(seats)) {
 				campaign.seats = seats;
-				updateCampaign(campaign);
+				updateCampaign(campaign, receivedMessage.guild.channels);
 				receivedMessage.author.send(`${campaign.title}'s max player count has been set as ${seats}.`)
 					.catch(console.error);
-				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
 				receivedMessage.author.send(`Please provide the max player count for the campaign.`)
 					.catch(console.error);

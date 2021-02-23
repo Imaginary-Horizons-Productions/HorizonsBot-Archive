@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const Campaign = require('../Classes/Campaign.js');
-const { isModerator, roleIDs, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, roleIDs, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignAdd"],
 	"Sets up a text channel and voice channel for a TRPG",
@@ -65,11 +65,10 @@ command.execute = (receivedMessage, state) => {
 					campaign.hostID = hostID;
 					campaign.channelID = textChannel.id;
 					campaign.voiceChannelID = voiceChannel.id;
-					updateCampaign(campaign);
+					updateCampaign(campaign, receivedMessage.guild.channels);
 					textChannel.send(`Welcome to your new campaign text channel <@${hostID}>! As host of this campaign, you can pin and delete messages in this channel. Also, you can use the following commands from this channel to add more details about it in the listing:\nCampaign**Rename**\nCampaign**SetSeats**\nCampaign**SetDescription**\nCampaign**SetSystem**\nCampaign**SetTimeSlot**\nCamapign**SetImage**`);
 				}).catch(console.error);
 			})
-			updateList(receivedMessage.guild.channels, "campaigns");
 		} else {
 			receivedMessage.author.send(`Please mention the host of the new campaign.`)
 				.catch(console.error);

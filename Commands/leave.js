@@ -54,7 +54,7 @@ command.execute = (receivedMessage, state) => {
 						.catch(console.error);
 					receivedMessage.guild.channels.resolve(campaign.voiceChannelID).permissionOverwrites.get(userID).delete("HorizonsBot leave used")
 						.catch(console.error);
-					updateCampaign(campaign);
+					updateCampaign(campaign, receivedMessage.guild.channels);
 				}
 			} else {
 				receivedMessage.channel.permissionOverwrites.get(userID).delete("HorizonsBot leave used")
