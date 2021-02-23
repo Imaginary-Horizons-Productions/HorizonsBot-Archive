@@ -55,7 +55,7 @@ command.execute = (receivedMessage, state) => {
 						},
 						{
 							"id": hostID,
-							"allow": ["VIEW_CHANNEL"]
+							"allow": ["VIEW_CHANNEL", "MANAGE_CHANNELS"]
 						}
 					],
 					type: "voice"
