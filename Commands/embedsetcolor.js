@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { embedsList, isModerator } = require('../helpers.js');
+const { guildID, embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetColor", "EmbedSetColour"], // aliases
 	"Assigns the color of an custom embed created by HorizonsBot", // description
@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 		if (embedsList[messageID]) {
 			let colorCode = state.messageArray[0];
 			if (colorCode.match(/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)) {
-				receivedMessage.client.guilds.fetch(guild => {
+				receivedMessage.client.guilds.fetch(guildID).then(guild => {
 					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setColor(colorCode).setTimestamp();
 						message.edit("", embed);
