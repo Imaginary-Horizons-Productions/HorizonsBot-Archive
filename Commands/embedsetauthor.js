@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { embedsList, isModerator } = require('../helpers.js');
+const { guildID, embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetAuthor"], // aliases
 	"Assigns an author to an custom embed created by HorizonsBot", // description
@@ -18,7 +18,7 @@ command.execute = (receivedMessage, state) => {
 			if (name) {
 				let iconURL = url.shift();
 				url = url.toString();
-				receivedMessage.client.guilds.fetch(guild => {
+				receivedMessage.client.guilds.fetch(guildID).then(guild => {
 					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
 						message.edit("", embed);
