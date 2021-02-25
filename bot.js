@@ -2,9 +2,18 @@ const { Client } = require('discord.js');
 const { getCommand } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
 
-const client = new Client();
+const client = new Client({
+    retryLimit: 5,
+    presence: {
+        activity: {
+            name: "for start-up errors...",
+            type: "WATCHING"
+        }
+    }
+});
 
-login();
+client.login(require('./auth.json').token)
+    .catch(console.error);
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
@@ -145,24 +154,3 @@ client.on('channelDelete', channel => {
         helpers.updateList(channel.guild.channels, "campaigns");
     }
 })
-
-client.on('disconnect', (error, code) => {
-    console.log(`Disconnect encountered (Error code ${code}):`);
-    console.log(error);
-    console.log(`---Restarting`);
-    login();
-})
-
-client.on('error', (error) => {
-    console.log(`Error encountered:`);
-    console.log(error);
-    console.log(`---Restarting`);
-    login();
-})
-
-function login() {
-    let { token } = require('./auth.json');
-    client.login(token)
-        .catch(console.error);
-
-}
