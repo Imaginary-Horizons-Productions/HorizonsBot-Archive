@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignRename"], // aliases
 	"Renames the text and voice chats of a campaign", // description
@@ -17,8 +17,7 @@ command.execute = (receivedMessage, state) => {
 				campaign.title = newName;
 				receivedMessage.channel.setName(newName);
 				receivedMessage.guild.channels.resolve(campaign.voiceChannelID).setName(newName + " Voice");
-				updateCampaign(campaign);
-				updateList(receivedMessage.guild.channels, "campaigns");
+				updateCampaign(campaign, receivedMessage.guild.channels);
 			} else {
 				receivedMessage.author.send(`Please provide the new name for the campaign.`)
 					.catch(console.error);

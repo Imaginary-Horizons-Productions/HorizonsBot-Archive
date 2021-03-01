@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetDescription"], // aliases
 	"Sets the description for a campaign", // description
@@ -16,8 +16,7 @@ command.execute = (receivedMessage, state) => {
 			if (description) {
 				campaign.description = description;
 				receivedMessage.channel.setTopic(description);
-				updateCampaign(campaign);
-				updateList(receivedMessage.guild.channels, "campaigns");
+				updateCampaign(campaign, receivedMessage.guild.channels);
 			} else {
 				receivedMessage.author.send(`Please provide the description for the campaign.`)
 					.catch(console.error);

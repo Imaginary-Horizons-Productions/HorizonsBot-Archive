@@ -2,9 +2,18 @@ const { Client } = require('discord.js');
 const { getCommand } = require('./Commands/CommandsList.js');
 var helpers = require('./helpers.js');
 
-const client = new Client();
+const client = new Client({
+    retryLimit: 5,
+    presence: {
+        activity: {
+            name: "for start-up errors...",
+            type: "WATCHING"
+        }
+    }
+});
 
-login();
+client.login(require('./auth.json').token)
+    .catch(console.error);
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
@@ -14,10 +23,15 @@ client.on('ready', () => {
     // Update pinned lists
     client.guilds.fetch(helpers.guildID).then(guild => {
         let channelManager = guild.channels;
-        helpers.updateList(channelManager, "topics").then(message => {
-            helpers.createJoinCollector(message);
-        });
-        helpers.updateList(channelManager, "campaigns");
+        if (helpers.listMessages.topics) {
+            helpers.updateList(channelManager, "topics").then(message => {
+                helpers.createJoinCollector(message);
+            });
+        }
+
+        if (helpers.listMessages.campaigns) {
+            helpers.updateList(channelManager, "campaigns");
+        }
     })
 })
 
@@ -48,8 +62,9 @@ client.on('message', receivedMessage => {
     }
 
     // Publish stream notifications
-    if (receivedMessage.author.id == "106122478715150336" && receivedMessage.channel.id == "768639980770820136" && receivedMessage.content.includes("Arcane_ish")) {
+    if (receivedMessage.author.id == "368105370532577280" && receivedMessage.channel.id == "572197893201592328" && receivedMessage.content.includes("Arcane_ish")) {
         receivedMessage.crosspost();
+        return;
     }
 
     // Process commands
@@ -139,24 +154,3 @@ client.on('channelDelete', channel => {
         helpers.updateList(channel.guild.channels, "campaigns");
     }
 })
-
-client.on('disconnect', (error, code) => {
-    console.log(`Disconnect encountered (Error code ${code}):`);
-    console.log(error);
-    console.log(`---Restarting`);
-    login();
-})
-
-client.on('error', (error) => {
-    console.log(`Error encountered:`);
-    console.log(error);
-    console.log(`---Restarting`);
-    login();
-})
-
-function login() {
-    let { token } = require('./auth.json');
-    client.login(token)
-        .catch(console.error);
-
-}

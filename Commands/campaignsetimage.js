@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetImage"], // aliases
 	"Sets the image url for a campaign, from url in message or attachments", // description
@@ -18,10 +18,9 @@ command.execute = (receivedMessage, state) => {
 			}
 			if (url) {
 				campaign.imageURL = url;
-				updateCampaign(campaign);
+				updateCampaign(campaign, receivedMessage.guild.channels);
 				receivedMessage.author.send(`${campaign.title}'s image has been set.`)
 					.catch(console.error);
-				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
 				receivedMessage.author.send(`Please provide a url for the campaign image.`)
 					.catch(console.error);

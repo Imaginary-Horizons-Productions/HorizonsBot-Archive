@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Collection, MessageEmbed } = require('discord.js');
+const { Collection, MessageEmbed, GuildEmoji } = require('discord.js');
 exports.guildID = require('./auth.json').guildID;
 exports.roleIDs = require('./roleIDs.json');
 
@@ -51,7 +51,8 @@ exports.createJoinCollector = function (message) {
         return !user.bot && topicEmoji.keyArray().includes(reaction.emoji.name);
     });
     collector.on("collect", (reaction, user) => {
-        let channel = message.guild.channels.resolve(exports.getTopicByEmoji(reaction.emoji.name));
+        console.log(emojiString(reaction.emoji));
+        let channel = message.guild.channels.resolve(exports.getTopicByEmoji(emojiString(reaction.emoji)));
         exports.joinChannel(channel, user);
     })
 }
@@ -61,10 +62,11 @@ exports.getTopicEmoji = function () {
 }
 
 exports.addTopicEmoji = function (emoji, channelID) {
-    if (exports.getTopicByEmoji(emoji.name) != -1) {
+    let emojiName = emojiString(emoji);
+    if (exports.getTopicByEmoji(emojiName) != -1) {
         exports.removeTopicEmoji(channelID)
     }
-    topicEmoji.set(emoji.name, channelID);
+    topicEmoji.set(emojiName, channelID);
     exports.saveObject(topicEmoji, "topicEmoji.json");
 }
 
@@ -90,8 +92,9 @@ exports.getCampaignList = function () {
     return campaignList;
 }
 
-exports.updateCampaign = function (campaign) {
+exports.updateCampaign = function (campaign, channelManager) {
     campaignList[campaign.channelID] = campaign;
+    exports.updateList(channelManager, "campaigns");
     exports.saveObject(campaignList, 'campaignList.json');
 }
 
@@ -101,6 +104,14 @@ exports.removeCampaign = function (id) {
 }
 
 // Functions
+function emojiString(emoji) {
+    if (emoji instanceof GuildEmoji) {
+        return `<:${emoji.name}:${emoji.id}>`;
+    } else {
+        return emoji.name;
+    }
+}
+
 exports.getManagedChannels = function () {
     return exports.getTopicList().concat(Object.keys(exports.getCampaignList()));
 }
@@ -138,7 +149,7 @@ exports.topicListBuilder = function (channelManager) {
             if (Object.values(topics).includes(id)) {
                 channelEmote = exports.getEmojiByChannelID(id);
             }
-            description += `\n${channel.name} (Channel ID: *${channel.id}*${channelEmote ? `, or react with ${channelEmote} to join` : ""})`;
+            description += `\n__${channel.name}__ (Channel ID: *${channel.id}*${channelEmote ? `, or react with ${channelEmote} to join` : ""})`;
         }
     }
 
@@ -195,8 +206,8 @@ exports.pinTopicsList = function (channelManager, channel) {
                 "messageID": message.id,
                 "channelID": message.channel.id
             }
-            exports.getTopicEmoji().forEach(emoji => {
-                message.react(emoji);
+            exports.getTopicEmoji().forEach(async emoji => {
+                await message.react(emoji);
             })
             exports.createJoinCollector(message);
             message.pin();
@@ -309,8 +320,7 @@ exports.joinChannel = function (channel, user) {
                             })
                             channel.send(`Welcome to ${channel.name}, ${user}!`);
                         })
-                        exports.updateCampaign(campaign);
-                        updateList(channel.guild.channels, "campaigns");
+                        exports.updateCampaign(campaign, channel.guild.channels);
                     } else {
                         user.send(`You are already in ${campaign.title}.`)
                             .catch(console.error);

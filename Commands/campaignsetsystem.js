@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSystem"], // aliases
 	"Sets the system for a campaign", // description
@@ -15,10 +15,9 @@ command.execute = (receivedMessage, state) => {
 			let system = state.messageArray.join(' ');
 			if (system) {
 				campaign.system = system;
-				updateCampaign(campaign);
+				updateCampaign(campaign, receivedMessage.guild.channels);
 				receivedMessage.author.send(`${campaign.title}'s system has been set as ${system}.`)
 					.catch(console.error);
-				updateList(receivedMessage.guild.channels, "campaigns");
 			} else {
 				receivedMessage.author.send(`Please provide the system for the campaign.`)
 					.catch(console.error);
