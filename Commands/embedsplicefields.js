@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { guildID, embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSpliceFields"], // aliases
-	"Splices the fields of an custom embed created by HorizonsBot", // description
+	"Splices fields of a custom embed", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSpliceFields (message ID) (index),, (delete count)`\nReplacing fields unsupported."]); // texts (must match number of headings)

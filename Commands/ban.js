@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getManagedChannels } = require('../helpers.js');
 
 var command = new Command(["Ban"], // aliases
-	"Bans the mentioned users from an opt-in channel or TRPG campaign", // description
+	"Ban mentioned users from a topic or campaign channel", // description
 	"Moderator, must be used from an opt-in channel or campaign channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot Ban (users)`"]); // texts (must match number of headings)

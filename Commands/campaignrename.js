@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignRename"], // aliases
-	"Renames the text and voice chats of a campaign", // description
+	"Renames a campaign's channels", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignRename (new name)`"]); // texts (must match number of headings)

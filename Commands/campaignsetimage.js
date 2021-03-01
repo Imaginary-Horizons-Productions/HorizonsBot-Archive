@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetImage"], // aliases
-	"Sets the image url for a campaign, from url in message or attachments", // description
+	"Sets a campaign's image url, from text or attachments", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace [ ] with settings (optional)"], // headings
 	["`@HorizonsBot CampaignSetImage [url]`"]); // texts (must match number of headings)

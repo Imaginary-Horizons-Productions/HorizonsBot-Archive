@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { guildID, embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetColor", "EmbedSetColour"], // aliases
-	"Assigns the color of an custom embed created by HorizonsBot", // description
+	"Assigns the color of a custom embed", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSetColor (message ID) (color hexcode)`"]); // texts (must match number of headings)

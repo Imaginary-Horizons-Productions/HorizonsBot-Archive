@@ -3,7 +3,7 @@ const Campaign = require('../Classes/Campaign.js');
 const { isModerator, roleIDs, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignAdd"],
-	"Sets up a text channel and voice channel for a TRPG",
+	"Sets up a text and voice channels for a TRPG",
 	"Moderator",
 	["__Example__ - replace ( ) with your settings"],
 	["`@HorizonsBot CampaignAdd (mention the host)`"]);

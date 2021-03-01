@@ -184,7 +184,7 @@ exports.topicListBuilder = function (channelManager) {
         })
     } else {
         return new Promise((resolve, reject) => {
-            let embed = new MessageEmbed()
+            let embed = new MessageEmbed().setColor("#6b81eb")
                 .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
                 .setTitle("Topic Channels")
                 .setDescription(description)
@@ -244,7 +244,7 @@ exports.campaignListBuilder = function (channelManager) {
         })
     } else {
         return new Promise((resolve, reject) => {
-            resolve(new MessageEmbed()
+            resolve(new MessageEmbed().setColor("#f07581")
                 .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
                 .setTitle("TRPG Campaigns")
                 .setDescription(description)

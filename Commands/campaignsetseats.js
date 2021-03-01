@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSeats"], // aliases
-	"Sets the max number of players for a campaign", // description
+	"Sets a campaign's max number of players", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetSeats (number)`"]); // texts (must match number of headings)

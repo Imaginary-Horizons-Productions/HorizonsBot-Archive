@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { guildID, embedsList, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetThumbnail"], // aliases
-	"Assigns a thumbnail to an custom embed created by HorizonsBot", // description
+	"Assigns a thumbnail to a custom embed", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSetThumbnail (message ID) (url)`"]); // texts (must match number of headings)
