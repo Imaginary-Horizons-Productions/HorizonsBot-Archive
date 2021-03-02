@@ -12,7 +12,7 @@ command.execute = (receivedMessage, state) => {
 	// Create a new MessageEmbed
 	if (receivedMessage.guild) {
 		if (isModerator(receivedMessage.author.id)) {
-			let embed = new MessageEmbed().setTimestamp();
+			let embed = new MessageEmbed().setAuthor("Custom Embed").setTimestamp();
 			receivedMessage.channel.send("Here's your new embed.", embed).then(message => {
 				embedsList[message.id] = message.channel.id;
 				saveObject(embedsList, "embedsList.json");
