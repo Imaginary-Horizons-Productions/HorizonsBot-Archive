@@ -110,7 +110,7 @@ client.on('message', receivedMessage => {
 })
 
 client.on('guildMemberRemove', member => {
-    let campaigns = Object.values(helpers.getCampaignList());
+    let campaigns = Object.values(helpers.getCampaigns());
     let memberID = member.id;
     for (campaign of campaigns) {
         if (memberID == campaign.hostID) {
@@ -124,8 +124,8 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    let topics = helpers.getTopicList();
-    let campaigns = helpers.getCampaignList();
+    let topics = helpers.getTopics();
+    let campaigns = helpers.getCampaigns();
     if (topics && topics.includes(channelID)) {
         helpers.removeTopicEmoji(channelID);
         helpers.setTopicList(topics.filter(id => id != channelID))

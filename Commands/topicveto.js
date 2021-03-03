@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getPetitionList, setPetitionList, updateList } = require('../helpers.js');
+const { isModerator, getPetitions, setPetitions, updateList } = require('../helpers.js');
 
 var command = new Command(["TopicVeto"], // aliases
 	"Vetos an open petition", // description
@@ -11,8 +11,8 @@ command.execute = (receivedMessage, state) => {
 	// Remove the given petition from the petition list
 	if (isModerator(receivedMessage.author.id)) {
 		let vetoedPetition = state.messageArray.join('-');
-		let petitionList = getPetitionList();
-		let petitionersIDs = petitionList[vetoedPetition];
+		let petitions = getPetitions();
+		let petitionersIDs = petitions[vetoedPetition];
 		if (petitionersIDs) {
 			receivedMessage.channel.send(`${petitionersIDs.length} server member(s) have petitioned for ${vetoedPetition}.\nReally veto? :white_check_mark: for yes, :no_entry_sign: for no.`).then(async message => {
 				await message.react("✅");
@@ -24,8 +24,8 @@ command.execute = (receivedMessage, state) => {
 						message.edit(`Petition veto cancelled.`)
 							.catch(console.error);
 					} else if (reaction.emoji.name == "✅") {
-						delete petitionList[vetoedPetition];
-						setPetitionList(petitionList);
+						delete petitions[vetoedPetition];
+						setPetitions(petitions);
 						updateList(receivedMessage.guild.channels, "topics");
 						message.edit(`The petition for ${vetoedPetition} has been vetoed.`)
 							.catch(console.error);

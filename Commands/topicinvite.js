@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
-const { getTopicList, joinChannel, guildID, getTopicEmoji, getEmojiByChannelID } = require('../helpers.js');
+const { getTopics, joinChannel, guildID, getEmojiByChannelID } = require('../helpers.js');
 
 var command = new Command(["TopicInvite"], // aliases
 	"Invite users to the given topic channel", // description
@@ -12,7 +12,7 @@ command.execute = (receivedMessage, state) => {
 	// Provide full details on the given campaign
 	let channel = receivedMessage.channel;
 	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
-	if (getTopicList().includes(channel.id)) {
+	if (getTopics().includes(channel.id)) {
 		if (recipients.length > 0) {
 			let emoji = getEmojiByChannelID(channel.id);
 			if (emoji == undefined) {

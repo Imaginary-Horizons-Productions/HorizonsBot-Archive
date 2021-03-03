@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
+const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignRename"], // aliases
 	"Renames a campaign's channels", // description
@@ -9,7 +9,7 @@ var command = new Command(["CampaignRename"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Rename the text voice channels associated with receiving channel
-	let campaign = getCampaignList()[receivedMessage.channel.id];
+	let campaign = getCampaigns()[receivedMessage.channel.id];
 	if (campaign) {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let newName = state.messageArray.join('-');

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetDescription"], // aliases
 	"Assigns a description to a custom embed", // description
@@ -8,14 +8,14 @@ var command = new Command(["EmbedSetDescription"], // aliases
 	["`@HorizonsBot EmbedSetDescription (message ID) (description)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Set the description for the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let description = state.messageArray.join(' ');
 			if (description) {
 				receivedMessage.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setDescription(description).setTimestamp();
 						message.edit("", embed);
 					})

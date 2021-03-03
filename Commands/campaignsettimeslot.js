@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
+const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetTimeSlot"], // aliases
 	"Sets a campaign's time slot", // description
@@ -9,7 +9,7 @@ var command = new Command(["CampaignSetTimeSlot"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaign = getCampaignList()[receivedMessage.channel.id];
+	let campaign = getCampaigns()[receivedMessage.channel.id];
 	if (campaign) {
 		if (isModerator(receivedMessage.author.id) || (campaign && receivedMessage.author.id == campaign.hostID)) {
 			let timeSlot = state.messageArray.join(' ');

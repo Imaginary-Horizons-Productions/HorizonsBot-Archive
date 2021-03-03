@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { getPetitionList, setPetitionList, addChannel, updateList } = require('../helpers.js');
+const { getPetitions, setPetitions, addChannel, updateList } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
@@ -10,15 +10,15 @@ var command = new Command(["Petition"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions
 	let topicName = state.messageArray.join('-').toLowerCase();
-	let petitionList = getPetitionList();
-	if (!petitionList[topicName]) {
-		petitionList[topicName] = [];
+	let petitions = getPetitions();
+	if (!petitions[topicName]) {
+		petitions[topicName] = [];
 	}
-	if (!petitionList[topicName].includes(receivedMessage.author.id)) {
-		petitionList[topicName].push(receivedMessage.author.id);
+	if (!petitions[topicName].includes(receivedMessage.author.id)) {
+		petitions[topicName].push(receivedMessage.author.id);
 		let memberCount = 70;
-		if (petitionList[topicName].length > memberCount * 0.05) {
-			let petitionersIDs = petitionList[topicName];
+		if (petitions[topicName].length > memberCount * 0.05) {
+			let petitionersIDs = petitions[topicName];
 			let unveilingText = "This channel has been created thanks to: ";
 			addChannel(receivedMessage.guild.channels, receivedMessage.channel.parent.id, topicName).then(channel => {
 				petitionersIDs.forEach(id => {
@@ -29,10 +29,10 @@ command.execute = (receivedMessage, state) => {
 				});
 				channel.send(unveilingText);
 			})
-			delete petitionList[topicName];
+			delete petitions[topicName];
 		}
 		updateList(receivedMessage.guild.channels, "topics");
-		setPetitionList(petitionList);
+		setPetitions(petitions);
 		receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
 			.catch(console.error)
 	} else {

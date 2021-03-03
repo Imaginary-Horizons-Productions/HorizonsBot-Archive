@@ -20,20 +20,20 @@ exports.removeModerator = function (removedID) {
 }
 
 // {messageID: channelID}
-exports.embedsList = require('./data/embedsList.json');
+exports.customEmbeds = require('./data/embedsList.json');
 
 // {type: {messageID: number, channelID: number}}
 exports.listMessages = require('./data/listMessageIDs.json');
 
 // [channelID]
-let topicList = require('./data/topicList.json');
-exports.getTopicList = function () {
-    return topicList;
+let topics = require('./data/topicList.json');
+exports.getTopics = function () {
+    return topics;
 }
 
 exports.setTopicList = function (topicListInput) {
-    topicList = topicListInput;
-    exports.saveObject(topicList, 'topicList.json');
+    topics = topicListInput;
+    exports.saveObject(topics, 'topicList.json');
 }
 
 // Collection <emoji, channelID>
@@ -76,31 +76,31 @@ exports.removeTopicEmoji = function (channelID) {
 }
 
 // {name: [petitioner IDs]}
-let petitionList = require('./data/petitionList.json');
-exports.getPetitionList = function () {
-    return petitionList;
+let petitions = require('./data/petitionList.json');
+exports.getPetitions = function () {
+    return petitions;
 }
 
-exports.setPetitionList = function (petitionListInput) {
-    petitionList = petitionListInput;
-    exports.saveObject(petitionList, 'petitionList.json');
+exports.setPetitions = function (petitionListInput) {
+    petitions = petitionListInput;
+    exports.saveObject(petitions, 'petitionList.json');
 }
 
 // {textChannelID: Campaign}
-let campaignList = require('./data/campaignList.json');
-exports.getCampaignList = function () {
-    return campaignList;
+let campaigns = require('./data/campaignList.json');
+exports.getCampaigns = function () {
+    return campaigns;
 }
 
 exports.updateCampaign = function (campaign, channelManager) {
-    campaignList[campaign.channelID] = campaign;
+    campaigns[campaign.channelID] = campaign;
     exports.updateList(channelManager, "campaigns");
-    exports.saveObject(campaignList, 'campaignList.json');
+    exports.saveObject(campaigns, 'campaignList.json');
 }
 
 exports.removeCampaign = function (id) {
-    delete campaignList[id];
-    exports.saveObject(campaignList, 'campaignList.json');
+    delete campaigns[id];
+    exports.saveObject(campaigns, 'campaignList.json');
 }
 
 // Functions
@@ -113,7 +113,7 @@ function emojiString(emoji) {
 }
 
 exports.getManagedChannels = function () {
-    return exports.getTopicList().concat(Object.keys(exports.getCampaignList()));
+    return exports.getTopics().concat(Object.keys(exports.getCampaigns()));
 }
 
 exports.updateList = function (channelManager, listType) {
@@ -139,7 +139,7 @@ exports.updateList = function (channelManager, listType) {
 
 exports.topicListBuilder = function (channelManager) {
     let description = "Here's a list of the opt-in topic channels for the server, their IDs, and associated emoji. Join one by typing `@HorizonsBot Join (channel ID)` or by reacting with their emoji.\n";
-    let topics = exports.getTopicList();
+    let topics = exports.getTopics();
 
     for (let i = 0; i < topics.length; i += 1) {
         let id = topics[i];
@@ -153,11 +153,11 @@ exports.topicListBuilder = function (channelManager) {
         }
     }
 
-    let petitions = Object.keys(petitionList);
+    let petitions = Object.keys(petitions);
     let petitionText = "Here are the topic channels that have been petitioned for. They will automatically be added when 5% of the server petitions for them.\n";
     if (petitions.length > 0) {
         petitions.forEach(topicName => {
-            petitionText += `\n${topicName}: ${petitionList[topicName].length} petitioner(s) so far`;
+            petitionText += `\n${topicName}: ${petitions[topicName].length} petitioner(s) so far`;
         })
     }
 
@@ -218,7 +218,7 @@ exports.pinTopicsList = function (channelManager, channel) {
 
 exports.campaignListBuilder = function (channelManager) {
     let description = "Here's a list of the TRPG campaigns for the server. Learn more about one by typing `@HorizonsBot CampaignDetails (campaign ID)`.\n";
-    let campaigns = exports.getCampaignList();
+    let campaigns = exports.getCampaigns();
 
     Object.keys(campaigns).forEach(id => {
         let campaign = campaigns[id];
@@ -289,7 +289,7 @@ exports.addChannel = function (channelManager, categoryID, topicName) {
                 }
             ]
         }).then(channel => {
-            exports.setTopicList(exports.getTopicList().concat([channel.id]));
+            exports.setTopicList(exports.getTopics().concat([channel.id]));
             exports.updateList(channelManager.guild.channels, "topics");
             return channel;
         }).catch(console.log);
@@ -301,14 +301,14 @@ exports.joinChannel = function (channel, user) {
         let channelID = channel.id;
         let permissionOverwrite = channel.permissionOverwrites.get(user.id);
         if (!permissionOverwrite || !permissionOverwrite.deny.has("VIEW_CHANNEL", false)) {
-            if (exports.getTopicList().includes(channelID)) {
+            if (exports.getTopics().includes(channelID)) {
                 channel.createOverwrite(user, {
                     "VIEW_CHANNEL": true
                 }).then(() => {
                     channel.send(`Welcome to ${channel.name}, ${user}!`);
                 }).catch(console.log);
-            } else if (Object.keys(exports.getCampaignList()).includes(channelID)) {
-                let campaign = exports.getCampaignList()[channelID];
+            } else if (Object.keys(exports.getCampaigns()).includes(channelID)) {
+                let campaign = exports.getCampaigns()[channelID];
                 if (campaign.seats == 0 || campaign.userIDs.length < campaign.seats) {
                     if (campaign.hostID != user.id && !campaign.userIDs.includes(user.id)) {
                         campaign.userIDs.push(user.id);

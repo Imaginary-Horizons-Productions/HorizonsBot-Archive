@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetAuthor"], // aliases
 	"Assigns an author to a custom embed", // description
@@ -8,10 +8,10 @@ var command = new Command(["EmbedSetAuthor"], // aliases
 	["`@HorizonsBot EmbedSetAuthor (message ID) (name),, [iconURL],, [url]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Set the author for the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let url = state.messageArray.join(' ');
 			url = url.split(",, ");
 			let name = url.shift();
@@ -19,7 +19,7 @@ command.execute = (receivedMessage, state) => {
 				let iconURL = url.shift();
 				url = url.toString();
 				receivedMessage.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
 						message.edit("", embed);
 					})

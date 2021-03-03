@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetColor", "EmbedSetColour"], // aliases
 	"Assigns the color of a custom embed", // description
@@ -8,14 +8,14 @@ var command = new Command(["EmbedSetColor", "EmbedSetColour"], // aliases
 	["`@HorizonsBot EmbedSetColor (message ID) (color hexcode)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Set the color for the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let colorCode = state.messageArray[0];
 			if (colorCode.match(/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)) {
 				receivedMessage.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setColor(colorCode).setTimestamp();
 						message.edit("", embed);
 					})

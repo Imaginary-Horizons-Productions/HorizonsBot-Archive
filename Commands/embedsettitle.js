@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetTitle"], // aliases
 	"Assigns a title to a custom embed", // description
@@ -11,11 +11,11 @@ command.execute = (receivedMessage, state) => {
 	// Set the title for the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let title = state.messageArray.join(' ');
 			if (title) {
 				receivedMessage.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setTitle(title).setTimestamp();
 						message.edit("", embed);
 					})

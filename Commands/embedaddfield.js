@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedAddField"], // aliases
 	"Adds a field to a custom embed", // description
@@ -8,10 +8,10 @@ var command = new Command(["EmbedAddField"], // aliases
 	["`@HorizonsBot EmbedAddField (message ID) (header),, (text),, [inline (default: false)]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Add a field to the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let inline = state.messageArray.join(' ');
 			inline = inline.split(",, ");
 			let header = inline.shift();
@@ -24,7 +24,7 @@ command.execute = (receivedMessage, state) => {
 						inline = false;
 					}
 					receivedMessage.client.guilds.fetch(guildID).then(guild => {
-						guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+						guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 							let embed = message.embeds[0].addField(header, text, inline).setTimestamp();
 							message.edit("", embed);
 						})

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSpliceFields"], // aliases
 	"Splices fields of a custom embed", // description
@@ -8,10 +8,10 @@ var command = new Command(["EmbedSpliceFields"], // aliases
 	["`@HorizonsBot EmbedSpliceFields (message ID) (index),, (delete count)`\nReplacing fields unsupported."]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Splice fields from the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let deleteCount = state.messageArray.join(' ');
 			deleteCount = deleteCount.split(",, ");
 			let index = parseInt(deleteCount.shift());
@@ -19,7 +19,7 @@ command.execute = (receivedMessage, state) => {
 				deleteCount = parseInt(deleteCount[0]);
 				if (!isNaN(deleteCount)) {
 					receivedMessage.client.guilds.fetch(guildID).then(guild => {
-						guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+						guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 							let embed = message.embeds[0].spliceFields(index, deleteCount).setTimestamp();
 							message.edit("", embed);
 						})

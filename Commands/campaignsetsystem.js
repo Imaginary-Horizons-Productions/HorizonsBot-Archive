@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
+const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSystem"], // aliases
 	"Sets a campaign's system for", // description
@@ -9,7 +9,7 @@ var command = new Command(["CampaignSetSystem"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaign = getCampaignList()[receivedMessage.channel.id];
+	let campaign = getCampaigns()[receivedMessage.channel.id];
 	if (campaign) {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let system = state.messageArray.join(' ');

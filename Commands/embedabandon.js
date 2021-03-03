@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { embedsList, isModerator, saveObject } = require('../helpers.js');
+const { customEmbeds, isModerator, saveObject } = require('../helpers.js');
 
 var command = new Command(["EmbedAbandon"], // aliases
 	"Stop managing the given embed(s)", // description
@@ -8,12 +8,12 @@ var command = new Command(["EmbedAbandon"], // aliases
 	["`@HorizonsBot EmbedAbandon (message ID)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Stop managing the given embed(s)
 	if (isModerator(receivedMessage.author.id)) {
 		state.messageArray.forEach(messageID => {
-			if (embedsList[messageID]) {
-				delete embedsList[messageID];
-				saveObject(embedsList, "embedsList.json");
+			if (customEmbeds[messageID]) {
+				delete customEmbeds[messageID];
+				saveObject(customEmbeds, "embedsList.json");
 				receivedMessage.author.send(`The provided embed has been abandoned.`)
 					.catch(console.error);
 			} else {
