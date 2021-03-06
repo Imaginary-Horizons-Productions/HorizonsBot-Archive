@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { getPetitions, setPetitions, addChannel, updateList } = require('../helpers.js');
+const { getPetitions, setPetitions, addChannel, updateList, guildID } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
@@ -15,26 +15,27 @@ command.execute = (receivedMessage, state) => {
 		petitions[topicName] = [];
 	}
 	if (!petitions[topicName].includes(receivedMessage.author.id)) {
-		petitions[topicName].push(receivedMessage.author.id);
-		let memberCount = 70;
-		if (petitions[topicName].length > memberCount * 0.05) {
-			let petitionersIDs = petitions[topicName];
-			let unveilingText = "This channel has been created thanks to: ";
-			addChannel(receivedMessage.guild.channels, receivedMessage.channel.parent.id, topicName).then(channel => {
-				petitionersIDs.forEach(id => {
-					unveilingText += `<@${id}> `;
-					channel.createOverwrite(id, {
-						"VIEW_CHANNEL": true
+		receivedMessage.client.guilds.fetch(guildID).then(guild => {
+			petitions[topicName].push(receivedMessage.author.id);
+			if (petitions[topicName].length > guild.memberCount * 0.05) {
+				let petitionersIDs = petitions[topicName];
+				let unveilingText = "This channel has been created thanks to: ";
+				addChannel(guild.channels, topicName).then(channel => {
+					petitionersIDs.forEach(id => {
+						unveilingText += `<@${id}> `;
+						channel.createOverwrite(id, {
+							"VIEW_CHANNEL": true
+						});
 					});
-				});
-				channel.send(unveilingText);
-			})
-			delete petitions[topicName];
-		}
-		updateList(receivedMessage.guild.channels, "topics");
-		setPetitions(petitions);
-		receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
-			.catch(console.error)
+					channel.send(unveilingText);
+				})
+				delete petitions[topicName];
+			}
+			updateList(guild.channels, "topics");
+			setPetitions(petitions);
+			receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
+				.catch(console.error)
+		});
 	} else {
 		receivedMessage.author.send(`You have already petitioned for ${topicName}.`)
 			.catch(console.error)

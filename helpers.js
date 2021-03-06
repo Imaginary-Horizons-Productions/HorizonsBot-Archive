@@ -266,10 +266,10 @@ exports.pinCampaignsList = function (channelManager, channel) {
     }).catch(console.log);
 }
 
-exports.addChannel = function (channelManager, categoryID, topicName) {
+exports.addChannel = function (channelManager, topicName) {
     return channelManager.guild.members.fetch("536330483852771348").then(bountyBot => { // Creating permissionOverwrites by string doesn't seem to be working at time of writing
         return channelManager.create(topicName, {
-            "parent": categoryID,
+            "parent": "581886288102424592",
             "permissionOverwrites": [
                 {
                     "id": channelManager.client.user.id,
