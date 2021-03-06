@@ -165,7 +165,7 @@ exports.topicListBuilder = function (channelManager) {
         return new Promise((resolve, reject) => {
             let fileText = description;
             if (petitionNames.length > 0) {
-                fileText += `\n\n${petitionText}`
+                fileText += `\n\n${petitionText}`;
             }
 
             fs.writeFile("data/TopicChannels.txt", fileText, "utf8", error => {
