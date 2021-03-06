@@ -14,6 +14,7 @@ command.execute = (receivedMessage, state) => {
     // Provides a summary about bot commands, or details about a given command
     if (state.messageArray.length > 0) {
         state.messageArray.forEach(searchTerm => {
+            searchTerm = searchTerm.toLowerCase();
             var lookedUpCommand = getCommand(searchTerm);
             if (lookedUpCommand) {
                 receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL()))
