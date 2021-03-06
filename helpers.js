@@ -153,10 +153,10 @@ exports.topicListBuilder = function (channelManager) {
         }
     }
 
-    let petitions = Object.keys(petitions);
+    let petitionNames = Object.keys(petitions);
     let petitionText = "Here are the topic channels that have been petitioned for. They will automatically be added when 5% of the server petitions for them.\n";
-    if (petitions.length > 0) {
-        petitions.forEach(topicName => {
+    if (petitionNames.length > 0) {
+        petitionNames.forEach(topicName => {
             petitionText += `\n${topicName}: ${petitions[topicName].length} petitioner(s) so far`;
         })
     }
@@ -164,7 +164,7 @@ exports.topicListBuilder = function (channelManager) {
     if (description.length > 2048 || petitionText.length > 1024) {
         return new Promise((resolve, reject) => {
             let fileText = description;
-            if (petitions.length > 0) {
+            if (petitionNames.length > 0) {
                 fileText += `\n\n${petitionText}`
             }
 
@@ -191,7 +191,7 @@ exports.topicListBuilder = function (channelManager) {
                 .setFooter("Please do not make bounties to vote for your petitions.")
                 .setTimestamp();
 
-            if (petitions.length > 0) {
+            if (petitionNames.length > 0) {
                 embed.addField("Petitioned Channels", petitionText)
             }
             resolve(embed);

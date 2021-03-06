@@ -13,14 +13,16 @@ command.execute = (receivedMessage, state) => {
 
     // Provides a summary about bot commands, or details about a given command
     if (state.messageArray.length > 0) {
-        var lookedUpCommand = getCommand(state.messageArray[0]);
-        if (lookedUpCommand) {
-            receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL()))
-                .catch(console.error);
-        } else {
-            receivedMessage.author.send(`**${state.messageArray[0]}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`)
-                .catch(console.error);
-        }
+        state.messageArray.forEach(searchTerm => {
+            var lookedUpCommand = getCommand(searchTerm);
+            if (lookedUpCommand) {
+                receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL()))
+                    .catch(console.error);
+            } else {
+                receivedMessage.author.send(`**${searchTerm}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`)
+                    .catch(console.error);
+            }    
+        })
     } else {
         let titleString = "HorizonsBot Commands";
         let descriptionString = "Here are HorizonsBots commands. Check a command's details to see what the usage requirements are!";
@@ -32,7 +34,7 @@ command.execute = (receivedMessage, state) => {
             .setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
             .setDescription(descriptionString)
             .setFooter(footerString, receivedMessage.client.user.displayAvatarURL())
-            .setTimestamp()
+            .setTimestamp();
         for (commandSet of commandSets) {
             let commandSetText = commandSet.description + "\n";
             commandSet.fileNames.forEach(filename => {
