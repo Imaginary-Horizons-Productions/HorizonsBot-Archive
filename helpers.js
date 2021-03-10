@@ -27,6 +27,8 @@ exports.listMessages = require('./data/listMessageIDs.json');
 
 // [channelID]
 let topics = require('./data/topicList.json');
+exports.topicNames = {};
+
 exports.getTopics = function () {
     return topics;
 }
@@ -37,7 +39,7 @@ exports.setTopicList = function (topicListInput) {
 }
 
 // Collection <emoji, channelID>
-let topicEmoji = new Collection(require("./data/topicEmoji.json"))
+let topicEmoji = new Collection(require("./data/topicEmoji.json"));
 exports.getTopicByEmoji = function (emoji) {
     return topicEmoji.get(emoji);
 }

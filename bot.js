@@ -6,8 +6,8 @@ const client = new Client({
     retryLimit: 5,
     presence: {
         activity: {
-            name: "for start-up errors...",
-            type: "WATCHING"
+            name: "@HorizonsBot help",
+            type: "LISTENING"
         }
     }
 });
@@ -17,11 +17,9 @@ client.login(require('./auth.json').token)
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
-    client.user.setActivity(`"@HorizonsBot help"`)
-        .catch(console.error);
 
-    // Update pinned lists
     client.guilds.fetch(helpers.guildID).then(guild => {
+        // Update pinned lists
         let channelManager = guild.channels;
         if (helpers.listMessages.topics) {
             helpers.updateList(channelManager, "topics").then(message => {
@@ -32,6 +30,11 @@ client.on('ready', () => {
         if (helpers.listMessages.campaigns) {
             helpers.updateList(channelManager, "campaigns");
         }
+
+        // Generate topicNames
+        helpers.getTopics().forEach(id => {
+            helpers.topicNames[guild.channels.resolve(id).name] = id;
+        })
     })
 })
 
