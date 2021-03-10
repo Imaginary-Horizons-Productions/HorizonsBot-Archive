@@ -293,6 +293,7 @@ exports.addChannel = function (channelManager, topicName) {
         }).then(channel => {
             exports.setTopicList(exports.getTopics().concat([channel.id]));
             exports.updateList(channelManager.guild.channels, "topics");
+            exports.topicNames[channel.id] = channel.name;
             return channel;
         }).catch(console.log);
     })
