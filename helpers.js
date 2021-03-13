@@ -169,7 +169,7 @@ exports.topicListBuilder = function (channelManager) {
     }
 
     let petitionNames = Object.keys(petitions);
-    let petitionText = "Here are the topic channels that have been petitioned for. They will automatically be added when 5% of the server petitions for them.\n";
+    let petitionText = `Here are the topic channels that have been petitioned for. They will automatically be added when reaching **${Math.ceil(channelManager.guild.memberCount * 0.05)} petitions** (5% of the server).\n`;
     if (petitionNames.length > 0) {
         petitionNames.forEach(topicName => {
             petitionText += `\n${topicName}: ${petitions[topicName].length} petitioner(s) so far`;
