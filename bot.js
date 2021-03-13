@@ -31,9 +31,9 @@ client.on('ready', () => {
             helpers.updateList(channelManager, "campaigns");
         }
 
-        // Generate topicNames
-        helpers.getTopics().forEach(id => {
-            helpers.topicNames[guild.channels.resolve(id).name] = id;
+        // Generate topic collection
+        require('./data/topicList.json').forEach(id => {
+            helpers.addTopic(id, guild.channels.resolve(id).name);
         })
     })
 })
@@ -127,12 +127,10 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    let topics = helpers.getTopics();
+    let topics = helpers.getTopicIDs();
     let campaigns = helpers.getCampaigns();
     if (topics && topics.includes(channelID)) {
-        helpers.removeTopicEmoji(channelID);
-        helpers.setTopicList(topics.filter(id => id != channelID))
-        helpers.updateList(channel.guild.channels, "topics");
+        helpers.removeTopic(channel);
     } else if (campaigns) {
         if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
             for (campaign of Object.values(campaigns)) {

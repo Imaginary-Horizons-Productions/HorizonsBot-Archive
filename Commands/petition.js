@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { topicNames, joinChannel, getPetitions, setPetitions, addChannel, updateList, guildID } = require('../helpers.js');
+const { joinChannel, getPetitions, setPetitions, addChannel, updateList, guildID, getTopicNames, findTopicID } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic channel to be created", // description
@@ -10,8 +10,8 @@ var command = new Command(["Petition"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions
 	let topicName = state.messageArray.join('-').toLowerCase();
-	if (Object.keys(topicNames).includes(topicName)) {
-		let channelID = topicNames[topicName];
+	if (getTopicNames().includes(topicName)) {
+		let channelID = findTopicID(topicName);
 		receivedMessage.client.guilds.fetch(guildID).then(guild => {
 			joinChannel(guild.channels.resolve(channelID), receivedMessage.author);
 		})
