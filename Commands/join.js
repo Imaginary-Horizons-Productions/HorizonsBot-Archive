@@ -13,7 +13,7 @@ command.execute = (receivedMessage, state) => {
 		state.messageArray.forEach(argument => { // can't use mention because users can't mention channels that are invisible to them (even by constructing the mention manually)
 			receivedMessage.client.guilds.fetch(guildID).then(guild => {
 				if (isNaN(parseInt(argument))) {
-					let channelID = findTopicID(argument);
+					let channelID = findTopicID(argument.toLowerCase());
 					if (channelID) {
 						let channel = guild.channels.resolve(channelID);
 						joinChannel(channel, receivedMessage.author);
