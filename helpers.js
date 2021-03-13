@@ -25,19 +25,34 @@ exports.customEmbeds = require('./data/embedsList.json');
 // {type: {messageID: number, channelID: number}}
 exports.listMessages = require('./data/listMessageIDs.json');
 
-// [channelID]
-let topics = require('./data/topicList.json');
-exports.getTopics = function () {
-    return topics;
+// Collection <channelName, channelID>
+let topics = new Collection();
+
+exports.getTopicIDs = function () {
+    return topics.keyArray();
 }
 
-exports.setTopicList = function (topicListInput) {
-    topics = topicListInput;
-    exports.saveObject(topics, 'topicList.json');
+exports.getTopicNames = function () {
+    return topics.array();
+}
+
+exports.findTopicID = function (channelName) {
+    return topics.findKey(checkedName => checkedName === channelName);
+}
+
+exports.addTopic = function (id, channelName) {
+    topics.set(id, channelName);
+}
+
+exports.removeTopic = function (channel) {
+    topics.delete(channel.id);
+    exports.removeTopicEmoji(channel.id);
+    exports.saveObject(topics.keyArray(), 'topicList.json');
+    helpers.updateList(channel.guild.channels, "topics");
 }
 
 // Collection <emoji, channelID>
-let topicEmoji = new Collection(require("./data/topicEmoji.json"))
+let topicEmoji = new Collection(require("./data/topicEmoji.json"));
 exports.getTopicByEmoji = function (emoji) {
     return topicEmoji.get(emoji);
 }
@@ -113,7 +128,7 @@ function emojiString(emoji) {
 }
 
 exports.getManagedChannels = function () {
-    return exports.getTopics().concat(Object.keys(exports.getCampaigns()));
+    return exports.getTopicIDs().concat(Object.keys(exports.getCampaigns()));
 }
 
 exports.updateList = function (channelManager, listType) {
@@ -138,8 +153,8 @@ exports.updateList = function (channelManager, listType) {
 }
 
 exports.topicListBuilder = function (channelManager) {
-    let description = "Here's a list of the opt-in topic channels for the server, their IDs, and associated emoji. Join one by typing `@HorizonsBot Join (channel ID)` or by reacting with their emoji.\n";
-    let topics = exports.getTopics();
+    let description = "Here's a list of the opt-in topic channels for the server and their associated emoji. Join them by typing `@HorizonsBot Join (channel names)` or by reacting with their emoji.\n";
+    let topics = exports.getTopicIDs();
 
     for (let i = 0; i < topics.length; i += 1) {
         let id = topics[i];
@@ -149,7 +164,7 @@ exports.topicListBuilder = function (channelManager) {
             if (Object.values(topics).includes(id)) {
                 channelEmote = exports.getEmojiByChannelID(id);
             }
-            description += `\n__${channel.name}__ (Channel ID: *${channel.id}*${channelEmote ? `, or react with ${channelEmote} to join` : ""})`;
+            description += `\n__${channel.name}__${channelEmote ? ` (React with ${channelEmote} to join)` : ""}`;
         }
     }
 
@@ -289,8 +304,9 @@ exports.addChannel = function (channelManager, topicName) {
                 }
             ]
         }).then(channel => {
-            exports.setTopicList(exports.getTopics().concat([channel.id]));
+            exports.addTopic(channel.id, channel.name);
             exports.updateList(channelManager.guild.channels, "topics");
+            exports.saveObject(topics.keyArray(), 'topicList.json');
             return channel;
         }).catch(console.log);
     })
@@ -301,7 +317,7 @@ exports.joinChannel = function (channel, user) {
         let channelID = channel.id;
         let permissionOverwrite = channel.permissionOverwrites.get(user.id);
         if (!permissionOverwrite || !permissionOverwrite.deny.has("VIEW_CHANNEL", false)) {
-            if (exports.getTopics().includes(channelID)) {
+            if (exports.getTopicIDs().includes(channelID)) {
                 channel.createOverwrite(user, {
                     "VIEW_CHANNEL": true
                 }).then(() => {

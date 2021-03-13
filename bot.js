@@ -6,8 +6,8 @@ const client = new Client({
     retryLimit: 5,
     presence: {
         activity: {
-            name: "for start-up errors...",
-            type: "WATCHING"
+            name: "@HorizonsBot help",
+            type: "LISTENING"
         }
     }
 });
@@ -17,11 +17,9 @@ client.login(require('./auth.json').token)
 
 client.on('ready', () => {
     console.log(`Connected as ${client.user.tag}\n`);
-    client.user.setActivity(`"@HorizonsBot help"`)
-        .catch(console.error);
 
-    // Update pinned lists
     client.guilds.fetch(helpers.guildID).then(guild => {
+        // Update pinned lists
         let channelManager = guild.channels;
         if (helpers.listMessages.topics) {
             helpers.updateList(channelManager, "topics").then(message => {
@@ -32,6 +30,11 @@ client.on('ready', () => {
         if (helpers.listMessages.campaigns) {
             helpers.updateList(channelManager, "campaigns");
         }
+
+        // Generate topic collection
+        require('./data/topicList.json').forEach(id => {
+            helpers.addTopic(id, guild.channels.resolve(id).name);
+        })
     })
 })
 
@@ -124,12 +127,10 @@ client.on('guildMemberRemove', member => {
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
-    let topics = helpers.getTopics();
+    let topics = helpers.getTopicIDs();
     let campaigns = helpers.getCampaigns();
     if (topics && topics.includes(channelID)) {
-        helpers.removeTopicEmoji(channelID);
-        helpers.setTopicList(topics.filter(id => id != channelID))
-        helpers.updateList(channel.guild.channels, "topics");
+        helpers.removeTopic(channel);
     } else if (campaigns) {
         if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
             for (campaign of Object.values(campaigns)) {
