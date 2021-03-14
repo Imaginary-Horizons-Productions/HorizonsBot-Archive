@@ -1,15 +1,15 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
+const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetImage"], // aliases
-	"Sets the image url for a campaign, from url in message or attachments", // description
+	"Sets a campaign's image url, from text or attachments", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace [ ] with settings (optional)"], // headings
 	["`@HorizonsBot CampaignSetImage [url]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaign = getCampaignList()[receivedMessage.channel.id];
+	let campaign = getCampaigns()[receivedMessage.channel.id];
 	if (campaign) {
 		if (isModerator(receivedMessage.author.id) || (campaign && receivedMessage.author.id == campaign.hostID)) {
 			let url = state.messageArray.join('');

@@ -1,15 +1,15 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign, updateList } = require("../helpers.js");
+const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSeats"], // aliases
-	"Sets the max number of players for a campaign", // description
+	"Sets a campaign's max number of players", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetSeats (number)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaign = getCampaignList()[receivedMessage.channel.id];
+	let campaign = getCampaigns()[receivedMessage.channel.id];
 	if (campaign) {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let seats = parseInt(state.messageArray[0]);

@@ -1,15 +1,15 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getCampaignList, updateCampaign } = require("../helpers.js");
+const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetDescription"], // aliases
-	"Sets the description for a campaign", // description
+	"Sets a campaign's description", // description
 	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetDecription (description)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving campaign channel
-	let campaign = getCampaignList()[receivedMessage.channel.id];
+	let campaign = getCampaigns()[receivedMessage.channel.id];
 	if (campaign) {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == campaign.hostID) {
 			let description = state.messageArray.join(' ');

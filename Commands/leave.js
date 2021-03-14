@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { getManagedChannels, getCampaignList, updateCampaign } = require('../helpers.js');
+const { getManagedChannels, getCampaigns, updateCampaign } = require('../helpers.js');
 
 var command = new Command(["Leave"], // aliases
 	"Leave an opt-in channel or TRPG campaign", // description
@@ -28,7 +28,7 @@ command.execute = (receivedMessage, state) => {
 	let userID = receivedMessage.author.id;
 	channelsToLeave.forEach(channelID => {
 		if (getManagedChannels().includes(channelID)) {
-			let campaign = getCampaignList()[channelID];
+			let campaign = getCampaigns()[channelID];
 			if (campaign) {
 				if (userID == campaign.hostID) {
 					receivedMessage.author.send(`If a campaign's host leaves, the campaign will be deleted. Really leave? :white_check_mark: for yes, :no_entry_sign: for no.`).then(async message => {

@@ -1,21 +1,21 @@
 const Command = require('../Classes/Command.js');
-const { guildID, embedsList, isModerator } = require('../helpers.js');
+const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetURL"], // aliases
-	"Assigns a url to an custom embed created by HorizonsBot", // description
+	"Assigns a title url to a custom embed", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSetURL (message ID) (url)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Set the title for the given embed
+	// Set the title url for the given embed
 	if (isModerator(receivedMessage.author.id)) {
 		let messageID = state.messageArray.shift();
-		if (embedsList[messageID]) {
+		if (customEmbeds[messageID]) {
 			let url = state.messageArray[0];
 			if (url) {
 				receivedMessage.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(embedsList[messageID]).messages.fetch(messageID).then(message => {
+					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setURL(url).setTimestamp();
 						message.edit("", embed);
 					})

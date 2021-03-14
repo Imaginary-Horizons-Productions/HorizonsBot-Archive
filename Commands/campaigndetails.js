@@ -1,16 +1,16 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
-const { getCampaignList, joinChannel, guildID } = require('./../helpers.js');
+const { getCampaigns, joinChannel, guildID } = require('./../helpers.js');
 
 var command = new Command(["CampaignDetails", "CampaignInvite"], // aliases
-	"Provide full details on the given campaign", // description
+	"Provides mentioned users details on the given campaign", // description
 	"None", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignDetails (campaign ID) [recepient(s)]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Provide full details on the given campaign
-	let campaign = getCampaignList()[state.messageArray[0]];
+	let campaign = getCampaigns()[state.messageArray[0]];
 	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
 	if (campaign) {
 		if (recipients.length == 0) {
