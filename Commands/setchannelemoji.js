@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { isModerator, removeTopicEmoji, addTopicEmoji, updateList } = require('../helpers.js');
 
 var command = new Command(["SetChannelEmoji", "SetChannelEmote"], // aliases
-	"Associate an emoji with a channel for joining via reaction", // description
+	"Set a topic's reaction join emoji", // description
 	"Moderator, use from relevant channel", // requirements
 	["Example"], // headings
 	["`@HorizonsBot SetChannelEmoji`"]); // texts (must match number of headings)
