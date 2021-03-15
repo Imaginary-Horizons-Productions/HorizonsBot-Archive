@@ -43,8 +43,6 @@ command.execute = (receivedMessage, state) => {
                 commandSetText += `\n__${command.aliases[0]}__ ${command.description}`;
             })
             totalCharacterCount += commandSetText.length;
-            console.log(commandSetText.length)
-            console.log(totalCharacterCount)
             if (commandSetText.length > 1024 || totalCharacterCount > 6000) {
                 embed = {
                     files: [{
