@@ -2,8 +2,8 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetTimeSlot"], // aliases
-	"Set a campaign's time slot", // description
-	"Moderator or Campaign Host, use from campaign channel", // requirements
+	"Sets a campaign's time slot", // description
+	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetTimeSlot (time slot)`"]); // texts (must match number of headings)
 

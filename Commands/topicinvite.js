@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const { getTopics, joinChannel, guildID, getEmojiByChannelID } = require('../helpers.js');
 
 var command = new Command(["TopicInvite"], // aliases
-	"Invite users to this topic", // description
+	"Invite users to the given topic channel", // description
 	"Use from channel to invite to", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignDetails (recepient(s))`"]); // texts (must match number of headings)

@@ -3,8 +3,8 @@ const { MessageEmbed } = require('discord.js');
 const { isModerator, customEmbeds, saveObject } = require('../helpers.js');
 
 var command = new Command(["EmbedCreate"], // aliases
-	"Make a new MessageEmbed, configurable with other commands", // description
-	"Moderator, use from a server channel", // requirements
+	"Makes a new MessageEmbed, configurable with other commands", // description
+	"Moderator, must be used from a server channel", // requirements
 	["Usage"], // headings
 	["`@HorizonsBot EmbedCreate`"]); // texts (must match number of headings)
 

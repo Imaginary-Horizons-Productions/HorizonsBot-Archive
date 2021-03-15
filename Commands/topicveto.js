@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getPetitions, setPetitions, updateList } = require('../helpers.js');
 
 var command = new Command(["TopicVeto"], // aliases
-	"Veto a petition", // description
+	"Vetos an open petition", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot TopicVeto (channel name)`"]); // texts (must match number of headings)

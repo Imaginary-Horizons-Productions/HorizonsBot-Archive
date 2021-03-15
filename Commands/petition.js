@@ -2,8 +2,8 @@ const Command = require('../Classes/Command.js');
 const { joinChannel, getPetitions, setPetitions, addChannel, updateList, guildID, getTopicNames, findTopicID } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
-	"Petition for a topic", // description
-	"N/A", // requirements
+	"Petition for a topic channel to be created", // description
+	"None", // requirements
 	["Example - replace ( ) with your settings"], // headers
 	[`@HorizonsBot Petition (topic name)`]); // texts (must match number of headings)
 
