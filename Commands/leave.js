@@ -3,7 +3,7 @@ const { getManagedChannels, getCampaigns, updateCampaign } = require('../helpers
 
 var command = new Command(["Leave"], // aliases
 	"Leave an opt-in channel or TRPG campaign", // description
-	"Must be used from an opt-in channel or campaign channel", // requirements
+	"Use from relevant channel", // requirements
 	["Example"], // headings
 	["`@HorizonsBot Leave`"]); // texts (must match number of headings)
 

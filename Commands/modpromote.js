@@ -4,7 +4,7 @@ var { roleIDs, isModerator, addModerator, saveObject } = require('../helpers.js'
 
 var command = new Command(["ModPromote", "AddMod"], // aliases
 	"Add a Moderator to HorizonsBot's list and give them the role", // description
-	"Discord ADMINISTRATOR or Moderator, must be used from server channel", // requirements
+	"Discord ADMINISTRATOR or Moderator, use from server channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ModPromote (user)`"]); // texts (must match number of headings)
 

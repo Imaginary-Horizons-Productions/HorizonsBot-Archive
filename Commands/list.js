@@ -3,7 +3,7 @@ const { guildID, topicListBuilder, campaignListBuilder } = require('../helpers.j
 
 var command = new Command(["List"], // aliases
 	"Provide a list of topic or campaign channels", // description
-	"None", // requirements
+	"N/A", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot List (topic or campaign)`]); // texts (must match number of headings)
 
