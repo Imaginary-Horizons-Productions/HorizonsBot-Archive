@@ -2,7 +2,7 @@ const Command = require('../Classes/Command.js');
 const { guildID, customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetAuthor"], // aliases
-	"Assign a custom embed's author", // description
+	"Assigns an author to a custom embed", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSetAuthor (message ID) (name),, [iconURL],, [url]`"]); // texts (must match number of headings)

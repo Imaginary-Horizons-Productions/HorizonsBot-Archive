@@ -1,8 +1,8 @@
 const Command = require('../Classes/Command.js');
-const { guildID, customEmbeds, isModerator } = require('../helpers.js');
+const { guildID, customEmbedsmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command(["EmbedSetFooter"], // aliases
-	"Assign a custom embed's footer", // description
+	"Assigns a footer to a custom embed", // description
 	"Moderator", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSetFooter (message ID) (text),, [iconURL]`"]); // texts (must match number of headings)

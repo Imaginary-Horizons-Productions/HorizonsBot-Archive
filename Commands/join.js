@@ -3,7 +3,7 @@ const { guildID, joinChannel, findTopicID } = require('../helpers.js');
 
 var command = new Command(["Join"], // aliases
 	"Join one or many opt-in channels or TRPG campaigns", // description
-	"N/A", // requirements
+	"None", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot Join (channel names or IDs)`]); // texts (must match number of headings)
 

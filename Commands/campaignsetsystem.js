@@ -2,8 +2,8 @@ const Command = require('../Classes/Command.js');
 const { isModerator, getCampaigns, updateCampaign } = require("../helpers.js");
 
 var command = new Command(["CampaignSetSystem"], // aliases
-	"Set a campaign's system for", // description
-	"Moderator or Campaign Host, use from campaign channel", // requirements
+	"Sets a campaign's system for", // description
+	"Moderator or Campaign Host, use from campaign text channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot CampaignSetSystem (system)`"]); // texts (must match number of headings)
 

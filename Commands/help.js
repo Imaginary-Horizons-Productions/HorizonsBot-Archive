@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 
 var command = new Command(['Help', 'Commands'],
     "Lists all HorizonsBot commands; add a command at the end to get give examples and more details on that command",
-    "N/A",
+    "None",
     ["Example: list HorizonBot's commands", "Example: get command specific info - replace ( ) with your settings"],
     ["`@HorizonsBot Help`", "`@HorizonsBot Help (command)`"]);
 
@@ -43,8 +43,6 @@ command.execute = (receivedMessage, state) => {
                 commandSetText += `\n__${command.aliases[0]}__ ${command.description}`;
             })
             totalCharacterCount += commandSetText.length;
-            console.log(commandSetText.length)
-            console.log(totalCharacterCount)
             if (commandSetText.length > 1024 || totalCharacterCount > 6000) {
                 embed = {
                     files: [{

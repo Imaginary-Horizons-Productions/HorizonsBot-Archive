@@ -4,9 +4,7 @@ const CommandSet = require('./../Classes/CommandSet.js');
 // Total commands (new CommandSet when exceeding 25): 15
 exports.commandSets = [
 	new CommandSet("HorizonsBot Commands", "Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!",
-		['about.js', 'help.js', 'support.js', 'datapolicy.js', "list.js", "join.js", "leave.js", "petition.js", "setchannelemoji.js", "ban.js", "delete.js", "pinlist.js"]),
-	new CommandSet("Dice Rolling Commands", "Use these commands to roll dice.",
-		["roll.js", "rollDetailed.js", "rollVerbose.js", "rollWithMax.js"]),
+		['about.js', 'help.js', 'support.js', 'datapolicy.js', "list.js", "join.js", "leave.js", "petition.js", "setchannelemoji.js", "ban.js", "delete.js", "pinlist.js", "roll.js", "rollDetailed.js", "rollVerbose.js", "rollWithMax.js"]),
 	new CommandSet("Custom Message Embeds", "To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select \"Copy ID\".",
 		['embedcreate.js', 'embedabandon.js', 'embedsetauthor.js', 'embedsettitle.js', 'embedseturl.js', 'embedsetcolor.js', 'embedsetdescription.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsplicefields.js', 'embedsetimage.js', 'embedsetfooter.js',]),
 	new CommandSet("Topic Commands", "Commands for managing opt-in topic text channels.",

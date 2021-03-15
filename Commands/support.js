@@ -2,8 +2,8 @@ const Command = require('./../Classes/Command.js');
 const { MessageEmbed } = require( 'discord.js');
 
 var command = new Command(["Support"],
-	"Show ways to support the community",
-	"N/A",
+	"Shows ways to support the community",
+	"None",
 	["Usage"],
 	["@HorizonsBot Support"]);
 

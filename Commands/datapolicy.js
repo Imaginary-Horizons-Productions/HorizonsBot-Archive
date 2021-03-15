@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 
 var command = new Command(["DataPolicy", "PrivacyPolicy"], // aliases
 	"Shows types of user data HorizonsBot collects and how it's used", // description
-	"N/A", // requirements
+	"None", // requirements
 	["Usage"], // headings
 	["`@HorizonsBot DataPolicy`"]); // texts (must match number of headings)
 

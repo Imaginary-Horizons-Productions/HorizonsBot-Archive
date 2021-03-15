@@ -4,7 +4,7 @@ var { roleIDs, isModerator, removeModerator } = require('../helpers.js');
 
 var command = new Command(["ModDemote"], // aliases
 	"Remove a Moderator from HorizonsBot's list and remove the role", // description
-	"Discord ADMINISTRATOR or Moderator, use from server channel", // requirements
+	"Discord ADMINISTRATOR or Moderator, must be used from server channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ModDemote (user)`"]); // texts (must match number of headings)
 
