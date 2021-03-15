@@ -1,15 +1,20 @@
 const Command = require('../Classes/Command.js');
 const { getRollString } = require('../Helper Modules/RollEngine.js');
 
-var command = new Command(["rollWithMax"],
-	"Roll some dice and get the result with a comparison to the maximum!",
-	"None",
+var command = new Command(["RollWithMax"],
+	"Roll dice, get results compared to max",
+	"N/A",
 	["Example - replace ( ) with your settings"],
-	[`@HorizonsBot rollWithMax (numbers and dice rolls formatted as #d#) (text to put after the roll [optional])`]);
+	["`@HorizonsBot RollWithMax (dice in #d# format) [label]`"]);
 
 command.execute = (receivedMessage, state) => {
-	var rollResult = getRollString(state.messageArray.join(' '), true, true);
-	receivedMessage.channel.send(`Roll Result:\n\`${rollResult}\``);
+	if (state.messageArray.length > 0) {
+		var rollResult = getRollString(state.messageArray.join(' '), true, true);
+		receivedMessage.channel.send(`Roll Result:\n\`${rollResult}\``);
+	} else {
+		receivedMessage.author.send('Please provide the number/type of dice you want to role in #d# format.')
+			.catch(console.error);
+	}
 };
 
 module.exports = command;

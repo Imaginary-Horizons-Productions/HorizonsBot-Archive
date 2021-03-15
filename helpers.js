@@ -66,7 +66,6 @@ exports.createJoinCollector = function (message) {
         return !user.bot && topicEmoji.keyArray().includes(reaction.emoji.name);
     });
     collector.on("collect", (reaction, user) => {
-        console.log(emojiString(reaction.emoji));
         let channel = message.guild.channels.resolve(exports.getTopicByEmoji(emojiString(reaction.emoji)));
         exports.joinChannel(channel, user);
     })
