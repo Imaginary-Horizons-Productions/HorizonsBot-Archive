@@ -2,8 +2,8 @@ const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
 var command = new Command(["About", "Credits"],
-	"Details HorizonsBot and its contributors",
-	"None",
+	"Detail HorizonsBot and its contributors",
+	"N/A",
 	["Usage"],
 	["`@HorizonsBot About`"]);
 

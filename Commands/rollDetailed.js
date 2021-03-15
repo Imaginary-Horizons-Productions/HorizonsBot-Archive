@@ -1,15 +1,21 @@
 const Command = require('../Classes/Command.js');
 const { getRollString } = require('../Helper Modules/RollEngine.js');
 
-var command = new Command(["rollDetailed"],
-	"Roll some dice and get the results from each die!",
-	"None",
+var command = new Command(["RollDetailed"],
+	"Roll dice, get results for each die",
+	"N/A",
 	["Example - replace ( ) with your settings"],
-	[`@HorizonsBot rollDetailed (numbers and dice rolls formatted as #d#) (text to put after the roll [optional])`]);
+	["`@HorizonsBot RollDetailed (dice in #d# format) [label]`"]);
 
 command.execute = (receivedMessage, state) => {
-	var rollResult = getRollString(state.messageArray.join(' '), false, false);
-	receivedMessage.channel.send(`Roll Result:\n\`${rollResult}\``);
+	if (state.messageArray.length > 0) {
+		var rollResult = getRollString(state.messageArray.join(' '), false, false);
+		receivedMessage.channel.send(`Roll Result:\n\`${rollResult}\``);
+	} else {
+		receivedMessage.author.send('Please provide the number/type of dice you want to role in #d# format.')
+			.catch(console.error);
+	}
+
 };
 
 module.exports = command;
