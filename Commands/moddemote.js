@@ -1,17 +1,16 @@
 const Command = require('../Classes/Command.js');
-const { Permissions } = require('discord.js');
 var { roleIDs, isModerator, removeModerator } = require('../helpers.js');
 
 var command = new Command(["ModDemote"], // aliases
 	"Remove a Moderator from HorizonsBot's list and remove the role", // description
-	"Discord ADMINISTRATOR or Moderator, use from server channel", // requirements
+	"Bot management permission or Moderator, use from server channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ModDemote (user)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Remove a Moderator: remove from list, remove role and channel permissions
 	if (receivedMessage.guild) {
-		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || isModerator(receivedMessage.author.id)) {
+		if (!receivedMessage.member.manageable || isModerator(receivedMessage.author.id)) {
 			let demotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (demotee) {
 				if (isModerator(demotee.id)) {

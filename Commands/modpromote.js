@@ -1,17 +1,16 @@
 const Command = require('../Classes/Command.js');
-const { Permissions } = require('discord.js');
 var { roleIDs, isModerator, addModerator, saveObject } = require('../helpers.js');
 
 var command = new Command(["ModPromote", "AddMod"], // aliases
 	"Add a Moderator to HorizonsBot's list and give them the role", // description
-	"Discord ADMINISTRATOR or Moderator, use from server channel", // requirements
+	"Bot management permission or Moderator, use from server channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ModPromote (user)`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Add a Moderator: add to list, give role and channel permissions
 	if (receivedMessage.guild) {
-		if (receivedMessage.member.hasPermission(Permissions.FLAGS.ADMINISTRATOR) || isModerator(receivedMessage.author.id)) {
+		if (!receivedMessage.member.manageable || isModerator(receivedMessage.author.id)) {
 			let promotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (promotee) {
 				if (!isModerator(promotee.id)) {

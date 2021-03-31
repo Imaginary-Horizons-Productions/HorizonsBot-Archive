@@ -63,13 +63,7 @@ client.on('message', receivedMessage => {
             campaignBuriedness = 0;
         }
     }
-
-    // Publish stream notifications
-    if (receivedMessage.author.id == "368105370532577280" && receivedMessage.channel.id == "572197893201592328" && receivedMessage.content.includes("Arcane_ish")) {
-        receivedMessage.crosspost();
-        return;
-    }
-
+    
     // Process commands
     if (receivedMessage.author.bot) {
         return;
