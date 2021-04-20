@@ -15,6 +15,7 @@ command.execute = (receivedMessage, state) => {
 		.setDescription(`HorizonsBot helps with channel management and other stuff on the Imaginary Horizons Community Discord.`)
 		.addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Archainis) )`)
 		.addField(`\u200B`, `**__Patrons__**\nImaginary Horizons Productions is supported on [Patreon](https://www.patreon.com/imaginaryhorizonsproductions) by generous users like you, credited below.`)
+		.addField(`Archivist Tier`, `Victor Huang`, false)
 		.addField(`Cartographer Tier`, `Ralph Beish`, false)
 		.addField(`Explorer Tier`, `Eric Hu`, false)
 		.setFooter(`Use "@HorizonsBot support" to learn how to support the server!`, receivedMessage.client.user.displayAvatarURL())
