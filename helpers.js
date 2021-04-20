@@ -236,7 +236,7 @@ exports.campaignListBuilder = function (channelManager) {
 
     Object.keys(campaigns).forEach(id => {
         let campaign = campaigns[id];
-        description += `\n__**${campaign.title}**__ (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**ID**: ${campaign.channelID}\n**Host**: <@${campaign.hostID}>**Game**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n`;
+        description += `\n__**${campaign.title}**__ (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**ID**: ${campaign.channelID}\n**Host**: <@${campaign.hostID}>\n**Game**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n`;
     })
 
     if (description.length > 2048) {
