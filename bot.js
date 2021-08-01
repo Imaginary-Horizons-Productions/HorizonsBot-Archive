@@ -9,7 +9,8 @@ const client = new Client({
             name: "@HorizonsBot help",
             type: "LISTENING"
         }
-    }
+    },
+    intents: ['DIRECT_MESSAGES', 'GUILD_MEMBERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'GUILD_EMOJIS_AND_STICKERS']
 });
 
 client.login(require('./auth.json').token)
@@ -33,7 +34,9 @@ client.on('ready', () => {
 
         // Generate topic collection
         require('./data/topicList.json').forEach(id => {
-            helpers.addTopic(id, guild.channels.resolve(id).name);
+            guild.channels.fetch(id).then(channel => {
+                helpers.addTopic(id, channel.name);
+            })
         })
     })
 })
@@ -41,7 +44,7 @@ client.on('ready', () => {
 let topicBuriedness = 0;
 let campaignBuriedness = 0;
 
-client.on('message', receivedMessage => {
+client.on('messageCreate', receivedMessage => {
     // Count messages for pin bumping
     if (helpers.listMessages.topics && receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;

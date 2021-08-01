@@ -29,7 +29,7 @@ exports.listMessages = require('./data/listMessageIDs.json');
 let topics = new Collection();
 
 exports.getTopicIDs = function () {
-    return topics.keyArray();
+    return Object.keys(topics);
 }
 
 exports.getTopicNames = function () {
@@ -72,7 +72,7 @@ exports.createJoinCollector = function (message) {
 }
 
 exports.getTopicEmoji = function () {
-    return topicEmoji.keyArray();
+    return Object.keys(topicEmoji);
 }
 
 exports.addTopicEmoji = function (emoji, channelID) {
@@ -133,21 +133,23 @@ exports.getManagedChannels = function () {
 exports.updateList = function (channelManager, listType) {
     let messageData = exports.listMessages[listType];
     if (messageData) {
-        return channelManager.resolve(messageData.channelID).messages.fetch(messageData.messageID).then(message => {
-            if (listType == "topics") {
-                exports.topicListBuilder(channelManager).then(embed => {
-                    message.edit(embed);
-                    exports.getTopicEmoji().forEach(async emoji => {
-                        await message.react(emoji);
-                    })
-                }).catch(console.error);
-            } else {
-                exports.campaignListBuilder(channelManager).then(embed => {
-                    message.edit(embed);
-                }).catch(console.error)
-            }
-            return message;
-        });
+        return channelManager.fetch(messageData.channelID).then(channel => {
+           return channel.messages.fetch(messageData.messageID).then(message => {
+                if (listType == "topics") {
+                    exports.topicListBuilder(channelManager).then(embed => {
+                        message.edit(embed);
+                        exports.getTopicEmoji().forEach(async emoji => {
+                            await message.react(emoji);
+                        })
+                    }).catch(console.error);
+                } else {
+                    exports.campaignListBuilder(channelManager).then(embed => {
+                        message.edit(embed);
+                    }).catch(console.error)
+                }
+                return message;
+            });
+        })
     }
 }
 
