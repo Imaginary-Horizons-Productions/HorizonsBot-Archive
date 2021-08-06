@@ -134,7 +134,7 @@ exports.updateList = function (channelManager, listType) {
     let messageData = exports.listMessages[listType];
     if (messageData) {
         return channelManager.fetch(messageData.channelID).then(channel => {
-           return channel.messages.fetch(messageData.messageID).then(message => {
+            return channel.messages.fetch(messageData.messageID).then(message => {
                 if (listType == "topics") {
                     exports.topicListBuilder(channelManager).then(embed => {
                         message.edit(embed);
@@ -217,7 +217,7 @@ exports.topicListBuilder = function (channelManager) {
 
 exports.pinTopicsList = function (channelManager, channel) {
     exports.topicListBuilder(channelManager).then(embed => {
-        channel.send(embed).then(message => {
+        channel.send({ embeds: [embed] }).then(message => {
             exports.listMessages.topics = {
                 "messageID": message.id,
                 "channelID": message.channel.id
@@ -271,7 +271,7 @@ exports.campaignListBuilder = function (channelManager) {
 
 exports.pinCampaignsList = function (channelManager, channel) {
     exports.campaignListBuilder(channelManager).then(embed => {
-        channel.send(embed).then(message => {
+        channel.send({ embeds: [embed] }).then(message => {
             exports.listMessages.campaigns = {
                 "messageID": message.id,
                 "channelID": message.channel.id
@@ -343,7 +343,7 @@ exports.joinChannel = function (channel, user) {
                             .catch(console.error);
                     }
                 } else {
-                    user.send(`${campaign.title} is already full on players.`)
+                    user.send(`${campaign.title} is already full.`)
                         .catch(console.error);
                 }
             }

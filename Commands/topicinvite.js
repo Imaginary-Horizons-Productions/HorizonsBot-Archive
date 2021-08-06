@@ -24,7 +24,7 @@ command.execute = (receivedMessage, state) => {
 				.addField(`${channel.name}`, channel.topic)
 				.setFooter(`React with ${emoji} to join! (5 minute time limit)`);
 			recipients.forEach(recipient => {
-				recipient.send(embed).then(async message => {
+				recipient.send({ embeds: [embed] }).then(async message => {
 					await message.react(emoji);
 					await message.react("🚫");
 					let collector = message.createReactionCollector((reaction, user) => { return user.id != receivedMessage.client.user.id && reaction.emoji.name == "🚫" || reaction.emoji.name == "🎲" }, { "max": 1, "time": 300000 });

@@ -13,7 +13,7 @@ command.help = (avatarURL) => {
 
 command.execute = (receivedMessage, state) => {
 	// Command specifications go here
-	receivedMessage.author.send(dataPolicyBuilder(receivedMessage.client.user.displayAvatarURL()))
+	receivedMessage.author.send({ embeds: [dataPolicyBuilder(receivedMessage.client.user.displayAvatarURL())] })
 		.catch(console.error);
 }
 
