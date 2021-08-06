@@ -10,7 +10,7 @@ const client = new Client({
             type: "LISTENING"
         }
     },
-    intents: ['DIRECT_MESSAGES', 'GUILD_MEMBERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'GUILD_EMOJIS_AND_STICKERS']
+    intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_EMOJIS_AND_STICKERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'DIRECT_MESSAGES']
 });
 
 client.login(require('./auth.json').token)
