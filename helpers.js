@@ -137,14 +137,14 @@ exports.updateList = function (channelManager, listType) {
             return channel.messages.fetch(messageData.messageID).then(message => {
                 if (listType == "topics") {
                     exports.topicListBuilder(channelManager).then(embed => {
-                        message.edit(embed);
+                        message.edit({ embeds: [embed] });
                         exports.getTopicEmoji().forEach(async emoji => {
                             await message.react(emoji);
                         })
                     }).catch(console.error);
                 } else {
                     exports.campaignListBuilder(channelManager).then(embed => {
-                        message.edit(embed);
+                        message.edit({ embeds: [embed] });
                     }).catch(console.error)
                 }
                 return message;

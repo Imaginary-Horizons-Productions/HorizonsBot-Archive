@@ -20,7 +20,7 @@ command.execute = (receivedMessage, state) => {
 				receivedMessage.client.guilds.fetch(guildID).then(guild => {
 					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setFooter(text, iconURL).setTimestamp();
-						message.edit("", embed);
+						message.edit({ content: "", embeds: [embed] });
 					})
 				})
 			} else {
