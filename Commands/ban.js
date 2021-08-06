@@ -11,7 +11,7 @@ command.execute = (receivedMessage, state) => {
 	// Remove visibility of receiving channel from mentioned user
 	if (isModerator(receivedMessage.author.id)) {
 		if (getManagedChannels().includes(receivedMessage.channel.id)) {
-			receivedMessage.mentions.users.keyArray().filter(id => id != receivedMessage.client.user.id).forEach(id => {
+			receivedMessage.mentions.users.map(user => user.id).filter(id => id != receivedMessage.client.user.id).forEach(id => {
 				receivedMessage.channel.createOverwrite(id, { VIEW_CHANNEL: false }, `Banned by ${receivedMessage.author.tag}`);
 			})
 		} else {

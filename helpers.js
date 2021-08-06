@@ -25,7 +25,7 @@ exports.customEmbeds = require('./data/embedsList.json');
 // {type: {messageID: number, channelID: number}}
 exports.listMessages = require('./data/listMessageIDs.json');
 
-// Collection <channelName, channelID>
+// Collection <channelID, channelName>
 let topics = new Collection();
 
 exports.getTopicIDs = function () {
@@ -47,7 +47,7 @@ exports.addTopic = function (id, channelName) {
 exports.removeTopic = function (channel) {
     topics.delete(channel.id);
     exports.removeTopicEmoji(channel.id);
-    exports.saveObject(topics.keyArray(), 'topicList.json');
+    exports.saveObject(exports.getTopicIDs(), 'topicList.json');
     helpers.updateList(channel.guild.channels, "topics");
 }
 
@@ -63,7 +63,7 @@ exports.getEmojiByChannelID = function (id) {
 
 exports.createJoinCollector = function (message) {
     let collector = message.createReactionCollector((reaction, user) => {
-        return !user.bot && topicEmoji.keyArray().includes(reaction.emoji.name);
+        return !user.bot && exports.getTopicEmoji().includes(reaction.emoji.name);
     });
     collector.on("collect", (reaction, user) => {
         let channel = message.guild.channels.resolve(exports.getTopicByEmoji(emojiString(reaction.emoji)));
@@ -307,7 +307,7 @@ exports.addChannel = function (channelManager, topicName) {
         }).then(channel => {
             exports.addTopic(channel.id, channel.name);
             exports.updateList(channelManager.guild.channels, "topics");
-            exports.saveObject(topics.keyArray(), 'topicList.json');
+            exports.saveObject(exports.getTopicIDs(), 'topicList.json');
             return channel;
         }).catch(console.log);
     })

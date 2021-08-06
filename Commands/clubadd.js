@@ -11,7 +11,7 @@ var command = new Command(["ClubAdd", "CampaignAdd"],
 command.execute = (receivedMessage, state) => {
 	// Create a new club including a text and voice channel in the receiving channel's category and set the mentioned user as host
 	if (isModerator(receivedMessage.author.id)) {
-		let hostID = receivedMessage.mentions.users.keyArray().filter(id => id != receivedMessage.client.user.id)[0];
+		let hostID = receivedMessage.mentions.users.map(user => user.id).filter(id => id != receivedMessage.client.user.id)[0];
 		if (hostID) {
 			let channelManager = receivedMessage.guild.channels;
 			let category = receivedMessage.channel.parent;

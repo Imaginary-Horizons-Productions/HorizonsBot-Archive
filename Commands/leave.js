@@ -19,7 +19,7 @@ command.execute = (receivedMessage, state) => {
 	});
 
 	// Mentions
-	channelsToLeave = channelsToLeave.concat(receivedMessage.mentions.channels.keyArray());
+	channelsToLeave = channelsToLeave.concat(receivedMessage.mentions.channels.map(channel => channel.id));
 
 	// Current Channel
 	if (channelsToLeave.length == 0) {
