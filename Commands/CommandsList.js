@@ -11,8 +11,8 @@ exports.commandSets = [
 		['embedcreate.js', 'embedabandon.js', 'embedsetauthor.js', 'embedsettitle.js', 'embedseturl.js', 'embedsetcolor.js', 'embedsetdescription.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsplicefields.js', 'embedsetimage.js', 'embedsetfooter.js',]),
 	new CommandSet("Topic Commands", "Commands for managing opt-in topic text channels.",
 		["topicinvite.js", "topicadd.js", "topicveto.js"]),
-	new CommandSet("TRPG Campaign Commands", "Commands for managing TRPG text and voice channels.",
-		["campaigndetails.js", "campaignadd.js", "campaignrename.js", "campaignsetseats.js", "campaignsetdescription.js", "campaignsetsystem.js", "campaignsettimeslot.js", "campaignsetimage.js"]),
+	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
+		["clubinvite.js", "clubadd.js", "clubrename.js", "clubsetseats.js", "clubsetdescription.js", "clubsetgame.js", "clubsettimeslot.js", "clubsetimage.js"]),
 	new CommandSet("Moderation Commands", "Commands for managing HorizonsBot's list of moderators.",
 		['modpromote.js', 'moddemote.js'])
 ];

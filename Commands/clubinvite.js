@@ -1,29 +1,29 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
-const { getCampaigns, joinChannel, guildID } = require('./../helpers.js');
+const { getClubs, joinChannel, guildID } = require('../helpers.js');
 
-var command = new Command(["CampaignDetails", "CampaignInvite"], // aliases
-	"Provide mentioned users details on the given campaign", // description
+var command = new Command(["ClubInvite", "ClubDetails", "CampaignInvite", "CampaignDetails"], // aliases
+	"Send the mentioned users an invite to the given club", // description
 	"N/A", // requirements
 	["Example - replace ( ) with your settings"], // headings
-	["`@HorizonsBot CampaignDetails (campaign ID) [recepient(s)]`"]); // texts (must match number of headings)
+	["`@HorizonsBot ClubInvite (club ID) [recepient(s)]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Provide full details on the given campaign
-	let campaign = getCampaigns()[state.messageArray[0]];
+	// Provide full details on the given club
+	let club = getClubs()[state.messageArray[0]];
 	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
-	if (campaign) {
+	if (club) {
 		if (recipients.length == 0) {
 			recipients.push(receivedMessage.author);
 		}
 		let embed = new MessageEmbed()
 			.setAuthor("Click here to visit the Imaginary Horizons Patreon", receivedMessage.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
-			.setTitle(`__**${campaign.title}**__ (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)`)
-			.setDescription(campaign.description)
-			.addField("Campaign Host", `<@${campaign.hostID}>`)
-			.addField("System", campaign.system)
-			.addField("Time Slot", campaign.timeslot)
-			.setImage(campaign.imageURL)
+			.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Players)`)
+			.setDescription(club.description)
+			.addField("Club Host", `<@${club.hostID}>`)
+			.addField("Game", club.system)
+			.addField("Time Slot", club.timeslot)
+			.setImage(club.imageURL)
 			.setFooter("React with 🎲 to join! (5 minute time limit)");
 		recipients.forEach(recipient => {
 			recipient.send({ embeds: [embed] }).then(async message => {
@@ -36,14 +36,14 @@ command.execute = (receivedMessage, state) => {
 						collector.stop();
 					} else if (reaction.emoji.name == "🎲") {
 						receivedMessage.client.guilds.fetch(guildID).then(guild => {
-							joinChannel(guild.channels.resolve(campaign.channelID), recipient);
+							joinChannel(guild.channels.resolve(club.channelID), recipient);
 						});
 					}
 				})
 			})
 		})
 	} else {
-		receivedMessage.author.send(`The campaign you indicated could not be found. Please check for typos!`)
+		receivedMessage.author.send(`The club you indicated could not be found. Please check for typos!`)
 			.catch(console.error);
 	}
 }

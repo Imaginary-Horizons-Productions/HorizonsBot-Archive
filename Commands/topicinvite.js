@@ -6,10 +6,10 @@ var command = new Command(["TopicInvite"], // aliases
 	"Invite users to this topic", // description
 	"Use from channel to invite to", // requirements
 	["Example - replace ( ) with your settings"], // headings
-	["`@HorizonsBot CampaignDetails (recepient(s))`"]); // texts (must match number of headings)
+	["`@HorizonsBot TopicInvite (recepient(s))`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Provide full details on the given campaign
+	// Invite users to the given topic
 	let channel = receivedMessage.channel;
 	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
 	if (getTopicIDs().includes(channel.id)) {

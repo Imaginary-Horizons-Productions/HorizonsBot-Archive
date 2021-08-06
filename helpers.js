@@ -100,21 +100,21 @@ exports.setPetitions = function (petitionListInput) {
     exports.saveObject(petitions, 'petitionList.json');
 }
 
-// {textChannelID: Campaign}
-let campaigns = require('./data/campaignList.json');
-exports.getCampaigns = function () {
-    return campaigns;
+// {textChannelID: Club}
+let clubs = require('./data/clubList.json');
+exports.getClubs = function () {
+    return clubs;
 }
 
-exports.updateCampaign = function (campaign, channelManager) {
-    campaigns[campaign.channelID] = campaign;
-    exports.updateList(channelManager, "campaigns");
-    exports.saveObject(campaigns, 'campaignList.json');
+exports.updateClub = function (club, channelManager) {
+    clubs[club.channelID] = club;
+    exports.updateList(channelManager, "clubs");
+    exports.saveObject(clubs, 'clubList.json');
 }
 
-exports.removeCampaign = function (id) {
-    delete campaigns[id];
-    exports.saveObject(campaigns, 'campaignList.json');
+exports.removeClub = function (id) {
+    delete clubs[id];
+    exports.saveObject(clubs, 'clubList.json');
 }
 
 // Functions
@@ -127,7 +127,7 @@ function emojiString(emoji) {
 }
 
 exports.getManagedChannels = function () {
-    return exports.getTopicIDs().concat(Object.keys(exports.getCampaigns()));
+    return exports.getTopicIDs().concat(Object.keys(exports.getClubs()));
 }
 
 exports.updateList = function (channelManager, listType) {
@@ -143,7 +143,7 @@ exports.updateList = function (channelManager, listType) {
                         })
                     }).catch(console.error);
                 } else {
-                    exports.campaignListBuilder(channelManager).then(embed => {
+                    exports.clubListBuilder(channelManager).then(embed => {
                         message.edit({ embeds: [embed] });
                     }).catch(console.error)
                 }
@@ -232,19 +232,19 @@ exports.pinTopicsList = function (channelManager, channel) {
     }).catch(console.log);
 }
 
-exports.campaignListBuilder = function (channelManager) {
-    let description = "Here's a list of the TRPG campaigns for the server. Learn more about one by typing `@HorizonsBot CampaignDetails (campaign ID)`.\n";
-    let campaigns = exports.getCampaigns();
+exports.clubListBuilder = function (channelManager) {
+    let description = "Here's a list of the clubs on the server. Learn more about one by typing `@HorizonsBot ClubDetails (club ID)`.\n";
+    let clubs = exports.getClubs();
 
-    Object.keys(campaigns).forEach(id => {
-        let campaign = campaigns[id];
-        description += `\n__**${campaign.title}**__ (${campaign.userIDs.length}${campaign.seats != 0 ? `/${campaign.seats}` : ""} Players)\n**ID**: ${campaign.channelID}\n**Host**: <@${campaign.hostID}>\n**Game**: ${campaign.system}\n**Timeslot**: ${campaign.timeslot}\n`;
+    Object.keys(clubs).forEach(id => {
+        let club = clubs[id];
+        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Players)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
     })
 
     if (description.length > 2048) {
         return new Promise((resolve, reject) => {
             let fileText = description;
-            fs.writeFile("data/CampaignChannels.txt", fileText, "utf8", error => {
+            fs.writeFile("data/ClubChannels.txt", fileText, "utf8", error => {
                 if (error) {
                     console.log(error);
                 }
@@ -253,8 +253,8 @@ exports.campaignListBuilder = function (channelManager) {
         }).then(() => {
             return {
                 files: [{
-                    attachment: "data/CampaignChannels.txt",
-                    name: "CampaignChannels.txt"
+                    attachment: "data/ClubChannels.txt",
+                    name: "ClubChannels.txt"
                 }]
             }
         })
@@ -262,17 +262,17 @@ exports.campaignListBuilder = function (channelManager) {
         return new Promise((resolve, reject) => {
             resolve(new MessageEmbed().setColor("#f07581")
                 .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
-                .setTitle("TRPG Campaigns")
+                .setTitle("Clubs")
                 .setDescription(description)
                 .setTimestamp());
         })
     }
 }
 
-exports.pinCampaignsList = function (channelManager, channel) {
-    exports.campaignListBuilder(channelManager).then(embed => {
+exports.pinClubsList = function (channelManager, channel) {
+    exports.clubListBuilder(channelManager).then(embed => {
         channel.send({ embeds: [embed] }).then(message => {
-            exports.listMessages.campaigns = {
+            exports.listMessages.clubs = {
                 "messageID": message.id,
                 "channelID": message.channel.id
             }
@@ -324,26 +324,26 @@ exports.joinChannel = function (channel, user) {
                 }).then(() => {
                     channel.send(`Welcome to ${channel.name}, ${user}!`);
                 }).catch(console.log);
-            } else if (Object.keys(exports.getCampaigns()).includes(channelID)) {
-                let campaign = exports.getCampaigns()[channelID];
-                if (campaign.seats == 0 || campaign.userIDs.length < campaign.seats) {
-                    if (campaign.hostID != user.id && !campaign.userIDs.includes(user.id)) {
-                        campaign.userIDs.push(user.id);
+            } else if (Object.keys(exports.getClubs()).includes(channelID)) {
+                let club = exports.getClubs()[channelID];
+                if (club.seats == 0 || club.userIDs.length < club.seats) {
+                    if (club.hostID != user.id && !club.userIDs.includes(user.id)) {
+                        club.userIDs.push(user.id);
                         channel.createOverwrite(user, {
                             "VIEW_CHANNEL": true
                         }).then(() => {
-                            channel.guild.channels.resolve(campaign.voiceChannelID).createOverwrite(user, {
+                            channel.guild.channels.resolve(club.voiceChannelID).createOverwrite(user, {
                                 "VIEW_CHANNEL": true
                             })
                             channel.send(`Welcome to ${channel.name}, ${user}!`);
                         })
-                        exports.updateCampaign(campaign, channel.guild.channels);
+                        exports.updateClub(club, channel.guild.channels);
                     } else {
-                        user.send(`You are already in ${campaign.title}.`)
+                        user.send(`You are already in ${club.title}.`)
                             .catch(console.error);
                     }
                 } else {
-                    user.send(`${campaign.title} is already full.`)
+                    user.send(`${club.title} is already full.`)
                         .catch(console.error);
                 }
             }

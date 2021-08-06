@@ -8,7 +8,7 @@ var command = new Command(["SetChannelEmoji", "SetChannelEmote"], // aliases
 	["`@HorizonsBot SetChannelEmoji`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
-	// Associates the provided emoji with the topic or campaign channel for joining via reaction
+	// Associates the provided emoji with the topic or club channel for joining via reaction
 	if (isModerator(receivedMessage.author.id)) {
 		receivedMessage.channel.send(`${receivedMessage.author}, react to this message with the emoji to use for reaction-joining. Alternatively, react with :no_entry_sign: to clear the emoji.`).then(async message => {
 			await message.react(`🚫`);
