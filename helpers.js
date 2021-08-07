@@ -29,11 +29,11 @@ exports.listMessages = require('./data/listMessageIDs.json');
 let topics = new Collection();
 
 exports.getTopicIDs = function () {
-    return Object.keys(topics);
+    return Array.from(topics.keys());
 }
 
 exports.getTopicNames = function () {
-    return topics.array();
+    return Array.from(topics.values());
 }
 
 exports.findTopicID = function (channelName) {
@@ -48,7 +48,7 @@ exports.removeTopic = function (channel) {
     topics.delete(channel.id);
     exports.removeTopicEmoji(channel.id);
     exports.saveObject(exports.getTopicIDs(), 'topicList.json');
-    helpers.updateList(channel.guild.channels, "topics");
+    exports.updateList(channel.guild.channels, "topics");
 }
 
 // Collection <emoji, channelID>
@@ -72,7 +72,7 @@ exports.createJoinCollector = function (message) {
 }
 
 exports.getTopicEmoji = function () {
-    return Object.keys(topicEmoji);
+    return Array.from(topicEmoji.keys);
 }
 
 exports.addTopicEmoji = function (emoji, channelID) {
@@ -95,9 +95,10 @@ exports.getPetitions = function () {
     return petitions;
 }
 
-exports.setPetitions = function (petitionListInput) {
+exports.setPetitions = function (petitionListInput, channelManager) {
     petitions = petitionListInput;
     exports.saveObject(petitions, 'petitionList.json');
+    exports.updateList(channelManager, "topics");
 }
 
 // {textChannelID: Club}
@@ -282,44 +283,57 @@ exports.pinClubsList = function (channelManager, channel) {
     }).catch(console.log);
 }
 
-exports.addChannel = function (channelManager, topicName) {
-    return channelManager.guild.members.fetch("536330483852771348").then(bountyBot => { // Creating permissionOverwrites by string doesn't seem to be working at time of writing
-        return channelManager.create(topicName, {
-            "parent": "581886288102424592",
-            "permissionOverwrites": [
-                {
-                    "id": channelManager.client.user.id,
-                    "allow": 268436480 // VIEW_CHANNEL and "Manage Permissions" set to true
-                },
-                {
-                    "id": exports.roleIDs.moderator,
-                    "allow": ["VIEW_CHANNEL"]
-                },
-                {
-                    "id": bountyBot.id, // BountyBot
-                    "allow": ["VIEW_CHANNEL"]
-                },
-                {
-                    "id": channelManager.guild.id, // use the guild id for @everyone
-                    "deny": ["VIEW_CHANNEL"]
-                }
-            ]
-        }).then(channel => {
-            exports.addTopic(channel.id, channel.name);
-            exports.updateList(channelManager.guild.channels, "topics");
-            exports.saveObject(exports.getTopicIDs(), 'topicList.json');
-            return channel;
+exports.checkPetition = function (guild, topicName) {
+    let petitions = exports.getPetitions();
+    let petitionComplete = petitions[topicName].length > guild.memberCount * 0.05;
+    if (petitionComplete) {
+        guild.roles.fetch(guild.id).then(everyoneRole => {
+            guild.roles.fetch(exports.roleIDs.moderator).then(moderatorRole => {
+                guild.channels.create(topicName, {
+                    parent: "581886288102424592",
+                    permissionOverwrites: [
+                        {
+                            "id": moderatorRole,
+                            "allow": ["VIEW_CHANNEL"]
+                        },
+                        {
+                            "id": everyoneRole,
+                            "deny": ["VIEW_CHANNEL"]
+                        }
+                    ],
+                    type: "GUILD_TEXT"
+                }).then(channel => {
+                    // Make channel viewable by petitioners, BountyBot, and HorizonsBot
+                    guild.members.fetch({
+                        user: petitions[topicName].concat(["536330483852771348", guild.client.user.id])
+                    }).then(allowedCollection => {
+                        console.log(allowedCollection);
+                        allowedCollection.mapValues(member => {
+                            channel.permissionOverwrites.create(member.user, {
+                                "VIEW_CHANNEL": true
+                            });
+                        })
+                    }).then(() => {
+                        channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
+                        delete petitions[topicName];
+                        exports.setPetitions(petitions, guild.channels);
+                        exports.addTopic(channel.id, channel.name);
+                        exports.saveObject(exports.getTopicIDs(), 'topicList.json');
+                    })
+                })
+            })
         }).catch(console.log);
-    })
+    }
+    return petitionComplete;
 }
 
 exports.joinChannel = function (channel, user) {
     if (!user.bot) {
         let channelID = channel.id;
-        let permissionOverwrite = channel.permissionOverwrites.get(user.id);
+        let permissionOverwrite = channel.permissionOverwrites.resolve(user.id);
         if (!permissionOverwrite || !permissionOverwrite.deny.has("VIEW_CHANNEL", false)) {
             if (exports.getTopicIDs().includes(channelID)) {
-                channel.createOverwrite(user, {
+                channel.permissionOverwrites.create(user, {
                     "VIEW_CHANNEL": true
                 }).then(() => {
                     channel.send(`Welcome to ${channel.name}, ${user}!`);
@@ -329,10 +343,10 @@ exports.joinChannel = function (channel, user) {
                 if (club.seats == 0 || club.userIDs.length < club.seats) {
                     if (club.hostID != user.id && !club.userIDs.includes(user.id)) {
                         club.userIDs.push(user.id);
-                        channel.createOverwrite(user, {
+                        channel.permissionOverwrites.create(user, {
                             "VIEW_CHANNEL": true
                         }).then(() => {
-                            channel.guild.channels.resolve(club.voiceChannelID).createOverwrite(user, {
+                            channel.guild.channels.resolve(club.voiceChannelID).permissionOverwrites.create(user, {
                                 "VIEW_CHANNEL": true
                             })
                             channel.send(`Welcome to ${channel.name}, ${user}!`);
@@ -363,7 +377,7 @@ exports.saveObject = function (object, fileName) {
     let textToSave = '';
     if (object instanceof Collection) {
         textToSave = [];
-        object.array().forEach(value => {
+        Array.from(object.values).forEach(value => {
             textToSave.push([object.findKey(checkedValue => checkedValue === value), value]);
         })
         textToSave = JSON.stringify(textToSave);

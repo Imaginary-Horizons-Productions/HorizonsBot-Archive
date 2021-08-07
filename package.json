@@ -4,7 +4,7 @@
   "description": "HorizonsBot is the helper bot for the Imaginary Horizons Discord community server.",
   "main": "bot.js",
   "dependencies": {
-    "discord.js": "^13.0.0"
+    "discord.js": "^13.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

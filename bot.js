@@ -66,7 +66,7 @@ client.on('messageCreate', receivedMessage => {
             clubBuriedness = 0;
         }
     }
-    
+
     // Process commands
     if (receivedMessage.author.bot) {
         return;
@@ -110,16 +110,26 @@ client.on('messageCreate', receivedMessage => {
 })
 
 client.on('guildMemberRemove', member => {
+    let memberId = member.id;
+    let guild = member.guild;
+
+    // Remove member's clubs
     let clubs = Object.values(helpers.getClubs());
-    let memberID = member.id;
     for (var club of clubs) {
-        if (memberID == club.hostID) {
-            member.guild.channels.resolve(club.channelID).delete("Club host left server");
-        } else if (club.userIDs.includes(memberID)) {
-            club.userIDs = club.userIDs.filter(id => id != memberID);
-            helpers.updateList(member.guild.channels, "clubs");
+        if (memberId == club.hostID) {
+            guild.channels.resolve(club.channelID).delete("Club host left server");
+        } else if (club.userIDs.includes(memberId)) {
+            club.userIDs = club.userIDs.filter(id => id != memberId);
+            helpers.updateList(guild.channels, "clubs");
         }
     }
+
+    // Remove member from petitions and check if member leaving completes any petitions
+    Object.keys(helpers.getPetitions()).forEach(topicName => {
+        petitions[topicName] = petitions[topicName].filter(id => id != memberId);
+        helpers.setPetitions(petitions, guild.channels);
+        helpers.checkPetition(guild, topicName);
+    })
 })
 
 client.on('channelDelete', channel => {
