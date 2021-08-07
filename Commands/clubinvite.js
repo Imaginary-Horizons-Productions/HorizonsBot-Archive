@@ -3,15 +3,21 @@ const { MessageEmbed } = require('discord.js');
 const { getClubs, joinChannel, guildID } = require('../helpers.js');
 
 var command = new Command(["ClubInvite", "ClubDetails", "CampaignInvite", "CampaignDetails"], // aliases
-	"Send the mentioned users an invite to the given club", // description
+	"Send the mentioned users (default: self) an invite to the given club (indicated by channel mention, or by sending from club)", // description
 	"N/A", // requirements
 	["Example - replace ( ) with your settings"], // headings
-	["`@HorizonsBot ClubInvite (club ID) [recepient(s)]`"]); // texts (must match number of headings)
+	["`@HorizonsBot ClubInvite (mention club text channel) [recepient(s)]`"]); // texts (must match number of headings)
 
 command.execute = (receivedMessage, state) => {
 	// Provide full details on the given club
-	let club = getClubs()[state.messageArray[0]];
-	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
+	let clubId = receivedMessage.channel.id;
+	if (receivedMessage.mentions.channels.first()) {
+		clubId = receivedMessage.mentions.channels.first().id;
+	} else if (!isNaN(parseInt(state.messageArray[0]))) {
+		clubId = state.messageArray[0];
+	}
+	let club = getClubs()[clubId];
+	let recipients = Array.from(receivedMessage.mentions.users.values).filter(user => user.id != receivedMessage.client.user.id);
 	if (club) {
 		if (recipients.length == 0) {
 			recipients.push(receivedMessage.author);
