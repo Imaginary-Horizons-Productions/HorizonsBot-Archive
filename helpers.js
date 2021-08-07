@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Collection, MessageEmbed, GuildEmoji } = require('discord.js');
+const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
 exports.guildID = require('./auth.json').guildID;
 exports.roleIDs = require('./roleIDs.json');
 
@@ -46,47 +46,8 @@ exports.addTopic = function (id, channelName) {
 
 exports.removeTopic = function (channel) {
     topics.delete(channel.id);
-    exports.removeTopicEmoji(channel.id);
     exports.saveObject(exports.getTopicIDs(), 'topicList.json');
     exports.updateList(channel.guild.channels, "topics");
-}
-
-// Collection <emoji, channelID>
-let topicEmoji = new Collection(require("./data/topicEmoji.json"));
-exports.getTopicByEmoji = function (emoji) {
-    return topicEmoji.get(emoji);
-}
-
-exports.getEmojiByChannelID = function (id) {
-    return topicEmoji.findKey(checkedID => checkedID === id);
-}
-
-exports.createJoinCollector = function (message) {
-    let collector = message.createReactionCollector((reaction, user) => {
-        return !user.bot && exports.getTopicEmoji().includes(reaction.emoji.name);
-    });
-    collector.on("collect", (reaction, user) => {
-        let channel = message.guild.channels.resolve(exports.getTopicByEmoji(emojiString(reaction.emoji)));
-        exports.joinChannel(channel, user);
-    })
-}
-
-exports.getTopicEmoji = function () {
-    return Array.from(topicEmoji.keys);
-}
-
-exports.addTopicEmoji = function (emoji, channelID) {
-    let emojiName = emojiString(emoji);
-    if (exports.getTopicByEmoji(emojiName) != -1) {
-        exports.removeTopicEmoji(channelID)
-    }
-    topicEmoji.set(emojiName, channelID);
-    exports.saveObject(topicEmoji, "topicEmoji.json");
-}
-
-exports.removeTopicEmoji = function (channelID) {
-    topicEmoji.delete(exports.getEmojiByChannelID(channelID));
-    exports.saveObject(topicEmoji, "topicEmoji.json");
 }
 
 // {name: [petitioner IDs]}
@@ -119,14 +80,6 @@ exports.removeClub = function (id) {
 }
 
 // Functions
-function emojiString(emoji) {
-    if (emoji instanceof GuildEmoji) {
-        return `<:${emoji.name}:${emoji.id}>`;
-    } else {
-        return emoji.name;
-    }
-}
-
 exports.getManagedChannels = function () {
     return exports.getTopicIDs().concat(Object.keys(exports.getClubs()));
 }
@@ -138,10 +91,36 @@ exports.updateList = function (channelManager, listType) {
             return channel.messages.fetch(messageData.messageID).then(message => {
                 if (listType == "topics") {
                     exports.topicListBuilder(channelManager).then(embed => {
-                        message.edit({ embeds: [embed] });
-                        exports.getTopicEmoji().forEach(async emoji => {
-                            await message.react(emoji);
-                        })
+                        var selectOptions = [];
+                        var topicNames = exports.getTopicNames();
+                        var topicIds = exports.getTopicIDs();
+                        for (var i = 0; i < topicNames.length; i += 1) {
+                            selectOptions.push({
+                                label: topicNames[i],
+                                description: "",
+                                value: topicIds[i]
+                            })
+                        }
+                        var petitionSelect = [];
+                        for (var petition of Object.keys(exports.getPetitions())) {
+                            petitionSelect.push({
+                                label: petition,
+                                description: "",
+                                value: petition
+                            })
+                        }
+                        var rows = [new MessageActionRow().addComponents(
+                            new MessageSelectMenu()
+                                .setCustomId("topicListSelect")
+                                .setPlaceholder("Select a topic...")
+                                .addOptions(selectOptions)),
+                        new MessageActionRow().addComponents(
+                            new MessageSelectMenu()
+                                .setCustomId("petitionListSelect")
+                                .setPlaceholder("Select a petition...")
+                                .addOptions(petitionSelect))
+                        ]
+                        message.edit({ embeds: [embed], components: rows });
                     }).catch(console.error);
                 } else {
                     exports.clubListBuilder(channelManager).then(embed => {
@@ -155,23 +134,19 @@ exports.updateList = function (channelManager, listType) {
 }
 
 exports.topicListBuilder = function (channelManager) {
-    let description = "Here's a list of the opt-in topic channels for the server and their associated emoji. Join them by typing `@HorizonsBot Join (channel names)` or by reacting with their emoji.\n";
+    let description = "Here's a list of the opt-in topic channels for the server. Join them by typing `@HorizonsBot Join (channel names)` or by using the select menu under this message (jump to message in pins).\n";
     let topics = exports.getTopicIDs();
 
     for (let i = 0; i < topics.length; i += 1) {
         let id = topics[i];
         let channel = channelManager.resolve(id);
         if (channel) {
-            let channelEmote = "";
-            if (Object.values(topics).includes(id)) {
-                channelEmote = exports.getEmojiByChannelID(id);
-            }
-            description += `\n__${channel.name}__${channelEmote ? ` (React with ${channelEmote} to join)` : ""}`;
+            description += `\n__${channel.name}__ ${channel.description}`;
         }
     }
 
     let petitionNames = Object.keys(petitions);
-    let petitionText = `Here are the topic channels that have been petitioned for. They will automatically be added when reaching **${Math.ceil(channelManager.guild.memberCount * 0.05)} petitions** (5% of the server).\n`;
+    let petitionText = `Here are the topic channels that have been petitioned for. They will automatically be added when reaching **${Math.ceil(channelManager.guild.memberCount * 0.05)} petitions** (5% of the server). You can sign onto an already open petition with the select menu under this message (jump to message in pins).\n`;
     if (petitionNames.length > 0) {
         petitionNames.forEach(topicName => {
             petitionText += `\n${topicName}: ${petitions[topicName].length} petitioner(s) so far`;
@@ -223,12 +198,8 @@ exports.pinTopicsList = function (channelManager, channel) {
                 "messageID": message.id,
                 "channelID": message.channel.id
             }
-            exports.getTopicEmoji().forEach(async emoji => {
-                await message.react(emoji);
-            })
-            exports.createJoinCollector(message);
-            message.pin();
             exports.saveObject(exports.listMessages, "listMessageIDs.json");
+            message.pin();
         })
     }).catch(console.log);
 }
@@ -283,10 +254,21 @@ exports.pinClubsList = function (channelManager, channel) {
     }).catch(console.log);
 }
 
-exports.checkPetition = function (guild, topicName) {
+exports.checkPetition = function (guild, topicName, author = null) {
     let petitions = exports.getPetitions();
-    let petitionComplete = petitions[topicName].length > guild.memberCount * 0.05;
-    if (petitionComplete) {
+    if (!petitions[topicName]) {
+        petitions[topicName] = [];
+    }
+    if (author) {
+        if (!petitions[topicName].includes(author.id)) {
+            petitions[topicName].push(receivedMessage.author.id);
+        } else {
+            author.send(`You have already petitioned for ${topicName}.`)
+                .catch(console.error)
+            return;
+        }
+    }
+    if (petitions[topicName].length > guild.memberCount * 0.05) {
         guild.roles.fetch(guild.id).then(everyoneRole => {
             guild.roles.fetch(exports.roleIDs.moderator).then(moderatorRole => {
                 guild.channels.create(topicName, {
@@ -323,8 +305,11 @@ exports.checkPetition = function (guild, topicName) {
                 })
             })
         }).catch(console.log);
+    } else {
+        author.send(`Your petition for ${topicName} has been recorded.`)
+            .catch(console.error)
+        setPetitions(petitions, guild.channels);
     }
-    return petitionComplete;
 }
 
 exports.joinChannel = function (channel, user) {

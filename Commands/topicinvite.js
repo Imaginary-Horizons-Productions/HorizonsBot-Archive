@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
-const { getTopicIDs, joinChannel, guildID, getEmojiByChannelID } = require('../helpers.js');
+const { getTopicIDs, joinChannel, guildID } = require('../helpers.js');
 
 var command = new Command(["TopicInvite"], // aliases
 	"Invite users to this topic", // description
@@ -14,25 +14,21 @@ command.execute = (receivedMessage, state) => {
 	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
 	if (getTopicIDs().includes(channel.id)) {
 		if (recipients.length > 0) {
-			let emoji = getEmojiByChannelID(channel.id);
-			if (emoji == undefined) {
-				emoji = "✅";
-			}
 			let embed = new MessageEmbed()
 				.setAuthor("Click here to visit the Imaginary Horizons Patreon", receivedMessage.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
 				.setDescription(`${receivedMessage.member} has invited you to the following opt-in channel on Imaginary Horizons.`)
 				.addField(`${channel.name}`, channel.topic)
-				.setFooter(`React with ${emoji} to join! (5 minute time limit)`);
+				.setFooter(`React with ✅ to join! (5 minute time limit)`);
 			recipients.forEach(recipient => {
 				recipient.send({ embeds: [embed] }).then(async message => {
-					await message.react(emoji);
+					await message.react("✅");
 					await message.react("🚫");
-					let collector = message.createReactionCollector((reaction, user) => { return user.id != receivedMessage.client.user.id && reaction.emoji.name == "🚫" || reaction.emoji.name == "🎲" }, { "max": 1, "time": 300000 });
+					let collector = message.createReactionCollector((reaction, user) => { return user.id != receivedMessage.client.user.id && reaction.emoji.name == "🚫" || reaction.emoji.name == "✅" }, { "max": 1, "time": 300000 });
 
 					collector.on("collect", (reaction) => {
-						if (reaction.emoji.name == "🚫") {
+						if (reaction.emoji.name === "🚫") {
 							collector.stop();
-						} else if (reaction.emoji.name == emoji) {
+						} else if (reaction.emoji.name === "✅") {
 							receivedMessage.client.guilds.fetch(guildID).then(guild => {
 								joinChannel(guild.channels.resolve(channel.channelID), recipient);
 							});

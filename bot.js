@@ -23,9 +23,7 @@ client.on('ready', () => {
         // Update pinned lists
         let channelManager = guild.channels;
         if (helpers.listMessages.topics) {
-            helpers.updateList(channelManager, "topics").then(message => {
-                helpers.createJoinCollector(message);
-            });
+            helpers.updateList(channelManager, "topics");
         }
 
         if (helpers.listMessages.clubs) {
@@ -105,6 +103,21 @@ client.on('messageCreate', receivedMessage => {
         } else {
             receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
                 .catch(console.error);
+        }
+    }
+})
+
+client.on("interactionCreate", interaction => {
+    if (interaction.isSelectMenu()) {
+        if (interaction.customId === "topicListSelect") {
+            interaction.guild.channels.fetch(interaction.values[0]).then(channel => {
+                helpers.joinChannel(channel, interaction.user);
+            }).then(() => {
+                interaction.update("\u200B");
+            })
+        } else if (interaction.customId = "petitionListSelect") {
+            helpers.checkPetition(interaction.guild, interaction.values[0], interaction.user);
+            interaction.update("\u200B");
         }
     }
 })

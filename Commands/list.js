@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 		receivedMessage.client.guilds.fetch(guildID).then(guild => {
 			if (listType == "topic" || listType == "topics") {
 				topicListBuilder(guild.channels).then(embed => {
-					receivedMessage.author.send({ embeds: [embed.setFooter("Note: joining by reaction not enabled for \"list\" command.")] });
+					receivedMessage.author.send({ embeds: [embed.setFooter("Note: joining or petitioning by select menu not enabled for \"list\" command.")] });
 				}).catch(console.log);
 			} else if (listType == "club" || listType == "clubs") {
 				clubListBuilder(guild.channels).then(embed => {
