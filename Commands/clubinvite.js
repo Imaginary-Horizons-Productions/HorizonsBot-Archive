@@ -29,24 +29,28 @@ command.execute = (receivedMessage, state) => {
 			.addField("Club Host", `<@${club.hostID}>`)
 			.addField("Game", club.system)
 			.addField("Time Slot", club.timeslot)
-			.setImage(club.imageURL)
-			.setFooter("React with 🎲 to join! (5 minute time limit)");
+			.setImage(club.imageURL);
 		recipients.forEach(recipient => {
-			recipient.send({ embeds: [embed] }).then(async message => {
-				await message.react("🎲");
-				await message.react("🚫");
-				let collector = message.createReactionCollector((reaction, user) => { return user.id != receivedMessage.client.user.id && reaction.emoji.name == "🚫" || reaction.emoji.name == "🎲" }, { "max": 1, "time": 300000 });
+			if (recipient.id === club.hostID || club.userIDs.includes(recipient.id)) {
+				recipient.send({ content: "Here is a preview of your club's info sheet. When sent to server members not in the club already, it'll also include an option to join.",embeds: [embed] })
+					.catch(console.error);
+			} else {
+				recipient.send({ embeds: [embed.setFooter("React with 🎲 to join! (5 minute time limit)")] }).then(async message => {
+					await message.react("🎲");
+					await message.react("🚫");
+					let collector = message.createReactionCollector((reaction, user) => { return user.id != receivedMessage.client.user.id && reaction.emoji.name == "🚫" || reaction.emoji.name == "🎲" }, { "max": 1, "time": 300000 });
 
-				collector.on("collect", (reaction) => {
-					if (reaction.emoji.name == "🚫") {
-						collector.stop();
-					} else if (reaction.emoji.name == "🎲") {
-						receivedMessage.client.guilds.fetch(guildID).then(guild => {
-							joinChannel(guild.channels.resolve(club.channelID), recipient);
-						});
-					}
-				})
-			})
+					collector.on("collect", (reaction) => {
+						if (reaction.emoji.name == "🚫") {
+							collector.stop();
+						} else if (reaction.emoji.name == "🎲") {
+							receivedMessage.client.guilds.fetch(guildID).then(guild => {
+								joinChannel(guild.channels.resolve(club.channelID), recipient);
+							});
+						}
+					})
+				}).catch(console.error);
+			}
 		})
 	} else {
 		receivedMessage.author.send(`The club you indicated could not be found. Please check for typos!`)
