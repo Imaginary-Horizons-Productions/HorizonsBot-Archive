@@ -12,7 +12,7 @@ command.execute = (receivedMessage, state) => {
 	if (isModerator(receivedMessage.author.id)) {
 		if (getManagedChannels().includes(receivedMessage.channel.id)) {
 			receivedMessage.mentions.users.map(user => user.id).filter(id => id != receivedMessage.client.user.id).forEach(id => {
-				receivedMessage.channel.createOverwrite(id, { VIEW_CHANNEL: false }, `Banned by ${receivedMessage.author.tag}`);
+				receivedMessage.channel.permissionOverwrites.create(id, { VIEW_CHANNEL: false }, `Banned by ${receivedMessage.author.tag}`);
 			})
 		} else {
 			receivedMessage.author.send(`Please use the \`ban\` command from a topic or club channel.`)
