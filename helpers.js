@@ -1,21 +1,20 @@
 const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
-exports.guildID = require('./auth.json').guildID;
-exports.roleIDs = require('./roleIDs.json');
+exports.guildID = require('./data/auth.json').guildID;
 
 // [userID]
 let moderatorIDs = require('./data/moderatorIDs.json');
 exports.isModerator = function (id) {
-    return moderatorIDs.includes(id);
+    return moderatorIDs.userIds.includes(id);
 }
 
 exports.addModerator = function (id) {
-    moderatorIDs.push(id);
+    moderatorIDs.userIds.push(id);
     exports.saveObject(moderatorIDs, "moderatorIDs.json");
 }
 
 exports.removeModerator = function (removedID) {
-    moderatorIDs.filter(id => id != removedID);
+    moderatorIDs.userIds.filter(id => id != removedID);
     exports.saveObject(moderatorIDs, "moderatorIDs.json");
 }
 
@@ -270,7 +269,7 @@ exports.checkPetition = function (guild, topicName, author = null) {
     }
     if (petitions[topicName].length > guild.memberCount * 0.05) {
         guild.roles.fetch(guild.id).then(everyoneRole => {
-            guild.roles.fetch(exports.roleIDs.moderator).then(moderatorRole => {
+            guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
                 guild.channels.create(topicName, {
                     parent: "581886288102424592",
                     permissionOverwrites: [

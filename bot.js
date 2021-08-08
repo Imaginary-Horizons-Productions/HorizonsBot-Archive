@@ -13,7 +13,7 @@ const client = new Client({
     intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_EMOJIS_AND_STICKERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'DIRECT_MESSAGES']
 });
 
-client.login(require('./auth.json').token)
+client.login(require('./data/auth.json').token)
     .catch(console.error);
 
 client.on('ready', () => {
