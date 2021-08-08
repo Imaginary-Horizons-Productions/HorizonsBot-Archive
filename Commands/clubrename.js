@@ -12,7 +12,7 @@ command.execute = (receivedMessage, state) => {
 	let club = getClubs()[receivedMessage.channel.id];
 	if (club) {
 		if (isModerator(receivedMessage.author.id) || receivedMessage.author.id == club.hostID) {
-			let newName = state.messageArray.join('-');
+			let newName = state.messageArray.join(' ');
 			if (newName) {
 				club.title = newName;
 				receivedMessage.channel.setName(newName);

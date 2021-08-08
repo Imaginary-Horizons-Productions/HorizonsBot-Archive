@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-var { roleIDs, isModerator, addModerator, saveObject } = require('../helpers.js');
+var { getModRoleID, isModerator, addModerator } = require('../helpers.js');
 
 var command = new Command(["ModPromote", "AddMod"], // aliases
 	"Add a Moderator to HorizonsBot's list and give them the role", // description
@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 			let promotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (promotee) {
 				if (!isModerator(promotee.id)) {
-					promotee.roles.add(roleIDs.moderator);
+					promotee.roles.add(getModRoleID());
 					addModerator(promotee.id);
 					receivedMessage.channel.send(`${promotee} has been promoted to Moderator.`)
 						.catch(console.error);

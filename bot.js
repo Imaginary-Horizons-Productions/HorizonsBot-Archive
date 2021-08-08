@@ -80,7 +80,7 @@ client.on('messageCreate', receivedMessage => {
         if (receivedMessage.guild) {
             // Message from guild
             firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || (firstWord != client.user.id && (helpers.roleIDs.permissions == "" || firstWord != receivedMessage.guild.me.roles.botRole.id))) {
+            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != receivedMessage.guild.me.roles.botRole.id)) {
                 return;
             }
             command = messageArray.shift();

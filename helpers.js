@@ -18,6 +18,11 @@ exports.removeModerator = function (removedID) {
     exports.saveObject(moderatorIDs, "moderatorIDs.json");
 }
 
+exports.getModRoleID = function () {
+    if (!moderatorIDs.roleId) console.error("./data/moderatorIDs.json/roleId not defined");
+    return moderatorIDs.roleId;
+}
+
 // {messageID: channelID}
 exports.customEmbeds = require('./data/embedsList.json');
 

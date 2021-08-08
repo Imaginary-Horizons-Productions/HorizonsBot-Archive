@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-var { roleIDs, isModerator, removeModerator } = require('../helpers.js');
+var { getModRoleID, isModerator, removeModerator } = require('../helpers.js');
 
 var command = new Command(["ModDemote"], // aliases
 	"Remove a Moderator from HorizonsBot's list and remove the role", // description
@@ -14,7 +14,7 @@ command.execute = (receivedMessage, state) => {
 			let demotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (demotee) {
 				if (isModerator(demotee.id)) {
-					demotee.roles.remove(roleIDs.moderator);
+					demotee.roles.remove(getModRoleID());
 					removeModerator(demotee.id);
 					receivedMessage.channel.send(`${demotee} has been demoted from Moderator.`)
 						.catch(console.error);
