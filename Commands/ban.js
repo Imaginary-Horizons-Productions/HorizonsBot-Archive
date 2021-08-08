@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { isModerator, getManagedChannels } = require('../helpers.js');
+const { isModerator, getManagedChannels, getClubs, updateList, updateClub } = require('../helpers.js');
 
 var command = new Command(["Ban"], // aliases
 	"Ban mentioned users from a topic or club channel", // description
@@ -13,6 +13,11 @@ command.execute = (receivedMessage, state) => {
 		if (getManagedChannels().includes(receivedMessage.channel.id)) {
 			receivedMessage.mentions.users.map(user => user.id).filter(id => id != receivedMessage.client.user.id).forEach(id => {
 				receivedMessage.channel.permissionOverwrites.create(id, { VIEW_CHANNEL: false }, `Banned by ${receivedMessage.author.tag}`);
+				var club = getClubs()[receivedMessage.channel.id];
+				if (club) {
+					club.userIDs = club.userIDs.filter(memberId => memberId != id);
+					updateClub(club, receivedMessage.guild.chanels);
+				}
 			})
 		} else {
 			receivedMessage.author.send(`Please use the \`ban\` command from a topic or club channel.`)
