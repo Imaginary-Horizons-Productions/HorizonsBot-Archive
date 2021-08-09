@@ -13,8 +13,8 @@ command.execute = (receivedMessage, state) => {
 	if (club) {
 		if (isModerator(receivedMessage.author.id) || (club && receivedMessage.author.id == club.hostID)) {
 			let url = state.messageArray.join('');
-			if (url == "" && receivedMessage.attachments.array().length > 0) {
-				url = receivedMessage.attachments.array()[0].url;
+			if (url == "" && Array.from(receivedMessage.attachments.values).length > 0) {
+				url = receivedMessage.attachments.first().url;
 			}
 			if (url) {
 				club.imageURL = url;
