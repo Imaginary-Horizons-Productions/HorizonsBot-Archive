@@ -16,14 +16,14 @@ command.execute = (receivedMessage, state) => {
 			if (system) {
 				club.system = system;
 				updateClub(club, receivedMessage.guild.channels);
-				receivedMessage.author.send(`${club.title}'s system has been set as ${system}.`)
+				receivedMessage.author.send(`${club.title}'s game has been set as ${system}.`)
 					.catch(console.error);
 			} else {
-				receivedMessage.author.send(`Please provide the system for the club.`)
+				receivedMessage.author.send(`Please provide the game for the club.`)
 					.catch(console.error);
 			}
 		} else {
-			receivedMessage.author.send(`Setting a club system is restricted to the host of that club or Moderators.`)
+			receivedMessage.author.send(`Setting a club game is restricted to the host of that club or Moderators.`)
 				.catch(console.error);
 		}
 	} else {
