@@ -57,7 +57,7 @@ command.execute = (receivedMessage, state) => {
 					updateClub(club, receivedMessage.guild.channels);
 				}
 			} else {
-				receivedMessage.channel.permissionOverwrites.get(userID).delete("HorizonsBot leave used")
+				receivedMessage.channel.permissionOverwrites.delete(receivedMessage.author, "HorizonsBot leave used")
 					.catch(console.error);
 			}
 		} else {
