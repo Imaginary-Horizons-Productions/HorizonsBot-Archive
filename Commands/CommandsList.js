@@ -8,7 +8,7 @@ exports.commandSets = [
 	new CommandSet("Dice Rolling Commands", "Use these commands to roll dice.",
 		["roll.js", "rolldetailed.js", "rollverbose.js", "rollwithmax.js"]),
 	new CommandSet("Custom Message Embeds", "To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select \"Copy ID\".",
-		['embedcreate.js', 'embedabandon.js', 'embedsetauthor.js', 'embedsettitle.js', 'embedseturl.js', 'embedsetcolor.js', 'embedsetdescription.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsplicefields.js', 'embedsetimage.js', 'embedsetfooter.js',]),
+		['embedcreate.js', 'embedabandon.js', 'embedsetauthor.js', 'embedsettitle.js', 'embedseturl.js', 'embedsetcolor.js', 'embedsetdescription.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsplicefields.js', 'embedsetimage.js']),
 	new CommandSet("Topic Commands", "Commands for managing opt-in topic text channels.",
 		["topicinvite.js", "topicadd.js", "topicveto.js"]),
 	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
