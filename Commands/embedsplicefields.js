@@ -21,7 +21,7 @@ command.execute = (receivedMessage, state) => {
 					receivedMessage.client.guilds.fetch(guildID).then(guild => {
 						guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 							let embed = message.embeds[0].spliceFields(index, deleteCount).setTimestamp();
-							message.edit({ content: "", embeds: [embed] });
+							message.edit({ content: "\u200B", embeds: [embed] });
 						})
 					})
 				} else {
