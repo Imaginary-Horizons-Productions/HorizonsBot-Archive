@@ -94,16 +94,26 @@ exports.updateList = function (channelManager, listType) {
             return channel.messages.fetch(messageData.messageID).then(message => {
                 if (listType == "topics") {
                     exports.topicListBuilder(channelManager).then(embed => {
-                        var selectOptions = [];
+                        var rows = [];
+
                         var topicNames = exports.getTopicNames();
                         var topicIds = exports.getTopicIDs();
-                        for (var i = 0; i < topicNames.length; i += 1) {
-                            selectOptions.push({
-                                label: topicNames[i],
-                                description: "",
-                                value: topicIds[i]
-                            })
+                        if (topicNames.length > 0) {
+                            var topicSelect = [];
+                            for (var i = 0; i < topicNames.length; i += 1) {
+                                topicSelect.push({
+                                    label: topicNames[i],
+                                    description: "",
+                                    value: topicIds[i]
+                                })
+                            }
+                            rows.push(new MessageActionRow().addComponents(
+                                new MessageSelectMenu()
+                                    .setCustomId("topicListSelect")
+                                    .setPlaceholder("Select a topic...")
+                                    .addOptions(topicSelect)))
                         }
+
                         var petitionSelect = [];
                         for (var petition of Object.keys(exports.getPetitions())) {
                             petitionSelect.push({
@@ -112,17 +122,13 @@ exports.updateList = function (channelManager, listType) {
                                 value: petition
                             })
                         }
-                        var rows = [new MessageActionRow().addComponents(
-                            new MessageSelectMenu()
-                                .setCustomId("topicListSelect")
-                                .setPlaceholder("Select a topic...")
-                                .addOptions(selectOptions)),
-                        new MessageActionRow().addComponents(
-                            new MessageSelectMenu()
-                                .setCustomId("petitionListSelect")
-                                .setPlaceholder("Select a petition...")
-                                .addOptions(petitionSelect))
-                        ]
+                        if (petitionSelect.length > 0) {
+                            rows.push(new MessageActionRow().addComponents(
+                                new MessageSelectMenu()
+                                    .setCustomId("petitionListSelect")
+                                    .setPlaceholder("Select a petition...")
+                                    .addOptions(petitionSelect)))
+                        }
                         message.edit({ embeds: [embed], components: rows });
                     }).catch(console.error);
                 } else {

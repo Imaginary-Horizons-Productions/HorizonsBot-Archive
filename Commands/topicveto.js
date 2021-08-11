@@ -20,6 +20,7 @@ command.execute = (receivedMessage, state) => {
 				let collector = message.createReactionCollector((reaction, user) => { return user.id == receivedMessage.author.id && (reaction.emoji.name == "🚫" || reaction.emoji.name == "✅") }, { "max": 1 });
 
 				collector.on("collect", (reaction) => {
+					console.log("collect emitted");
 					if (reaction.emoji.name == "🚫") {
 						message.edit(`Petition veto cancelled.`)
 							.catch(console.error);
