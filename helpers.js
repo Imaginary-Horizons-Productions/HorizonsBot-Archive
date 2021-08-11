@@ -14,7 +14,7 @@ exports.addModerator = function (id) {
 }
 
 exports.removeModerator = function (removedID) {
-    moderatorIDs.userIds.filter(id => id != removedID);
+    moderatorIDs.userIds = moderatorIDs.userIds.filter(id => id != removedID);
     exports.saveObject(moderatorIDs, "moderatorIDs.json");
 }
 

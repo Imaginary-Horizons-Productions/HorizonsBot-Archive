@@ -11,7 +11,7 @@ command.execute = (receivedMessage, state) => {
 	// Remove a Moderator: remove from list, remove role and channel permissions
 	if (receivedMessage.guild) {
 		if (!receivedMessage.member.manageable || isModerator(receivedMessage.author.id)) {
-			let demotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
+			let demotee = receivedMessage.mentions.members.map(member => member).filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (demotee) {
 				if (isModerator(demotee.id)) {
 					demotee.roles.remove(getModRoleID());

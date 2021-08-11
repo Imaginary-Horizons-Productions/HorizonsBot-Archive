@@ -11,7 +11,7 @@ command.execute = (receivedMessage, state) => {
 	// Add a Moderator: add to list, give role and channel permissions
 	if (receivedMessage.guild) {
 		if (!receivedMessage.member.manageable || isModerator(receivedMessage.author.id)) {
-			let promotee = receivedMessage.mentions.members.array().filter(member => member.id != receivedMessage.client.user.id)[0];
+			let promotee = receivedMessage.mentions.members.map(member => member).filter(member => member.id != receivedMessage.client.user.id)[0];
 			if (promotee) {
 				if (!isModerator(promotee.id)) {
 					promotee.roles.add(getModRoleID());
