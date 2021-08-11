@@ -9,10 +9,11 @@ const client = new Client({
             name: "@HorizonsBot help",
             type: "LISTENING"
         }
-    }
+    },
+    intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_EMOJIS_AND_STICKERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS']
 });
 
-client.login(require('./auth.json').token)
+client.login(require('./data/auth.json').token)
     .catch(console.error);
 
 client.on('ready', () => {
@@ -22,48 +23,48 @@ client.on('ready', () => {
         // Update pinned lists
         let channelManager = guild.channels;
         if (helpers.listMessages.topics) {
-            helpers.updateList(channelManager, "topics").then(message => {
-                helpers.createJoinCollector(message);
-            });
+            helpers.updateList(channelManager, "topics");
         }
 
-        if (helpers.listMessages.campaigns) {
-            helpers.updateList(channelManager, "campaigns");
+        if (helpers.listMessages.clubs) {
+            helpers.updateList(channelManager, "clubs");
         }
 
         // Generate topic collection
         require('./data/topicList.json').forEach(id => {
-            helpers.addTopic(id, guild.channels.resolve(id).name);
+            guild.channels.fetch(id).then(channel => {
+                helpers.addTopic(id, channel.name);
+            })
         })
     })
 })
 
 let topicBuriedness = 0;
-let campaignBuriedness = 0;
+let clubBuriedness = 0;
 
-client.on('message', receivedMessage => {
+client.on('messageCreate', receivedMessage => {
     // Count messages for pin bumping
     if (helpers.listMessages.topics && receivedMessage.channel.id === helpers.listMessages.topics.channelID) {
         topicBuriedness += 1;
-        if (topicBuriedness > 19) {
+        if (topicBuriedness > 9) {
             receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
-                oldMessage.delete({ "reason": "bump topics pin" });
+                oldMessage.delete();
             })
             helpers.pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
             topicBuriedness = 0;
         }
     }
-    if (helpers.listMessages.campaigns && receivedMessage.channel.id == helpers.listMessages.campaigns.channelID) {
-        campaignBuriedness += 1;
-        if (campaignBuriedness > 19) {
-            receivedMessage.channel.messages.fetch(helpers.listMessages.campaigns.messageID).then(oldMessage => {
-                oldMessage.delete({ "reason": "bump campaigns pin" });
+    if (helpers.listMessages.clubs && receivedMessage.channel.id == helpers.listMessages.clubs.channelID) {
+        clubBuriedness += 1;
+        if (clubBuriedness > 9) {
+            receivedMessage.channel.messages.fetch(helpers.listMessages.clubs.messageID).then(oldMessage => {
+                oldMessage.delete();
             })
-            helpers.pinCampaignsList(receivedMessage.guild.channels, receivedMessage.channel);
-            campaignBuriedness = 0;
+            helpers.pinClubsList(receivedMessage.guild.channels, receivedMessage.channel);
+            clubBuriedness = 0;
         }
     }
-    
+
     // Process commands
     if (receivedMessage.author.bot) {
         return;
@@ -79,7 +80,7 @@ client.on('message', receivedMessage => {
         if (receivedMessage.guild) {
             // Message from guild
             firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || (firstWord != client.user.id && (helpers.roleIDs.permissions == "" || firstWord != helpers.roleIDs.permissions))) {
+            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != receivedMessage.guild.me.roles.botRole.id)) {
                 return;
             }
             command = messageArray.shift();
@@ -106,46 +107,72 @@ client.on('message', receivedMessage => {
     }
 })
 
-client.on('guildMemberRemove', member => {
-    let campaigns = Object.values(helpers.getCampaigns());
-    let memberID = member.id;
-    for (campaign of campaigns) {
-        if (memberID == campaign.hostID) {
-            member.guild.channels.resolve(campaign.channelID).delete("Campaign host left server");
-        } else if (campaign.userIDs.includes(memberID)) {
-            campaign.userIDs = campaign.userIDs.filter(id => id != memberID);
-            helpers.updateList(member.guild.channels, "campaigns");
+client.on("interactionCreate", interaction => {
+    if (interaction.isSelectMenu()) {
+        if (interaction.customId === "topicListSelect") {
+            interaction.guild.channels.fetch(interaction.values[0]).then(channel => {
+                helpers.joinChannel(channel, interaction.user);
+            }).then(() => {
+                interaction.update("\u200B");
+            })
+        } else if (interaction.customId = "petitionListSelect") {
+            helpers.checkPetition(interaction.guild, interaction.values[0], interaction.user);
+            interaction.update("\u200B");
         }
     }
+})
+
+client.on('guildMemberRemove', member => {
+    let memberId = member.id;
+    let guild = member.guild;
+
+    // Remove member's clubs
+    let clubs = Object.values(helpers.getClubs());
+    for (var club of clubs) {
+        if (memberId == club.hostID) {
+            guild.channels.resolve(club.channelID).delete("Club host left server");
+        } else if (club.userIDs.includes(memberId)) {
+            club.userIDs = club.userIDs.filter(id => id != memberId);
+            helpers.updateList(guild.channels, "clubs");
+        }
+    }
+
+    // Remove member from petitions and check if member leaving completes any petitions
+    Object.keys(helpers.getPetitions()).forEach(topicName => {
+        petitions[topicName] = petitions[topicName].filter(id => id != memberId);
+        helpers.setPetitions(petitions, guild.channels);
+        helpers.updateList(channelManager, "topics");
+        helpers.checkPetition(guild, topicName);
+    })
 })
 
 client.on('channelDelete', channel => {
     let channelID = channel.id;
     let topics = helpers.getTopicIDs();
-    let campaigns = helpers.getCampaigns();
+    let clubs = helpers.getClubs();
     if (topics && topics.includes(channelID)) {
         helpers.removeTopic(channel);
-    } else if (campaigns) {
-        if (Object.values(campaigns).map(campaign => { return campaign.voiceChannelID; }).includes(channelID)) {
-            for (campaign of Object.values(campaigns)) {
-                if (campaign.voiceChannelID == channelID) {
-                    let textChannel = channel.guild.channels.resolve(campaign.channelID);
+    } else if (clubs) {
+        if (Object.values(clubs).map(club => { return club.voiceChannelID; }).includes(channelID)) {
+            for (var club of Object.values(clubs)) {
+                if (club.voiceChannelID == channelID) {
+                    let textChannel = channel.guild.channels.resolve(club.channelID);
                     if (textChannel) {
                         textChannel.delete();
-                        helpers.removeCampaign(campaign.channelID);
+                        helpers.removeClub(club.channelID);
                     }
                     break;
                 }
             }
-        } else if (Object.keys(campaigns).includes(channelID)) {
-            let voiceChannel = channel.guild.channels.resolve(campaigns[channelID].voiceChannelID);
+        } else if (Object.keys(clubs).includes(channelID)) {
+            let voiceChannel = channel.guild.channels.resolve(clubs[channelID].voiceChannelID);
             if (voiceChannel) {
                 voiceChannel.delete();
-                helpers.removeCampaign(channelID);
+                helpers.removeClub(channelID);
             }
         } else {
             return;
         }
-        helpers.updateList(channel.guild.channels, "campaigns");
+        helpers.updateList(channel.guild.channels, "clubs");
     }
 })

@@ -1,5 +1,5 @@
 const Command = require('./../Classes/Command.js');
-const { MessageEmbed } = require( 'discord.js');
+const { MessageEmbed } = require('discord.js');
 
 var command = new Command(["Support"],
 	"Show ways to support the community",
@@ -14,7 +14,7 @@ command.help = (avatarURL) => {
 
 command.execute = (receivedMessage, state) => {
 	// Lists ways users can support development
-	receivedMessage.author.send(supportBuilder(receivedMessage.client.user.displayAvatarURL()))
+	receivedMessage.author.send({ embeds: [supportBuilder(receivedMessage.client.user.displayAvatarURL())] })
 		.catch(console.error);
 }
 

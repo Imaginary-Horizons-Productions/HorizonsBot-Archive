@@ -17,12 +17,12 @@ command.execute = (receivedMessage, state) => {
             searchTerm = searchTerm.toLowerCase();
             var lookedUpCommand = getCommand(searchTerm);
             if (lookedUpCommand) {
-                receivedMessage.author.send(lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL()))
+                receivedMessage.author.send({ embeds: [lookedUpCommand.help(receivedMessage.client.user.displayAvatarURL())] })
                     .catch(console.error);
             } else {
                 receivedMessage.author.send(`**${searchTerm}** does not appear to be a ${receivedMessage.client.user} command. Please check for typos!`)
                     .catch(console.error);
-            }    
+            }
         })
     } else {
         let titleString = "HorizonsBot Commands";
@@ -55,7 +55,7 @@ command.execute = (receivedMessage, state) => {
                 embed.addField(commandSet.name, commandSetText);
             }
         }
-        receivedMessage.author.send(embed)
+        receivedMessage.author.send({ embeds: [embed] })
             .catch(console.error);
     }
 }

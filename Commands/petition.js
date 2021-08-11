@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { joinChannel, getPetitions, setPetitions, addChannel, updateList, guildID, getTopicNames, findTopicID } = require('../helpers.js');
+const { joinChannel, guildID, getTopicNames, findTopicID, checkPetition } = require('../helpers.js');
 
 var command = new Command(["Petition"], // aliases
 	"Petition for a topic", // description
@@ -16,36 +16,7 @@ command.execute = (receivedMessage, state) => {
 			joinChannel(guild.channels.resolve(channelID), receivedMessage.author);
 		})
 	} else {
-		let petitions = getPetitions();
-		if (!petitions[topicName]) {
-			petitions[topicName] = [];
-		}
-		if (!petitions[topicName].includes(receivedMessage.author.id)) {
-			receivedMessage.client.guilds.fetch(guildID).then(guild => {
-				petitions[topicName].push(receivedMessage.author.id);
-				if (petitions[topicName].length > guild.memberCount * 0.05) {
-					let petitionersIDs = petitions[topicName];
-					let unveilingText = "This channel has been created thanks to: ";
-					addChannel(guild.channels, topicName).then(channel => {
-						petitionersIDs.forEach(id => {
-							unveilingText += `<@${id}> `;
-							channel.createOverwrite(id, {
-								"VIEW_CHANNEL": true
-							});
-						});
-						channel.send(unveilingText);
-					})
-					delete petitions[topicName];
-				}
-				updateList(guild.channels, "topics");
-				setPetitions(petitions);
-				receivedMessage.author.send(`Your petition for ${topicName} has been recorded.`)
-					.catch(console.error)
-			});
-		} else {
-			receivedMessage.author.send(`You have already petitioned for ${topicName}.`)
-				.catch(console.error)
-		}
+		checkPetition(receivedMessage.guild, topicName, receivedMessage.author);
 	}
 }
 

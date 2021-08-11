@@ -13,7 +13,7 @@ command.help = (avatarURL) => {
 
 command.execute = (receivedMessage, state) => {
 	// Command specifications go here
-	receivedMessage.author.send(dataPolicyBuilder(receivedMessage.client.user.displayAvatarURL()))
+	receivedMessage.author.send({ embeds: [dataPolicyBuilder(receivedMessage.client.user.displayAvatarURL())] })
 		.catch(console.error);
 }
 
@@ -25,8 +25,8 @@ function dataPolicyBuilder(footerURL) {
 		.setTitle(`HorizonsBot Data Policy`)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/782019073562378298/shaking-hands.png')
 		.setDescription(`If you leave Imaginary Horizons, your data will be deleted.`)
-		.addField(`Data Collected (version 1.3.1)`, `HorizonsBot stores user submitted topics, petitions, and campaign details.`)
-		.addField(`Data Usage (version 1.3.1)`, `Imaginary Horizons does not use any user data at this time.`)
-		.setFooter(``, footerURL)
+		.addField(`Data Collected`, `HorizonsBot stores user submitted topics, petitions, and club details.`)
+		.addField(`Data Usage`, `Imaginary Horizons does not use any user data at this time.`)
+		.setFooter(`Updated: HorizonsBot version 1.6.0`, footerURL)
 		.setTimestamp();
 }
