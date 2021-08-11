@@ -11,14 +11,14 @@ var command = new Command(["TopicInvite"], // aliases
 command.execute = (receivedMessage, state) => {
 	// Invite users to the given topic
 	let channel = receivedMessage.channel;
-	let recipients = receivedMessage.mentions.users.array().filter(user => user.id != receivedMessage.client.user.id);
+	let recipients = receivedMessage.mentions.users.map(user => user).filter(user => user.id != receivedMessage.client.user.id);
 	if (getTopicIDs().includes(channel.id)) {
 		if (recipients.length > 0) {
 			let embed = new MessageEmbed()
 				.setAuthor("Click here to visit the Imaginary Horizons Patreon", receivedMessage.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
 				.setDescription(`${receivedMessage.member} has invited you to the following opt-in channel on Imaginary Horizons.`)
-				.addField(`${channel.name}`, channel.topic)
-				.setFooter(`React with ✅ to join! (5 minute time limit)`);
+				.addField(channel.name, `${channel.topic ? channel.topic : ""}\n\nReact with ✅ to join!`)
+				.setFooter(`5 minute time limit`);
 			recipients.forEach(recipient => {
 				recipient.send({ embeds: [embed] }).then(async message => {
 					await message.react("✅");
