@@ -141,6 +141,7 @@ client.on('guildMemberRemove', member => {
     Object.keys(helpers.getPetitions()).forEach(topicName => {
         petitions[topicName] = petitions[topicName].filter(id => id != memberId);
         helpers.setPetitions(petitions, guild.channels);
+        helpers.updateList(channelManager, "topics");
         helpers.checkPetition(guild, topicName);
     })
 })

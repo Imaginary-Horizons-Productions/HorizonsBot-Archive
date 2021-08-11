@@ -63,7 +63,6 @@ exports.getPetitions = function () {
 exports.setPetitions = function (petitionListInput, channelManager) {
     petitions = petitionListInput;
     exports.saveObject(petitions, 'petitionList.json');
-    exports.updateList(channelManager, "topics");
 }
 
 // {textChannelID: Club}
@@ -265,7 +264,7 @@ exports.checkPetition = function (guild, topicName, author = null) {
     }
     if (author) {
         if (!petitions[topicName].includes(author.id)) {
-            petitions[topicName].push(receivedMessage.author.id);
+            petitions[topicName].push(author.id);
         } else {
             author.send(`You have already petitioned for ${topicName}.`)
                 .catch(console.error)
@@ -273,47 +272,57 @@ exports.checkPetition = function (guild, topicName, author = null) {
         }
     }
     if (petitions[topicName].length > guild.memberCount * 0.05) {
-        guild.roles.fetch(guild.id).then(everyoneRole => {
-            guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
-                guild.channels.create(topicName, {
-                    parent: "581886288102424592",
-                    permissionOverwrites: [
-                        {
-                            "id": moderatorRole,
-                            "allow": ["VIEW_CHANNEL"]
-                        },
-                        {
-                            "id": everyoneRole,
-                            "deny": ["VIEW_CHANNEL"]
-                        }
-                    ],
-                    type: "GUILD_TEXT"
-                }).then(channel => {
-                    // Make channel viewable by petitioners, BountyBot, and HorizonsBot
-                    guild.members.fetch({
-                        user: petitions[topicName].concat(["536330483852771348", guild.client.user.id])
-                    }).then(allowedCollection => {
-                        console.log(allowedCollection);
-                        allowedCollection.mapValues(member => {
-                            channel.permissionOverwrites.create(member.user, {
-                                "VIEW_CHANNEL": true
-                            });
-                        })
-                    }).then(() => {
-                        channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
-                        delete petitions[topicName];
-                        exports.setPetitions(petitions, guild.channels);
-                        exports.addTopic(channel.id, channel.name);
-                        exports.saveObject(exports.getTopicIDs(), 'topicList.json');
-                    })
-                })
-            })
-        }).catch(console.log);
+        exports.addChannel(guild, topicName);
     } else {
         author.send(`Your petition for ${topicName} has been recorded.`)
             .catch(console.error)
         setPetitions(petitions, guild.channels);
     }
+}
+
+exports.addChannel = function (guild, topicName) {
+    var petitions = exports.getPetitions();
+    if (!petitions[topicName]) {
+        petitions[topicName] = [];
+    }
+    guild.roles.fetch(guild.id).then(everyoneRole => {
+        guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
+            guild.channels.create(topicName, {
+                parent: "656186659758407691",//"581886288102424592",
+                permissionOverwrites: [
+                    {
+                        "id": moderatorRole,
+                        "allow": ["VIEW_CHANNEL"]
+                    },
+                    {
+                        "id": everyoneRole,
+                        "deny": ["VIEW_CHANNEL"]
+                    }
+                ],
+                type: "GUILD_TEXT"
+            }).then(channel => {
+                // Make channel viewable by petitioners, BountyBot, and HorizonsBot
+                guild.members.fetch({
+                    user: petitions[topicName].concat(["536330483852771348", guild.client.user.id])
+                }).then(allowedCollection => {
+                    allowedCollection.mapValues(member => {
+                        channel.permissionOverwrites.create(member.user, {
+                            "VIEW_CHANNEL": true
+                        });
+                    })
+                }).then(() => {
+                    if (petitions[topicName].length > 0) {
+                        channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
+                        delete petitions[topicName];
+                        exports.setPetitions(petitions, guild.channels);
+                    }
+                    exports.addTopic(channel.id, channel.name);
+                    exports.updateList(guild.channels, "topics");
+                    exports.saveObject(exports.getTopicIDs(), 'topicList.json');
+                })
+            })
+        })
+    }).catch(console.log);
 }
 
 exports.joinChannel = function (channel, user) {
