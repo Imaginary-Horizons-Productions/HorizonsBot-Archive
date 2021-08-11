@@ -294,7 +294,7 @@ exports.addChannel = function (guild, topicName) {
     guild.roles.fetch(guild.id).then(everyoneRole => {
         guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
             guild.channels.create(topicName, {
-                parent: "656186659758407691",//"581886288102424592",
+                parent: "581886288102424592",
                 permissionOverwrites: [
                     {
                         "id": moderatorRole,
