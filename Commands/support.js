@@ -18,6 +18,12 @@ command.execute = (receivedMessage, state) => {
 		.catch(console.error);
 }
 
+command.executeInteraction = (interaction) => {
+	// Lists ways users can support development
+	interaction.reply({ embeds: [supportBuilder(interaction.client.user.displayAvatarURL())], ephemeral: true })
+		.catch(console.error);
+}
+
 module.exports = command;
 
 function supportBuilder(footerURL) {

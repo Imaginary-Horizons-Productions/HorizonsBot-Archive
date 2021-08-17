@@ -62,7 +62,7 @@ command.execute = (receivedMessage, state) => {
     }
 }
 
-command.executeInteraction = (interaction, state) => {
+command.executeInteraction = (interaction) => {
     //TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set
     const { commandSets, getCommand } = require(`./CommandsList.js`);
 
