@@ -28,7 +28,7 @@ command.executeInteraction = (interaction) => {
 		rollInput = rollInput.concat(` ${label}`);
 	}
 	var rollResult = getRollString(rollInput, false, true);
-	interaction.reply({ content: `Roll Result:\n\`${rollResult}\`` });
+	interaction.reply(`Roll Result:\n\`${rollResult}\``);
 }
 
 module.exports = command;
