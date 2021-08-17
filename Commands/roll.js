@@ -7,6 +7,9 @@ var command = new Command(["Roll"],
 	["Example - replace ( ) with your settings"],
 	["`@HorizonsBot Roll (dice in #d# format) [label]`"]);
 
+command.data.addStringOption(option => option.setName("dice").setDescription("The number and type of dice, use #d# format").setRequired(true))
+	.addStringOption(option => option.setName("label").setDescription("Text label for the roll").setRequired(false));
+
 command.execute = (receivedMessage, state) => {
 	if (state.messageArray.length > 0) {
 		var rollResult = getRollString(state.messageArray.join(' '), false, true);
@@ -16,5 +19,16 @@ command.execute = (receivedMessage, state) => {
 			.catch(console.error);
 	}
 };
+
+command.executeInteraction = (interaction) => {
+	// Roll the specified dice
+	var rollInput = interaction.options.getString('dice');
+	var label = interaction.options.getString('label');
+	if (label) {
+		rollInput = rollInput.concat(` ${label}`);
+	}
+	var rollResult = getRollString(rollInput, false, true);
+	interaction.reply({ content: `Roll Result:\n\`${rollResult}\`` });
+}
 
 module.exports = command;
