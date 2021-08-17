@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 const { getClubs, joinChannel, guildID } = require('../helpers.js');
 
 var command = new Command(["ClubInvite", "ClubDetails", "CampaignInvite", "CampaignDetails"], // aliases
-	"Send the mentioned users (default: self) an invite to the given club (indicated by channel mention, or by sending from club)", // description
+	"Send the user (default: self) an invite to the club by channel mention, or by sending from club", // description
 	"N/A", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ClubInvite (mention club text channel) [recepient(s)]`"]); // texts (must match number of headings)

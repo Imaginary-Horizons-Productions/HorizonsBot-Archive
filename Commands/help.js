@@ -2,7 +2,7 @@ const Command = require('./../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
 var command = new Command(['Help', 'Commands'],
-    "Lists all HorizonsBot commands; add a command at the end to get give examples and more details on that command",
+    "Lists all HorizonsBot commands; add a command to get examples and more details",
     "N/A",
     ["Example: list HorizonBot's commands", "Example: get command specific info - replace ( ) with your settings"],
     ["`@HorizonsBot Help`", "`@HorizonsBot Help (command)`"]);

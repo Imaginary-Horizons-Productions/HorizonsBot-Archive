@@ -1,4 +1,5 @@
 const { MessageEmbed } = require('discord.js');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = class Command {
 	constructor(aliasesInput, descriptionInput, requirementsInput, headingsInput, fieldsInput) {
@@ -7,6 +8,10 @@ module.exports = class Command {
 		this.requirements = requirementsInput;
 		this.headings = headingsInput; // This array must have the same length as this.texts
 		this.texts = fieldsInput;
+
+		this.data = new SlashCommandBuilder()
+			.setName(aliasesInput[0].toLowerCase())
+			.setDescription(descriptionInput);
 	}
 
 	help(avatarURL) {
@@ -24,4 +29,6 @@ module.exports = class Command {
 	}
 
 	execute(receivedMessage, state) { }
+
+	executeInteraction(interaction) { }
 }

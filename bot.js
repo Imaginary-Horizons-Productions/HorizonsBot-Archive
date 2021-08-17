@@ -119,6 +119,8 @@ client.on("interactionCreate", interaction => {
             helpers.checkPetition(interaction.guild, interaction.values[0], interaction.user);
             interaction.update("\u200B");
         }
+    } else if (interaction.isCommand()) {
+        getCommand(interaction.commandName).executeInteraction(interaction);
     }
 })
 
