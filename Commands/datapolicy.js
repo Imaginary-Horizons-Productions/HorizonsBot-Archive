@@ -17,6 +17,12 @@ command.execute = (receivedMessage, state) => {
 		.catch(console.error);
 }
 
+command.executeInteraction = (interaction) => {
+	// Command specifications go here
+	interaction.reply({ embeds: [dataPolicyBuilder(interaction.client.user.displayAvatarURL())], ephemeral: true })
+		.catch(console.error);
+}
+
 module.exports = command;
 
 function dataPolicyBuilder(footerURL) {
@@ -27,6 +33,6 @@ function dataPolicyBuilder(footerURL) {
 		.setDescription(`If you leave Imaginary Horizons, your data will be deleted.`)
 		.addField(`Data Collected`, `HorizonsBot stores user submitted topics, petitions, and club details.`)
 		.addField(`Data Usage`, `Imaginary Horizons does not use any user data at this time.`)
-		.setFooter(`Updated: HorizonsBot version 1.6.0`, footerURL)
+		.setFooter(`Updated: HorizonsBot version 1.7.0`, footerURL)
 		.setTimestamp();
 }
