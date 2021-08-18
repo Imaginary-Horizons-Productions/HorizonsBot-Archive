@@ -2,12 +2,12 @@ const Command = require('../Classes/Command.js');
 const { guildID, topicListBuilder, clubListBuilder } = require('../helpers.js');
 
 var command = new Command(["List"], // aliases
-	"Provide a list of topic or club channels", // description
+	"Get a list of topic or club channels", // description
 	"N/A", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot List (topic or club)`]); // texts (must match number of headings)
 
-command.data.addStringOption(option => option.setName("listtype").setDescription(`"topic" or "club"`).setRequired(true));
+command.data.addStringOption(option => option.setName("listtype").setDescription(`Get a list of topic or club channels`).setRequired(true).addChoice("Get the topic list", "topic").addChoice("Get the club list", "club"));
 
 command.execute = (receivedMessage, state) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions

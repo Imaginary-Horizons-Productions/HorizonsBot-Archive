@@ -2,12 +2,12 @@ const Command = require('../Classes/Command.js');
 const { isModerator, pinTopicsList, pinClubsList } = require('../helpers.js');
 
 var command = new Command(["PinList"], // aliases
-	"Pin a list of topics or clubs", // description
+	"Pin the list message for topics or clubs in this channel", // description
 	"Moderator, use from server channel", // requirements
 	["Example - replace ( ) with your settings"], // headings
 	[`@HorizonsBot PinList (topic or club)`]); // texts (must match number of headings)
 
-command.data.addStringOption(option => option.setName("listtype").setDescription(`"topic" or "club"`).setRequired(true));
+command.data.addStringOption(option => option.setName("listtype").setDescription(`Pin the list message for topics or clubs in this channel`).setRequired(true).addChoice("Pin the topic list", "topic").addChoice("Pin the club list", "club"));
 
 command.execute = (receivedMessage, state) => {
 	// Command specifications go here
