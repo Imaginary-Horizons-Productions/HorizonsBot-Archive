@@ -33,11 +33,11 @@ command.executeInteraction = (interaction) => {
 	// Pin the list message for topics or clubs to the receiving channel
 	if (isModerator(interaction.user.id)) {
 		let listType = interaction.options.getString("listtype").toLowerCase();
-		if (listType == "topic" || listType == "topics") {
+		if (listType == "topic") {
 			pinTopicsList(interaction.guild.channels, interaction.channel);
 			interaction.reply({ content: "Pinning the topic list succeded.", ephemeral: true })
 				.catch(console.error);
-		} else if (listType == "club" || listType == "clubs") {
+		} else if (listType == "club") {
 			pinClubsList(interaction.guild.channels, interaction.channel);
 			interaction.reply({ content: "Pinning the club list succeded.", ephemeral: true })
 				.catch(console.error);

@@ -37,11 +37,11 @@ command.executeInteraction = (interaction) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions
 	let listType = interaction.options.getString("listtype").toLowerCase();
 	interaction.client.guilds.fetch(guildID).then(guild => {
-		if (listType == "topic" || listType == "topics") {
+		if (listType == "topic") {
 			topicListBuilder(guild.channels).then(embed => {
 				interaction.reply({ embeds: [embed.setFooter("Note: joining or petitioning by select menu not enabled for \"list\" command.")], ephemeral: true });
 			}).catch(console.error);
-		} else if (listType == "club" || listType == "clubs") {
+		} else if (listType == "club") {
 			clubListBuilder(guild.channels).then(embed => {
 				interaction.reply({ embeds: [embed], ephemeral: true });
 			}).catch(console.error);
