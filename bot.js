@@ -5,10 +5,10 @@ var helpers = require('./helpers.js');
 const client = new Client({
     retryLimit: 5,
     presence: {
-        activity: {
+        activities: [{
             name: "@HorizonsBot help",
             type: "LISTENING"
-        }
+        }]
     },
     intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_EMOJIS_AND_STICKERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS']
 });
