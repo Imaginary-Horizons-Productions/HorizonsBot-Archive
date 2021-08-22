@@ -1,12 +1,14 @@
 const Command = require('../Classes/Command.js');
 const { Permissions } = require('discord.js');
-const { addChannel } = require('../helpers.js');
+const { addChannel, isModerator } = require('../helpers.js');
 
 var command = new Command(["TopicAdd"], // aliases
 	"Set up a topic", // description
-	"Permission to Manage Channels, use the command from a server channel", // requirements
+	"Moderator, use the command from a server channel", // requirements
 	["Example - replace ( ) with your settings"], // headers
 	[`@HorizonsBot TopicAdd (topic name)`]); // texts (must match number of headings)
+
+command.data.addStringOption(option => option.setName("topicname").setDescription("The new topic").setRequired(true))
 
 command.execute = (receivedMessage, state) => {
 	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels
@@ -23,6 +25,20 @@ command.execute = (receivedMessage, state) => {
 		}
 	} else {
 		receivedMessage.author.send("Please use `topicadd` from a server channel.")
+			.catch(console.error);
+	}
+}
+
+command.executeInteraction = (interaction) => {
+	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels
+	if (isModerator(interaction.user.id)) {
+		let channelName = interaction.options.getString('topicname');
+		addChannel(interaction.guild, channelName).then(channel => {
+			interaction.reply(`A new topic channel has been created: ${channel}`)
+				.catch(console.error);
+		});
+	} else {
+		interaction.reply(`The \`${state.command}\` command is restricted to moderators.`)
 			.catch(console.error);
 	}
 }

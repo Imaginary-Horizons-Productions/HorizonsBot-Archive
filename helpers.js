@@ -287,29 +287,34 @@ exports.checkPetition = function (guild, topicName, author = null) {
 }
 
 exports.addChannel = function (guild, topicName) {
-    var petitions = exports.getPetitions();
-    if (!petitions[topicName]) {
-        petitions[topicName] = [];
-    }
-    guild.roles.fetch(guild.id).then(everyoneRole => {
-        guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
-            guild.channels.create(topicName, {
-                parent: "581886288102424592",
+    return guild.roles.fetch(guild.id).then(everyoneRole => {
+        return guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
+            return guild.channels.create(topicName, {
+                parent: "656186659758407691",//"581886288102424592",
                 permissionOverwrites: [
                     {
-                        "id": moderatorRole,
-                        "allow": ["VIEW_CHANNEL"]
+                        id: guild.me,
+                        allow: ["VIEW_CHANNEL"]
                     },
                     {
-                        "id": everyoneRole,
-                        "deny": ["VIEW_CHANNEL"]
+                        id: moderatorRole,
+                        allow: ["VIEW_CHANNEL"]
+                    },
+                    {
+                        id: everyoneRole,
+                        deny: ["VIEW_CHANNEL"]
                     }
                 ],
                 type: "GUILD_TEXT"
             }).then(channel => {
-                // Make channel viewable by petitioners, BountyBot, and HorizonsBot
+                var petitions = exports.getPetitions();
+                if (!petitions[topicName]) {
+                    petitions[topicName] = [];
+                }
+            
+                // Make channel viewable by petitioners, and BountyBot
                 guild.members.fetch({
-                    user: petitions[topicName].concat(["536330483852771348", guild.client.user.id])
+                    user: petitions[topicName].concat(["536330483852771348"])
                 }).then(allowedCollection => {
                     allowedCollection.mapValues(member => {
                         channel.permissionOverwrites.create(member.user, {
@@ -326,6 +331,7 @@ exports.addChannel = function (guild, topicName) {
                     exports.updateList(guild.channels, "topics");
                     exports.saveObject(exports.getTopicIDs(), 'topicList.json');
                 })
+                return channel;
             })
         })
     }).catch(console.log);
