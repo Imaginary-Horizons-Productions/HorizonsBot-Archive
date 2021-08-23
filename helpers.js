@@ -280,8 +280,6 @@ exports.checkPetition = function (guild, topicName, author = null) {
     if (petitions[topicName].length > guild.memberCount * 0.05) {
         exports.addChannel(guild, topicName);
     } else {
-        author.send(`Your petition for ${topicName} has been recorded.`)
-            .catch(console.error)
         setPetitions(petitions, guild.channels);
     }
 }
