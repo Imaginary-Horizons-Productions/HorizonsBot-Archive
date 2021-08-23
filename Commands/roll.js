@@ -8,16 +8,16 @@ var command = new Command(["Roll"],
 	["`@HorizonsBot Roll (dice in #d# format) [label]`"]);
 
 command.data.addStringOption(option => option.setName("dice").setDescription("The number and type of dice, use #d# format").setRequired(true))
-	.addStringOption(option => option.setName("label").setDescription("Text label for the roll").setRequired(false));
+	.addStringOption(option => option.setName("display").setDescription("Choose output display options").setRequired(false)
+		.addChoice("Result only", "simple")
+		.addChoice("Compare to max total roll", "max")
+		.addChoice("Result for each die", "individual")
+		.addChoice("Compare each die to max roll", "verbose"))
+		.addStringOption(option => option.setName("label").setDescription("Text label for the roll").setRequired(false));
 
 command.execute = (receivedMessage, state) => {
-	if (state.messageArray.length > 0) {
-		var rollResult = getRollString(state.messageArray.join(' '), false, true);
-		receivedMessage.channel.send(`Roll Result:\n\`${rollResult}\``);
-	} else {
-		receivedMessage.author.send('Please provide the number/type of dice you want to role in #d# format.')
-			.catch(console.error);
-	}
+	receivedMessage.author.send('Please use the slash command for rolling dice.')
+		.catch(console.error);
 };
 
 command.executeInteraction = (interaction) => {
@@ -27,7 +27,20 @@ command.executeInteraction = (interaction) => {
 	if (label) {
 		rollInput = rollInput.concat(` ${label}`);
 	}
-	var rollResult = getRollString(rollInput, false, true);
+	switch (interaction.options.getString('display')) {
+		case "max":
+			var rollResult = getRollString(rollInput, true, true);
+			break;
+		case "individual":
+			var rollResult = getRollString(rollInput, false, false);
+			break;
+		case "verbose":
+			var rollResult = getRollString(rollInput, true, false);
+			break;
+		default:
+			var rollResult = getRollString(rollInput, false, true);
+			break;
+	}
 	interaction.reply(`Roll Result:\n\`${rollResult}\``);
 }
 
