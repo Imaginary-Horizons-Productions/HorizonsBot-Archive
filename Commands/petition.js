@@ -9,7 +9,7 @@ var command = new Command(["Petition"], // aliases
 
 command.execute = (receivedMessage, state) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions
-	let topicName = state.messageArray.join('-').toLowerCase();
+	let topicName = state.messageArray.join(' ').toLowerCase();
 	if (getTopicNames().includes(topicName)) {
 		let channelID = findTopicID(topicName);
 		receivedMessage.client.guilds.fetch(guildID).then(guild => {
