@@ -52,15 +52,15 @@ command.executeInteraction = (interaction) => {
 					})
 				})
 			} else {
-				interaction.reply(`Please provide color in hex code format (#000000).`)
+				interaction.reply({ content: `Please provide color in hex code format (#000000).`, ephemeral: true })
 					.catch(console.error);
 			}
 		} else {
-			interaction.reply(`The embed you provided for a \`${interaction.commandName}\` command could not be found.`)
+			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
 				.catch(console.error);
 		}
 	} else {
-		interaction.reply(`You must be a Moderator to use the \`${interaction.commandName}\` command.`)
+		interaction.reply({ content: `You must be a Moderator to use the \`${interaction.commandName}\` command.`, ephemeral: true })
 			.catch(console.error);
 	}
 }
