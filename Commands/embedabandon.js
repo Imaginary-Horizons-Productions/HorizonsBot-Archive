@@ -39,11 +39,11 @@ command.executeInteraction = (interaction) => {
 			interaction.reply({ content: `The provided embed has been abandoned.`, ephemeral: true })
 				.catch(console.error);
 		} else {
-			interaction.reply({ content: `The embed you provided for a \`${state.command}\` command could not be found.`, ephemeral: true })
+			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
 				.catch(console.error);
 		}
 	} else {
-		interaction.reply({ content: `You must be a Moderator to use the \`${state.command}\` command.`, ephemeral: true })
+		interaction.reply({ content: `You must be a Moderator to use the \`${interaction.commandName}\` command.`, ephemeral: true })
 			.catch(console.error);
 	}
 }
