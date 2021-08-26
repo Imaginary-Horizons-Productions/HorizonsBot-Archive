@@ -6,7 +6,7 @@ const client = new Client({
     retryLimit: 5,
     presence: {
         activities: [{
-            name: "@HorizonsBot help",
+            name: "@HorizonsBot commands",
             type: "LISTENING"
         }]
     },
@@ -64,47 +64,6 @@ client.on('messageCreate', receivedMessage => {
             clubBuriedness = 0;
         }
     }
-
-    // Process commands
-    if (receivedMessage.author.bot) {
-        return;
-    }
-
-    var messageArray = receivedMessage.content.split(" ").filter(element => {
-        return element != "";
-    });
-
-    let command;
-    if (messageArray.length > 0) {
-        let firstWord = messageArray.shift();
-        if (receivedMessage.guild) {
-            // Message from guild
-            firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != receivedMessage.guild.me.roles.botRole.id)) {
-                return;
-            }
-            command = messageArray.shift();
-        } else {
-            // Message from private message
-            if (firstWord.replace(/\D/g, "") == client.user.id) {
-                command = messageArray.shift();
-            } else {
-                command = firstWord;
-            }
-        }
-
-        let state = {
-            "command": command.toLowerCase(),
-            "messageArray": messageArray,
-        }
-        let usedCommand = getCommand(state.command);
-        if (usedCommand) {
-            usedCommand.execute(receivedMessage, state);
-        } else {
-            receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
-                .catch(console.error);
-        }
-    }
 })
 
 client.on("interactionCreate", interaction => {
@@ -120,7 +79,7 @@ client.on("interactionCreate", interaction => {
             interaction.update("\u200B");
         }
     } else if (interaction.isCommand()) {
-        getCommand(interaction.commandName).executeInteraction(interaction);
+        getCommand(interaction.commandName).execute(interaction);
     }
 })
 

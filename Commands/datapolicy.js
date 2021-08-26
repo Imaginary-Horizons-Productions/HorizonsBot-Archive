@@ -1,23 +1,9 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command(["DataPolicy", "PrivacyPolicy"], // aliases
-	"Shows types of user data HorizonsBot collects and how it's used", // description
-	"N/A", // requirements
-	["Usage"], // headings
-	["`@HorizonsBot DataPolicy`"]); // texts (must match number of headings)
+var command = new Command("data-policy",	"Shows types of user data HorizonsBot collects and how it's used");
 
-command.help = (avatarURL) => {
-	return dataPolicyBuilder(avatarURL);
-}
-
-command.execute = (receivedMessage, state) => {
-	// Command specifications go here
-	receivedMessage.author.send({ embeds: [dataPolicyBuilder(receivedMessage.client.user.displayAvatarURL())] })
-		.catch(console.error);
-}
-
-command.executeInteraction = (interaction) => {
+command.execute = (interaction) => {
 	// Command specifications go here
 	interaction.reply({ embeds: [dataPolicyBuilder(interaction.client.user.displayAvatarURL())], ephemeral: true })
 		.catch(console.error);

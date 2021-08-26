@@ -1,11 +1,7 @@
 const Command = require('../Classes/Command.js');
 const { getRollString } = require('../Helper Modules/RollEngine.js');
 
-var command = new Command(["Roll"],
-	"Roll dice",
-	"N/A",
-	["Example - replace ( ) with your settings"],
-	["`@HorizonsBot Roll (dice in #d# format) [label]`"]);
+var command = new Command("roll", "Roll dice");
 
 command.data.addStringOption(option => option.setName("dice").setDescription("The number and type of dice, use #d# format").setRequired(true))
 	.addStringOption(option => option.setName("display").setDescription("Choose output display options").setRequired(false)
@@ -13,14 +9,9 @@ command.data.addStringOption(option => option.setName("dice").setDescription("Th
 		.addChoice("Compare to max total roll", "max")
 		.addChoice("Result for each die", "individual")
 		.addChoice("Compare each die to max roll", "verbose"))
-		.addStringOption(option => option.setName("label").setDescription("Text label for the roll").setRequired(false));
+	.addStringOption(option => option.setName("label").setDescription("Text label for the roll").setRequired(false));
 
-command.execute = (receivedMessage, state) => {
-	receivedMessage.author.send('Please use the slash command for rolling dice.')
-		.catch(console.error);
-};
-
-command.executeInteraction = (interaction) => {
+command.execute = (interaction) => {
 	// Roll the specified dice
 	var rollInput = interaction.options.getString('dice');
 	var label = interaction.options.getString('label');
