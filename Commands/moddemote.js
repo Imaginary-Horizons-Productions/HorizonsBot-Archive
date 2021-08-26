@@ -7,6 +7,8 @@ var command = new Command(["ModDemote"], // aliases
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ModDemote (user)`"]); // texts (must match number of headings)
 
+command.data.addMentionableOption(option => option.setName("demotee").setDescription("The user to demote from moderator").setRequired(true));
+
 command.execute = (receivedMessage, state) => {
 	// Remove a Moderator: remove from list, remove role and channel permissions
 	if (receivedMessage.guild) {
@@ -32,6 +34,25 @@ command.execute = (receivedMessage, state) => {
 		}
 	} else {
 		receivedMessage.author.send(`The \`${state.command}\` command must be used from the server.`)
+			.catch(console.error);
+	}
+}
+
+command.executeInteraction = (interaction) => {
+	// Remove a Moderator: remove from list, remove role and channel permissions
+	if (isModerator(interaction.user.id) || !interaction.member.manageable) {
+		let demotee = interaction.options.getMentionable("demotee");
+		if (isModerator(demotee.id)) {
+			demotee.roles.remove(getModRoleID());
+			removeModerator(demotee.id);
+			interaction.reply(`${demotee} has been demoted from Moderator.`)
+				.catch(console.error);
+		} else {
+			interaction.reply({ content: `${demotee} is already not a Moderator.`, ephemeral: true })
+				.catch(console.error);
+		}
+	} else {
+		interaction.reply({ content: `You must be a Moderator to use the \`${interaction.commandName}\` command.`, ephemeral: true })
 			.catch(console.error);
 	}
 }
