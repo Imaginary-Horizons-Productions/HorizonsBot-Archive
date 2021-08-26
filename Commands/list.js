@@ -10,16 +10,15 @@ command.execute = (interaction) => {
 	let listType = interaction.options.getString("listtype").toLowerCase();
 	interaction.client.guilds.fetch(guildID).then(guild => {
 		if (listType == "topic") {
-			topicListBuilder(guild.channels).then(embed => {
-				interaction.reply({ embeds: [embed.setFooter("Note: joining or petitioning by select menu not enabled for \"list\" command.")], ephemeral: true });
+			topicListBuilder(guild.channels).then(messageOptions => {
+				messageOptions.ephemeral = true;
+				interaction.reply(messageOptions);
 			}).catch(console.error);
 		} else if (listType == "club") {
-			clubListBuilder(guild.channels).then(embed => {
-				interaction.reply({ embeds: [embed], ephemeral: true });
+			clubListBuilder(guild.channels).then(messageOptions => {
+				messageOptions.ephemeral = true;
+				interaction.reply(messageOptions);
 			}).catch(console.error);
-		} else {
-			interaction.reply({ content: `Please specify either \`topic\` or \`club\` for the type of list.`, ephemeral: true })
-				.catch(console.error);
 		}
 	});
 }
