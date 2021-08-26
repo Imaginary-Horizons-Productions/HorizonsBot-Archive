@@ -7,6 +7,9 @@ var command = new Command(["EmbedSetThumbnail"], // aliases
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot EmbedSetThumbnail (message ID) (url)`"]); // texts (must match number of headings)
 
+command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+	.addStringOption(option => option.setName("url").setDescription("The url to a picture for the thumbnail field").setRequired(true));
+
 command.execute = (receivedMessage, state) => {
 	// Set the thumbnail for the given embed
 	if (isModerator(receivedMessage.author.id)) {
@@ -18,7 +21,7 @@ command.execute = (receivedMessage, state) => {
 					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 						let embed = message.embeds[0].setThumbnail(url).setTimestamp();
 						message.edit({ content: "\u200B", embeds: [embed] });
-					})	
+					})
 				})
 			} else {
 				receivedMessage.author.send(`Your url for a \`${state.command}\` command could not be parsed.`)
@@ -30,6 +33,29 @@ command.execute = (receivedMessage, state) => {
 		}
 	} else {
 		receivedMessage.author.send(`You must be a Moderator to use the \`${state.command}\` command.`)
+			.catch(console.error);
+	}
+}
+
+command.executeInteraction = (interaction) => {
+	// Set the thumbnail for the given embed
+	if (isModerator(interaction.user.id)) {
+		let messageID = interaction.options.getString("messageid");
+		if (customEmbeds[messageID]) {
+			let url = interaction.options.getString("url");
+			interaction.client.guilds.fetch(guildID).then(guild => {
+				guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+					let embed = message.embeds[0].setThumbnail(url).setTimestamp();
+					message.edit({ embeds: [embed] });
+					interaction.reply({ content: `The embed's thumbnail has been updated. Link: ${message.url}`, ephemeral: true })
+				}).catch(console.error);
+			})
+		} else {
+			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
+				.catch(console.error);
+		}
+	} else {
+		interaction.reply({ content: `You must be a Moderator to use the \`${interaction.commandName}\` command.`, ephemeral: true })
 			.catch(console.error);
 	}
 }
