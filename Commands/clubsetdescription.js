@@ -7,6 +7,8 @@ var command = new Command(["ClubSetDescription", "CampaignSetDescription"], // a
 	["Example - replace ( ) with your settings"], // headings
 	["`@HorizonsBot ClubSetDecription (description)`"]); // texts (must match number of headings)
 
+command.data.addStringOption(option => option.setName("description").setDescription("The text to set as the club description").setRequired(true));
+
 command.execute = (receivedMessage, state) => {
 	// Set the decription for the receiving club channel
 	let club = getClubs()[receivedMessage.channel.id];
@@ -27,6 +29,26 @@ command.execute = (receivedMessage, state) => {
 		}
 	} else {
 		receivedMessage.author.send(`Please set club settings from the club channel.`)
+			.catch(console.error);
+	}
+}
+
+command.executeInteraction = (interaction) => {
+	// Set the decription for the receiving club channel
+	let club = getClubs()[interaction.channel.id];
+	if (club) {
+		if (isModerator(interaction.user.id) || interaction.user.id == club.hostID) {
+			club.description = interaction.options.getString("description");
+			interaction.channel.setTopic(club.description);
+			updateClub(club, interaction.guild.channels);
+			interaction.reply({ content: "The club's description has been updated.", ephemeral: true })
+				.catch(console.error);
+		} else {
+			interaction.reply({ content: `Setting a club description is restricted to the host of that club or Moderators.`, ephemeral: true })
+				.catch(console.error);
+		}
+	} else {
+		interaction.reply({ content: `Please set club settings from the club channel.`, ephemeral: true })
 			.catch(console.error);
 	}
 }
