@@ -18,7 +18,7 @@ command.execute = (interaction) => {
 		}
 		let embed = new MessageEmbed()
 			.setAuthor("Click here to visit the Imaginary Horizons Patreon", interaction.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
-			.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Players)`)
+			.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Members)`)
 			.setDescription(club.description)
 			.addField("Club Host", `<@${club.hostID}>`)
 			.addField("Game", club.system)

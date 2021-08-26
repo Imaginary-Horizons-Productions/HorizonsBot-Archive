@@ -219,7 +219,7 @@ exports.clubListBuilder = function (channelManager) {
 
     Object.keys(clubs).forEach(id => {
         let club = clubs[id];
-        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Players)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
+        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
     })
 
     if (description.length > 2048) {
@@ -309,7 +309,7 @@ exports.addChannel = function (guild, topicName) {
                 if (!petitions[topicName]) {
                     petitions[topicName] = [];
                 }
-            
+
                 // Make channel viewable by petitioners, and BountyBot
                 guild.members.fetch({
                     user: petitions[topicName].concat(["536330483852771348"])
