@@ -21,7 +21,7 @@ const rest = new REST({ version: 9 }).setToken(auth.token);
 		console.log('Started refreshing application (/) commands.');
 
 		await rest.put(
-			Routes.applicationGuildCommands("618233281019904010", auth.guildID),
+			Routes.applicationGuildCommands("634069551142928455", auth.guildID),
 			{ body: commands },
 		);
 
