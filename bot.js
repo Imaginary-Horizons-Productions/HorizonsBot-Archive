@@ -69,13 +69,16 @@ client.on('messageCreate', receivedMessage => {
 client.on("interactionCreate", interaction => {
     if (interaction.isSelectMenu()) {
         if (interaction.customId === "topicListSelect" || interaction.customId === "clubListSelect") {
-            interaction.guild.channels.fetch(interaction.values[0]).then(channel => {
-                helpers.joinChannel(channel, interaction.user);
-            }).then(() => {
-                interaction.update("\u200B");
+            interaction.values.forEach(channelID => {
+                interaction.guild.channels.fetch(channelID).then(channel => {
+                    helpers.joinChannel(channel, interaction.user);
+                })
             })
+            interaction.update("\u200B");
         } else if (interaction.customId === "petitionListSelect") {
-            helpers.checkPetition(interaction.guild, interaction.values[0], interaction.user);
+            interaction.values.forEach(petition => {
+                helpers.checkPetition(interaction.guild, petition, interaction.user);
+            })
             interaction.update("\u200B");
         }
     } else if (interaction.isCommand()) {

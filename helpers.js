@@ -170,6 +170,8 @@ function listSelectBuilder(listType) {
             .setPlaceholder(placeholderText)
             .setDisabled(disableSelect)
             .addOptions(entries)
+            .setMinValues(1)
+            .setMaxValues(entries.length)
     );
 }
 
@@ -187,7 +189,7 @@ exports.topicListBuilder = function (channelManager) {
         let id = topics[i];
         let channel = channelManager.resolve(id);
         if (channel) {
-            description += `\n__${channel.name}__ ${channel.description}`;
+            description += `\n__${channel.name}__${channel.description ? channel.description : ""}`;
         }
     }
 
@@ -366,12 +368,12 @@ exports.addChannel = function (guild, topicName) {
                             "VIEW_CHANNEL": true
                         });
                     })
-                }).then(() => {
+
                     if (petitions[topicName].length > 0) {
                         channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
-                        delete petitions[topicName];
-                        exports.setPetitions(petitions, guild.channels);
                     }
+                    delete petitions[topicName];
+                    exports.setPetitions(petitions, guild.channels);
                     exports.addTopic(channel.id, channel.name);
                     exports.updateList(guild.channels, "topics");
                     exports.saveObject(exports.getTopicIDs(), 'topicList.json');
