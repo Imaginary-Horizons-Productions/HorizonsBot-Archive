@@ -15,29 +15,13 @@ command.execute = (interaction) => {
 
 		interaction.guild.roles.fetch(interaction.guild.id).then(everyoneRole => {
 			interaction.guild.roles.fetch(getModRoleID()).then(modRole => {
-				channelManager.create("new-club-text", {
-					parent: categoryId,
-					permissionOverwrites: [
-						{
-							"id": channelManager.client.user,
-							"allow": ["VIEW_CHANNEL"]
-						},
-						{
-							"id": modRole,
-							"allow": ["VIEW_CHANNEL"]
-						},
-						{
-							"id": everyoneRole,
-							"deny": ["VIEW_CHANNEL"]
-						},
-						{
-							"id": host,
-							"allow": ["VIEW_CHANNEL", "MANAGE_MESSAGES"]
-						}
-					],
-					type: "GUILD_TEXT"
-				}).then(textChannel => {
-					channelManager.create("New Club Voice", {
+				interaction.guild.members.fetch("536330483852771348").then(bountyBot => {
+					console.log(channelManager.client.user);
+					console.log(modRole);
+					console.log(everyoneRole);
+					console.log(host);
+					console.log(bountyBot);
+					channelManager.create("new-club-text", {
 						parent: categoryId,
 						permissionOverwrites: [
 							{
@@ -54,20 +38,47 @@ command.execute = (interaction) => {
 							},
 							{
 								"id": host,
-								"allow": ["VIEW_CHANNEL", "MANAGE_CHANNELS"]
+								"allow": ["VIEW_CHANNEL", "MANAGE_MESSAGES"]
+							},
+							{
+								id: bountyBot,
+								allow: ["VIEW_CHANNEL"]
 							}
 						],
-						type: "GUILD_VOICE"
-					}).then(voiceChannel => {
-						let club = new Club();
-						club.title = "new club";
-						club.hostID = host.id;
-						club.channelID = textChannel.id;
-						club.voiceChannelID = voiceChannel.id;
-						updateClub(club, interaction.guild.channels);
-						textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\` and \`/club-set-image\`.`);
-						interaction.reply({ content: "The new club has been created.", ephemeral: true });
-					}).catch(console.error);
+						type: "GUILD_TEXT"
+					}).then(textChannel => {
+						channelManager.create("New Club Voice", {
+							parent: categoryId,
+							permissionOverwrites: [
+								{
+									"id": channelManager.client.user,
+									"allow": ["VIEW_CHANNEL"]
+								},
+								{
+									"id": modRole,
+									"allow": ["VIEW_CHANNEL"]
+								},
+								{
+									"id": everyoneRole,
+									"deny": ["VIEW_CHANNEL"]
+								},
+								{
+									"id": host,
+									"allow": ["VIEW_CHANNEL", "MANAGE_CHANNELS"]
+								}
+							],
+							type: "GUILD_VOICE"
+						}).then(voiceChannel => {
+							let club = new Club();
+							club.title = "new club";
+							club.hostID = host.id;
+							club.channelID = textChannel.id;
+							club.voiceChannelID = voiceChannel.id;
+							updateClub(club, interaction.guild.channels);
+							textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\` and \`/club-set-image\`.`);
+							interaction.reply({ content: "The new club has been created.", ephemeral: true });
+						}).catch(console.error);
+					})
 				})
 			})
 		})
