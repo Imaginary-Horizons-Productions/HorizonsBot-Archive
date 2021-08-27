@@ -136,7 +136,7 @@ function listSelectBuilder(listType) {
         entries = Object.values(exports.getClubs()).map(club => {
             return {
                 label: club.title,
-                description: club.description,
+                description: `${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Members`,
                 value: club.channelID
             }
         })
