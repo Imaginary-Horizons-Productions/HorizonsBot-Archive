@@ -5,10 +5,10 @@ var helpers = require('./helpers.js');
 const client = new Client({
     retryLimit: 5,
     presence: {
-        activity: {
-            name: "@HorizonsBot help",
+        activities: [{
+            name: "@HorizonsBot commands",
             type: "LISTENING"
-        }
+        }]
     },
     intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_EMOJIS_AND_STICKERS', 'GUILD_INVITES', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS']
 });
@@ -64,61 +64,25 @@ client.on('messageCreate', receivedMessage => {
             clubBuriedness = 0;
         }
     }
-
-    // Process commands
-    if (receivedMessage.author.bot) {
-        return;
-    }
-
-    var messageArray = receivedMessage.content.split(" ").filter(element => {
-        return element != "";
-    });
-
-    let command;
-    if (messageArray.length > 0) {
-        let firstWord = messageArray.shift();
-        if (receivedMessage.guild) {
-            // Message from guild
-            firstWord = firstWord.replace(/\D/g, ""); // bot mention required
-            if (messageArray.length == 0 || (firstWord != client.user.id && firstWord != receivedMessage.guild.me.roles.botRole.id)) {
-                return;
-            }
-            command = messageArray.shift();
-        } else {
-            // Message from private message
-            if (firstWord.replace(/\D/g, "") == client.user.id) {
-                command = messageArray.shift();
-            } else {
-                command = firstWord;
-            }
-        }
-
-        let state = {
-            "command": command.toLowerCase(),
-            "messageArray": messageArray,
-        }
-        let usedCommand = getCommand(state.command);
-        if (usedCommand) {
-            usedCommand.execute(receivedMessage, state);
-        } else {
-            receivedMessage.author.send(`**${state.command}** does not appear to be a HorizonsBot command. Please check for typos!`)
-                .catch(console.error);
-        }
-    }
 })
 
 client.on("interactionCreate", interaction => {
     if (interaction.isSelectMenu()) {
-        if (interaction.customId === "topicListSelect") {
-            interaction.guild.channels.fetch(interaction.values[0]).then(channel => {
-                helpers.joinChannel(channel, interaction.user);
-            }).then(() => {
-                interaction.update("\u200B");
+        if (interaction.customId === "topicListSelect" || interaction.customId === "clubListSelect") {
+            interaction.values.forEach(channelID => {
+                interaction.guild.channels.fetch(channelID).then(channel => {
+                    helpers.joinChannel(channel, interaction.user);
+                })
             })
-        } else if (interaction.customId = "petitionListSelect") {
-            helpers.checkPetition(interaction.guild, interaction.values[0], interaction.user);
+            interaction.update("\u200B");
+        } else if (interaction.customId === "petitionListSelect") {
+            interaction.values.forEach(petition => {
+                helpers.checkPetition(interaction.guild, petition, interaction.user);
+            })
             interaction.update("\u200B");
         }
+    } else if (interaction.isCommand()) {
+        getCommand(interaction.commandName).execute(interaction);
     }
 })
 

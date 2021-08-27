@@ -1,20 +1,11 @@
 const Command = require('./../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command(["Support"],
-	"Show ways to support the community",
-	"N/A",
-	["Usage"],
-	["@HorizonsBot Support"]);
+var command = new Command("support", "Show ways to support the community");
 
-// Overwrite detailed help description with executing the command
-command.help = (avatarURL) => {
-	return supportBuilder(avatarURL);
-}
-
-command.execute = (receivedMessage, state) => {
+command.execute = (interaction) => {
 	// Lists ways users can support development
-	receivedMessage.author.send({ embeds: [supportBuilder(receivedMessage.client.user.displayAvatarURL())] })
+	interaction.reply({ embeds: [supportBuilder(interaction.client.user.displayAvatarURL())], ephemeral: true })
 		.catch(console.error);
 }
 

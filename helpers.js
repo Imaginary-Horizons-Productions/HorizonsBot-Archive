@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, Message } = require('discord.js');
 exports.guildID = require('./data/auth.json').guildID;
 
 // [userID]
@@ -92,65 +92,104 @@ exports.updateList = function (channelManager, listType) {
     if (messageData) {
         return channelManager.fetch(messageData.channelID).then(channel => {
             return channel.messages.fetch(messageData.messageID).then(message => {
-                if (listType == "topics") {
-                    exports.topicListBuilder(channelManager).then(embed => {
-                        var rows = [];
-
-                        var topicNames = exports.getTopicNames();
-                        var topicIds = exports.getTopicIDs();
-                        if (topicNames.length > 0) {
-                            var topicSelect = [];
-                            for (var i = 0; i < topicNames.length; i += 1) {
-                                topicSelect.push({
-                                    label: topicNames[i],
-                                    description: "",
-                                    value: topicIds[i]
-                                })
-                            }
-                            rows.push(new MessageActionRow().addComponents(
-                                new MessageSelectMenu()
-                                    .setCustomId("topicListSelect")
-                                    .setPlaceholder("Select a topic...")
-                                    .addOptions(topicSelect)))
-                        }
-
-                        var petitionSelect = [];
-                        for (var petition of Object.keys(exports.getPetitions())) {
-                            petitionSelect.push({
-                                label: petition,
-                                description: "",
-                                value: petition
-                            })
-                        }
-                        if (petitionSelect.length > 0) {
-                            rows.push(new MessageActionRow().addComponents(
-                                new MessageSelectMenu()
-                                    .setCustomId("petitionListSelect")
-                                    .setPlaceholder("Select a petition...")
-                                    .addOptions(petitionSelect)))
-                        }
-                        message.edit({ embeds: [embed], components: rows });
-                    }).catch(console.error);
-                } else {
-                    exports.clubListBuilder(channelManager).then(embed => {
-                        message.edit({ embeds: [embed] });
-                    }).catch(console.error)
-                }
+                var builder = listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder;
+                builder(channelManager).then(messageOptions => {
+                    message.edit(messageOptions);
+                    if (messageOptions.files.length == 0) {
+                        message.removeAttachments();
+                    }
+                }).catch(console.error);
                 return message;
             });
         })
     }
 }
 
+function listSelectBuilder(listType) {
+    var selectCutomId = "";
+    var placeholderText = "";
+    var disableSelect = false;
+    var entries = [];
+
+    if (listType === "topics") {
+        var topicNames = exports.getTopicNames();
+        var topicIds = exports.getTopicIDs();
+        for (var i = 0; i < topicNames.length; i += 1) {
+            entries.push({
+                label: topicNames[i],
+                description: "",
+                value: topicIds[i]
+            })
+        }
+
+        selectCutomId = "topicListSelect";
+    } else if (listType === "petitions") {
+        for (var petition of Object.keys(exports.getPetitions())) {
+            entries.push({
+                label: petition,
+                description: "",
+                value: petition
+            })
+        }
+        selectCutomId = "petitionListSelect";
+    } else {
+        entries = Object.values(exports.getClubs()).map(club => {
+            return {
+                label: club.title,
+                description: club.description,
+                value: club.channelID
+            }
+        })
+        selectCutomId = "clubListSelect";
+    }
+
+    if (entries.length < 1) {
+        entries.push({
+            label: "no entries",
+            description: "",
+            value: "no entries"
+        })
+        disableSelect = true;
+    }
+
+    switch (listType) {
+        case "topics":
+            placeholderText = disableSelect ? "No topics yet" : "Select a topic...";
+            break;
+        case "petitions":
+            placeholderText = disableSelect ? "No open petitions" : "Select a petition...";
+            break;
+        case "clubs":
+            placeholderText = disableSelect ? "No clubs yet" : "Get club details...";
+            break;
+    }
+
+    return new MessageActionRow().addComponents(
+        new MessageSelectMenu()
+            .setCustomId(selectCutomId)
+            .setPlaceholder(placeholderText)
+            .setDisabled(disableSelect)
+            .addOptions(entries)
+            .setMinValues(1)
+            .setMaxValues(entries.length)
+    );
+}
+
 exports.topicListBuilder = function (channelManager) {
-    let description = "Here's a list of the opt-in topic channels for the server. Join them by typing `@HorizonsBot Join (channel names)` or by using the select menu under this message (jump to message in pins).\n";
+    var messageOptions = {};
+
+    // Select Menus
+    messageOptions.components = [listSelectBuilder("topics"), listSelectBuilder("petitions")];
+
+    // Generate Message Body
+    let description = "Here's a list of the opt-in topic channels for the server. Join them by typing `/join (channel name)` or by using the select menu under this message (jump to message in pins).\n";
     let topics = exports.getTopicIDs();
 
     for (let i = 0; i < topics.length; i += 1) {
         let id = topics[i];
         let channel = channelManager.resolve(id);
         if (channel) {
-            description += `\n__${channel.name}__ ${channel.description}`;
+            description += `\n__${channel.name}__${channel.description ? channel.description : ""}`;
         }
     }
 
@@ -174,14 +213,14 @@ exports.topicListBuilder = function (channelManager) {
                     console.log(error);
                 }
             });
-            resolve();
+            resolve(messageOptions);
         }).then(() => {
-            return {
-                files: [{
-                    attachment: "data/TopicChannels.txt",
-                    name: "TopicChannels.txt"
-                }]
-            }
+            messageOptions.embeds = [];
+            messageOptions.files = [{
+                attachment: "data/TopicChannels.txt",
+                name: "TopicChannels.txt"
+            }];
+            return messageOptions;
         })
     } else {
         return new Promise((resolve, reject) => {
@@ -195,14 +234,16 @@ exports.topicListBuilder = function (channelManager) {
             if (petitionNames.length > 0) {
                 embed.addField("Petitioned Channels", petitionText)
             }
-            resolve(embed);
+            messageOptions.embeds = [embed];
+            messageOptions.files = [];
+            resolve(messageOptions);
         })
     }
 }
 
 exports.pinTopicsList = function (channelManager, channel) {
-    exports.topicListBuilder(channelManager).then(embed => {
-        channel.send({ embeds: [embed] }).then(message => {
+    exports.topicListBuilder(channelManager).then(messageOptions => {
+        channel.send(messageOptions).then(message => {
             exports.listMessages.topics = {
                 "messageID": message.id,
                 "channelID": message.channel.id
@@ -214,12 +255,16 @@ exports.pinTopicsList = function (channelManager, channel) {
 }
 
 exports.clubListBuilder = function (channelManager) {
-    let description = "Here's a list of the clubs on the server. Learn more about one by typing `@HorizonsBot ClubDetails (club ID)`.\n";
+    var messageOptions = {};
+
+    messageOptions.components = [listSelectBuilder("clubs")];
+
+    let description = "Here's a list of the clubs on the server. Learn more about one by typing `/club-invite (club ID)`.\n";
     let clubs = exports.getClubs();
 
     Object.keys(clubs).forEach(id => {
         let club = clubs[id];
-        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Players)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
+        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
     })
 
     if (description.length > 2048) {
@@ -230,29 +275,33 @@ exports.clubListBuilder = function (channelManager) {
                     console.log(error);
                 }
             });
-            resolve();
-        }).then(() => {
-            return {
-                files: [{
-                    attachment: "data/ClubChannels.txt",
-                    name: "ClubChannels.txt"
-                }]
-            }
+            resolve(messageOptions);
+        }).then(messageOptions => {
+            messageOptions.files = [{
+                attachment: "data/ClubChannels.txt",
+                name: "ClubChannels.txt"
+            }];
+            messageOptions.embeds = [];
+            return messageOptions;
         })
     } else {
         return new Promise((resolve, reject) => {
-            resolve(new MessageEmbed().setColor("#f07581")
-                .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
-                .setTitle("Clubs")
-                .setDescription(description)
-                .setTimestamp());
+            messageOptions.embeds = [
+                new MessageEmbed().setColor("#f07581")
+                    .setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+                    .setTitle("Clubs")
+                    .setDescription(description)
+                    .setTimestamp()
+            ];
+            messageOptions.files = [];
+            resolve(messageOptions);
         })
     }
 }
 
 exports.pinClubsList = function (channelManager, channel) {
-    exports.clubListBuilder(channelManager).then(embed => {
-        channel.send({ embeds: [embed] }).then(message => {
+    exports.clubListBuilder(channelManager).then(messageOptions => {
+        channel.send(messageOptions).then(message => {
             exports.listMessages.clubs = {
                 "messageID": message.id,
                 "channelID": message.channel.id
@@ -280,52 +329,56 @@ exports.checkPetition = function (guild, topicName, author = null) {
     if (petitions[topicName].length > guild.memberCount * 0.05) {
         exports.addChannel(guild, topicName);
     } else {
-        author.send(`Your petition for ${topicName} has been recorded.`)
-            .catch(console.error)
         setPetitions(petitions, guild.channels);
     }
 }
 
 exports.addChannel = function (guild, topicName) {
-    var petitions = exports.getPetitions();
-    if (!petitions[topicName]) {
-        petitions[topicName] = [];
-    }
-    guild.roles.fetch(guild.id).then(everyoneRole => {
-        guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
-            guild.channels.create(topicName, {
+    return guild.roles.fetch(guild.id).then(everyoneRole => {
+        return guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
+            return guild.channels.create(topicName, {
                 parent: "581886288102424592",
                 permissionOverwrites: [
                     {
-                        "id": moderatorRole,
-                        "allow": ["VIEW_CHANNEL"]
+                        id: guild.me,
+                        allow: ["VIEW_CHANNEL"]
                     },
                     {
-                        "id": everyoneRole,
-                        "deny": ["VIEW_CHANNEL"]
+                        id: moderatorRole,
+                        allow: ["VIEW_CHANNEL"]
+                    },
+                    {
+                        id: everyoneRole,
+                        deny: ["VIEW_CHANNEL"]
                     }
                 ],
                 type: "GUILD_TEXT"
             }).then(channel => {
-                // Make channel viewable by petitioners, BountyBot, and HorizonsBot
+                var petitions = exports.getPetitions();
+                if (!petitions[topicName]) {
+                    petitions[topicName] = [];
+                }
+
+                // Make channel viewable by petitioners, and BountyBot
                 guild.members.fetch({
-                    user: petitions[topicName].concat(["536330483852771348", guild.client.user.id])
+                    user: petitions[topicName].concat(["536330483852771348"])
                 }).then(allowedCollection => {
                     allowedCollection.mapValues(member => {
                         channel.permissionOverwrites.create(member.user, {
                             "VIEW_CHANNEL": true
                         });
                     })
-                }).then(() => {
+
                     if (petitions[topicName].length > 0) {
                         channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
-                        delete petitions[topicName];
-                        exports.setPetitions(petitions, guild.channels);
                     }
+                    delete petitions[topicName];
+                    exports.setPetitions(petitions, guild.channels);
                     exports.addTopic(channel.id, channel.name);
                     exports.updateList(guild.channels, "topics");
                     exports.saveObject(exports.getTopicIDs(), 'topicList.json');
                 })
+                return channel;
             })
         })
     }).catch(console.log);
