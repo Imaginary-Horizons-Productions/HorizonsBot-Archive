@@ -16,11 +16,6 @@ command.execute = (interaction) => {
 		interaction.guild.roles.fetch(interaction.guild.id).then(everyoneRole => {
 			interaction.guild.roles.fetch(getModRoleID()).then(modRole => {
 				interaction.guild.members.fetch("536330483852771348").then(bountyBot => {
-					console.log(channelManager.client.user);
-					console.log(modRole);
-					console.log(everyoneRole);
-					console.log(host);
-					console.log(bountyBot);
 					channelManager.create("new-club-text", {
 						parent: categoryId,
 						permissionOverwrites: [
