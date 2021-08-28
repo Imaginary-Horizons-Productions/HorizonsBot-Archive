@@ -16,13 +16,11 @@ command.execute = (interaction) => {
 			let inline = interaction.options.getBoolean("inline");
 			let header = interaction.options.getString("header");
 			let text = interaction.options.getString("text");
-			interaction.client.guilds.fetch(guildID).then(guild => {
-				guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].addField(header, text, inline).setTimestamp();
-					message.edit({ embeds: [embed] });
-					interaction.reply({ content: `A field has been added to the embed. Link: ${message.url}`, ephemeral: true })
-				}).catch(console.error);
-			})
+			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+				let embed = message.embeds[0].addField(header, text, inline).setTimestamp();
+				message.edit({ embeds: [embed] });
+				interaction.reply({ content: `A field has been added to the embed. Link: ${message.url}`, ephemeral: true })
+			}).catch(console.error);
 		} else {
 			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
 				.catch(console.error);

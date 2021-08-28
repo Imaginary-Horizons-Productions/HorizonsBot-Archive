@@ -37,9 +37,7 @@ command.execute = (interaction) => {
 					if (reaction.emoji.name == "🚫") {
 						collector.stop();
 					} else if (reaction.emoji.name == "🎲") {
-						interaction.client.guilds.fetch(guildID).then(guild => {
-							joinChannel(guild.channels.resolve(club.channelID), recipient);
-						});
+						joinChannel(interaction.guild.channels.resolve(club.channelID), recipient);
 					}
 				})
 			}).catch(console.error);

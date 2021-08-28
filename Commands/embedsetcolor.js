@@ -13,12 +13,10 @@ command.execute = (interaction) => {
 		if (customEmbeds[messageID]) {
 			let colorCode = interaction.options.getString("color");
 			if (colorCode.match(/^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/)) {
-				interaction.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-						let embed = message.embeds[0].setColor(colorCode).setTimestamp();
-						message.edit({ embeds: [embed] });
-						interaction.reply({ content: `The embed's color has been updated. Link: ${message.url}`, ephemeral: true });
-					})
+				interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+					let embed = message.embeds[0].setColor(colorCode).setTimestamp();
+					message.edit({ embeds: [embed] });
+					interaction.reply({ content: `The embed's color has been updated. Link: ${message.url}`, ephemeral: true });
 				})
 			} else {
 				interaction.reply({ content: `Please provide color in hex code format (#000000).`, ephemeral: true })

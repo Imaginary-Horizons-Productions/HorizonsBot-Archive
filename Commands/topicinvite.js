@@ -27,9 +27,7 @@ command.execute = (interaction) => {
 					if (reaction.emoji.name === "🚫") {
 						collector.stop();
 					} else if (reaction.emoji.name === "✅") {
-						interaction.client.guilds.fetch(guildID).then(guild => {
-							joinChannel(guild.channels.resolve(channel.channelID), invitee);
-						});
+						joinChannel(interaction.guild.channels.resolve(channel.channelID), invitee);
 					}
 				})
 				interaction.reply({ content: "An invite has been sent!", ephemeral: true })

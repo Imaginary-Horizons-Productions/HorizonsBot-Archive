@@ -10,11 +10,9 @@ command.execute = (interaction) => {
 	let topicName = interaction.options.getString("topicname").toLowerCase();
 	if (getTopicNames().includes(topicName)) {
 		let channelID = findTopicID(topicName);
-		interaction.client.guilds.fetch(guildID).then(guild => {
-			joinChannel(guild.channels.resolve(channelID), interaction.user);
-			interaction.reply({ content: `A channel for ${topicName} already exists, you've been added to that channel.`, ephemeral: true })
-				.catch(console.error);
-		})
+		joinChannel(interaction.guild.channels.resolve(channelID), interaction.user);
+		interaction.reply({ content: `A channel for ${topicName} already exists, you've been added to that channel.`, ephemeral: true })
+			.catch(console.error);
 	} else {
 		checkPetition(interaction.guild, topicName, interaction.user);
 		interaction.reply("Petition recorded!")

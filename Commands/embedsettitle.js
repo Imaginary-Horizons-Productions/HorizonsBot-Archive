@@ -12,12 +12,10 @@ command.execute = (interaction) => {
 		let messageID = interaction.options.getString("messageid");
 		if (customEmbeds[messageID]) {
 			let title = interaction.options.getString("title");
-			interaction.client.guilds.fetch(guildID).then(guild => {
-				guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setTitle(title).setTimestamp();
-					message.edit({ embeds: [embed] });
-					interaction.reply({ content: `The embed's title has been updated. Link: ${message.url}`, ephemeral: true })
-				})
+			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+				let embed = message.embeds[0].setTitle(title).setTimestamp();
+				message.edit({ embeds: [embed] });
+				interaction.reply({ content: `The embed's title has been updated. Link: ${message.url}`, ephemeral: true })
 			})
 		} else {
 			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
