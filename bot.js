@@ -6,7 +6,7 @@ const client = new Client({
     retryLimit: 5,
     presence: {
         activities: [{
-            name: "@HorizonsBot commands",
+            name: "/commands",
             type: "LISTENING"
         }]
     },
