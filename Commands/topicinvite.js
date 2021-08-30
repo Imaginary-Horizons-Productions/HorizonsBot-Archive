@@ -15,8 +15,7 @@ command.execute = (interaction) => {
 		let embed = new MessageEmbed()
 			.setAuthor("Click here to visit the Imaginary Horizons Patreon", interaction.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
 			.setDescription(`${invitee} has invited you to the following opt-in channel on Imaginary Horizons.`)
-			.addField(channel.name, `${channel.topic ? channel.topic : "Description not yet set"}`)
-			.setFooter(`5 minute time limit`);
+			.addField(channel.name, `${channel.topic ? channel.topic : "Description not yet set"}`);
 		if (!invitee.bot) {
 			var joinButton = new MessageActionRow()
 				.addComponents(
