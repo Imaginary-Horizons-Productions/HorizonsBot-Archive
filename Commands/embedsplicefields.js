@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, customEmbeds, isModerator } = require('../helpers.js');
+const { customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command("embed-splice-fields", "Remove fields from a custom embed (replace unsupported)");
 

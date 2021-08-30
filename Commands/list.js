@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, topicListBuilder, clubListBuilder } = require('../helpers.js');
+const { topicListBuilder, clubListBuilder } = require('../helpers.js');
 
 var command = new Command("list", "Get a list of topic or club channels");
 

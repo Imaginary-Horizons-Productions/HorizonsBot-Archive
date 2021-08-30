@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { joinChannel, guildID, getTopicNames, findTopicID, checkPetition } = require('../helpers.js');
+const { joinChannel, getTopicNames, findTopicID, checkPetition } = require('../helpers.js');
 
 var command = new Command("petition", "Petition for a topic");
 

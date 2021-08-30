@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
-const { getTopicIDs, joinChannel, guildID } = require('../helpers.js');
+const { getTopicIDs, joinChannel } = require('../helpers.js');
 
 var command = new Command("topic-invite", "Invite users to this topic");
 

@@ -1,6 +1,5 @@
 const { MessageEmbed } = require('discord.js');
 const Command = require('../Classes/Command.js');
-const { guildID } = require('../helpers.js');
 
 var command = new Command("user-info", "Get join information about a user");
 

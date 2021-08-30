@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, customEmbeds, isModerator } = require('../helpers.js');
+const { customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command("embed-set-image", "Assign an custom embed's image");
 

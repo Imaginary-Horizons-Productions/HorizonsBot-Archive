@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, joinChannel, findTopicID } = require('../helpers.js');
+const { joinChannel, findTopicID } = require('../helpers.js');
 
 var command = new Command("join", "Join one or many opt-in channels or club");
 
