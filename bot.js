@@ -10,7 +10,7 @@ const client = new Client({
             type: "LISTENING"
         }]
     },
-    intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS', 'DIRECT_MESSAGES', 'DIRECT_MESSAGE_REACTIONS']
+    intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES']
 });
 
 client.login(require('./data/auth.json').token)
@@ -83,6 +83,20 @@ client.on("interactionCreate", interaction => {
         }
     } else if (interaction.isCommand()) {
         getCommand(interaction.commandName).execute(interaction);
+    } else if (interaction.isButton()) {
+        var buttonArguments = interaction.customId.split("-");
+        switch (buttonArguments[0]) {
+            case "join":
+                interaction.client.guilds.fetch(helpers.guildID).then(guild => {
+                    guild.channels.fetch(buttonArguments[1]).then(channel => {
+                        helpers.joinChannel(channel, interaction.user);
+                    })
+                })
+                break;
+            case "delete":
+                interaction.guild.channels.fetch(buttonArguments[1]).then(channel => channel.delete("Club leader left"));
+                break;
+        }
     }
 })
 

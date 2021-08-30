@@ -1,6 +1,6 @@
 const Command = require('../Classes/Command.js');
-const { MessageEmbed } = require('discord.js');
-const { getTopicIDs, joinChannel } = require('../helpers.js');
+const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
+const { getTopicIDs } = require('../helpers.js');
 
 var command = new Command("topic-invite", "Invite users to this topic");
 
@@ -15,24 +15,19 @@ command.execute = (interaction) => {
 		let embed = new MessageEmbed()
 			.setAuthor("Click here to visit the Imaginary Horizons Patreon", interaction.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
 			.setDescription(`${invitee} has invited you to the following opt-in channel on Imaginary Horizons.`)
-			.addField(channel.name, `${channel.topic ? channel.topic : ""}\n\nReact with ✅ to join!`)
+			.addField(channel.name, `${channel.topic ? channel.topic : "Description not yet set"}`)
 			.setFooter(`5 minute time limit`);
 		if (!invitee.bot) {
-			invitee.send({ embeds: [embed] }).then(async message => {
-				await message.react("✅");
-				await message.react("🚫");
-				let collector = message.createReactionCollector((reaction, user) => { return user.id != interaction.client.user.id && reaction.emoji.name == "🚫" || reaction.emoji.name == "✅" }, { "max": 1, "time": 300000 });
-
-				collector.on("collect", (reaction) => {
-					if (reaction.emoji.name === "🚫") {
-						collector.stop();
-					} else if (reaction.emoji.name === "✅") {
-						joinChannel(interaction.guild.channels.resolve(channel.channelID), invitee);
-					}
-				})
-				interaction.reply({ content: "An invite has been sent!", ephemeral: true })
-					.catch(console.error);
-			})
+			var joinButton = new MessageActionRow()
+				.addComponents(
+					new MessageButton()
+						.setCustomId(`join-${channel.id}`)
+						.setLabel(`Join ${channel.name}`)
+						.setStyle("SUCCESS")
+				);
+			invitee.send({ embeds: [embed], components: [joinButton] }).then(message => {
+				interaction.reply({ content: "An invite has been sent!", ephemeral: true });
+			}).catch(console.error);
 		} else {
 			interaction.reply({ content: "If you would like to add a bot to a topic, speak with a moderator.", ephemeral: true })
 				.catch(console.error);
