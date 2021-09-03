@@ -136,7 +136,7 @@ function listSelectBuilder(listType) {
         entries = Object.values(exports.getClubs()).map(club => {
             return {
                 label: club.title,
-                description: `${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Members`,
+                description: `${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members`,
                 value: club.channelID
             }
         })
@@ -264,7 +264,7 @@ exports.clubListBuilder = function (channelManager) {
 
     Object.keys(clubs).forEach(id => {
         let club = clubs[id];
-        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats != 0 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
+        description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
     })
 
     if (description.length > 2048) {
@@ -397,7 +397,7 @@ exports.joinChannel = function (channel, user) {
                 }).catch(console.log);
             } else if (Object.keys(exports.getClubs()).includes(channelID)) {
                 let club = exports.getClubs()[channelID];
-                if (club.seats == 0 || club.userIDs.length < club.seats) {
+                if (club.seats === -1 || club.userIDs.length < club.seats) {
                     if (club.hostID != user.id && !club.userIDs.includes(user.id)) {
                         club.userIDs.push(user.id);
                         channel.permissionOverwrites.create(user, {
