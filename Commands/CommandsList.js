@@ -12,7 +12,7 @@ exports.commandSets = [
 	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
 		["clubinvite.js", "clubadd.js", "clubconfig.js", "clubsetimage.js", "clubpromoteleader.js"]),
 	new CommandSet("Moderation Commands", "Commands for managing HorizonsBot's list of moderators.",
-		['modpromote.js', 'moddemote.js', "userinfo.js"])
+		['modpromote.js', 'moddemote.js'])
 ];
 
 var commandFileNames = [];
