@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, customEmbeds, isModerator } = require('../helpers.js');
+const { customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command("embed-set-image", "Assign an custom embed's image");
 
@@ -13,13 +13,11 @@ command.execute = (interaction) => {
 		if (customEmbeds[messageID]) {
 			let url = interaction.options.getString("url");
 			if (url.startsWith("https://") || url.startsWith("http://")) {
-				interaction.client.guilds.fetch(guildID).then(guild => {
-					guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-						let embed = message.embeds[0].setImage(url).setTimestamp();
-						message.edit({ embeds: [embed] });
-						interaction.reply({ content: `The embed's image has been updated. Link: ${message.url}`, ephemeral: true });
-					}).catch(console.error);
-				})
+				interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+					let embed = message.embeds[0].setImage(url).setTimestamp();
+					message.edit({ embeds: [embed] });
+					interaction.reply({ content: `The embed's image has been updated. Link: ${message.url}`, ephemeral: true });
+				}).catch(console.error);
 			} else {
 				interaction.reply({ content: `The image url must begin with "http".`, ephemeral: true })
 					.catch(console.error);

@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, customEmbeds, isModerator } = require('../helpers.js');
+const { customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command("embed-set-author", "Assign a custom embed's author");
 
@@ -16,13 +16,11 @@ command.execute = (interaction) => {
 			let name = interaction.options.getString("text");
 			let iconURL = interaction.options.getString("iconurl");
 			let url = interaction.options.getString("url");
-			interaction.client.guilds.fetch(guildID).then(guild => {
-				guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
-					message.edit({ embeds: [embed] });
-					interaction.reply({ content: `The author field has been updated. Link: ${message.url}`, ephemeral: true })
-				}).catch(console.error);
-			})
+			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+				let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
+				message.edit({ embeds: [embed] });
+				interaction.reply({ content: `The author field has been updated. Link: ${message.url}`, ephemeral: true })
+			}).catch(console.error);
 		} else {
 			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
 				.catch(console.error);

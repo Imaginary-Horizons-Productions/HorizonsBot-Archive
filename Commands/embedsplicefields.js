@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { guildID, customEmbeds, isModerator } = require('../helpers.js');
+const { customEmbeds, isModerator } = require('../helpers.js');
 
 var command = new Command("embed-splice-fields", "Remove fields from a custom embed (replace unsupported)");
 
@@ -14,13 +14,11 @@ command.execute = (interaction) => {
 		if (customEmbeds[messageID]) {
 			let deleteCount = interaction.options.getInteger("count");
 			let index = interaction.options.getInteger("index");
-			interaction.client.guilds.fetch(guildID).then(guild => {
-				guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-					let embed = message.embeds[0].spliceFields(index, deleteCount).setTimestamp();
-					message.edit({ embeds: [embed] });
-					interaction.reply({ content: `The fields have been removed. Link: ${message.url}`, ephemeral: true })
-				}).catch(console.error);
-			})
+			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
+				let embed = message.embeds[0].spliceFields(index, deleteCount).setTimestamp();
+				message.edit({ embeds: [embed] });
+				interaction.reply({ content: `The fields have been removed. Link: ${message.url}`, ephemeral: true })
+			}).catch(console.error);
 		} else {
 			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
 				.catch(console.error);
