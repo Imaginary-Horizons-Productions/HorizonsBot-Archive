@@ -19,6 +19,6 @@ function dataPolicyBuilder(footerURL) {
 		.setDescription(`If you leave Imaginary Horizons, your data will be deleted.`)
 		.addField(`Data Collected`, `HorizonsBot stores user submitted topics, petitions, and club details.`)
 		.addField(`Data Usage`, `Imaginary Horizons does not use any user data at this time.`)
-		.setFooter(`Updated: HorizonsBot version 1.8.0`, footerURL)
+		.setFooter(`Updated: HorizonsBot version 1.9.0`, footerURL)
 		.setTimestamp();
 }
