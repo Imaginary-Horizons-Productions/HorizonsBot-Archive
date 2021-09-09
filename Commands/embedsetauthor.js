@@ -14,12 +14,16 @@ command.execute = (interaction) => {
 		let messageID = interaction.options.getString("messageid");
 		if (customEmbeds[messageID]) {
 			let name = interaction.options.getString("text");
+			var urlRegex = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,})/, 'gi');
 			let iconURL = interaction.options.getString("iconurl");
+			var validIcon = urlRegex.test(iconURL);
 			let url = interaction.options.getString("url");
+			var validURL = urlRegex.test(url);
 			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-				let embed = message.embeds[0].setAuthor(name, iconURL, url).setTimestamp();
+				let embed = message.embeds[0].setAuthor(name, validIcon ? iconURL : "", validURL ? url : "").setTimestamp();
 				message.edit({ embeds: [embed] });
-				interaction.reply({ content: `The author field has been updated. Link: ${message.url}`, ephemeral: true })
+				interaction.reply({ content: `The author field has been updated. Link: ${message.url}`, ephemeral: true });
+				interaction.followUp({ content: `${validIcon ? "" : "Your input for iconurl does not appear to be a url."}\n${validURL ? "" : "Your input for url does not appear to be a url."}`, ephemeral: true });
 			}).catch(console.error);
 		} else {
 			interaction.reply({ content: `The embed you provided for a \`${interaction.commandName}\` command could not be found.`, ephemeral: true })
