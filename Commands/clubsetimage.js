@@ -12,9 +12,15 @@ command.execute = (interaction) => {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
 			let url = interaction.options.getString("url");
 			if (url) {
-				club.imageURL = url;
-				interaction.reply({ content: `${club.title}'s image has been set.`, ephemeral: true })
-					.catch(console.error);
+				var validURL = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,})/, 'gi').test(url);
+				if (validURL) {
+					club.imageURL = url;
+					interaction.reply({ content: `${club.title}'s image has been set.`, ephemeral: true })
+						.catch(console.error);
+				} else {
+					interaction.reply({ content: "Your input for url does not appear to be a url.", ephemeral: true })
+						.catch(console.error);
+				}
 			} else {
 				club.imageURL = "";
 				interaction.reply({ content: `${club.title}'s image has been cleared.`, ephemeral: true })

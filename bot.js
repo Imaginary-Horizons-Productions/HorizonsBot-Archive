@@ -68,7 +68,7 @@ client.on('messageCreate', receivedMessage => {
 
 client.on("interactionCreate", interaction => {
     if (interaction.isSelectMenu()) {
-        if (interaction.customId === "topicListSelect" || interaction.customId === "clubListSelect") {
+        if (interaction.customId === "topicListSelect") {
             interaction.values.forEach(channelID => {
                 interaction.guild.channels.fetch(channelID).then(channel => {
                     helpers.joinChannel(channel, interaction.user);
@@ -80,6 +80,10 @@ client.on("interactionCreate", interaction => {
                 helpers.checkPetition(interaction.guild, petition, interaction.user);
             })
             interaction.update("\u200B");
+        } else if (interaction.customId === "clubListSelect") {
+            interaction.values.forEach(channelID => {
+                helpers.clubInvite(interaction, channelID, interaction.user);
+            })
         }
     } else if (interaction.isCommand()) {
         getCommand(interaction.commandName).execute(interaction);
