@@ -22,7 +22,7 @@ command.execute = (interaction) => {
 					.catch(console.error);
 			} else {
 				club.userIDs = club.userIDs.filter(id => id != userID);
-				interaction.channel.permissionOverwrites.get(userID).delete("HorizonsBot leave used")
+				interaction.channel.permissionOverwrites.delete(interaction.user, "HorizonsBot leave used")
 					.catch(console.error);
 				interaction.guild.channels.resolve(club.voiceChannelID).permissionOverwrites.delete(interaction.user, "HorizonsBot leave used")
 					.catch(console.error);
