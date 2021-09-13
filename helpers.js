@@ -327,60 +327,59 @@ exports.checkPetition = function (guild, topicName, author = null) {
 		}
 	}
 	if (petitions[topicName].length > guild.memberCount * 0.05) {
-		exports.addTopic(guild, topicName);
+		exports.addTopicChannel(guild, topicName);
 	} else {
 		exports.setPetitions(petitions, guild.channels);
 	}
 }
 
-exports.addTopic = function (guild, topicName) {
-	return guild.roles.fetch(guild.id).then(everyoneRole => {
-		return guild.roles.fetch(moderatorIDs.roleId).then(moderatorRole => {
-			return guild.channels.create(topicName, {
-				parent: "581886288102424592",
-				permissionOverwrites: [
-					{
-						id: guild.me,
-						allow: ["VIEW_CHANNEL"]
-					},
-					{
-						id: moderatorRole,
-						allow: ["VIEW_CHANNEL"]
-					},
-					{
-						id: everyoneRole,
-						deny: ["VIEW_CHANNEL"]
-					}
-				],
-				type: "GUILD_TEXT"
-			}).then(channel => {
-				var petitions = exports.getPetitions();
-				if (!petitions[topicName]) {
-					petitions[topicName] = [];
-				}
+exports.addTopicChannel = function (guild, topicName) {
+	return guild.channels.create(topicName, {
+		parent: "581886288102424592",
+		permissionOverwrites: [
+			{
+				id: guild.me,
+				allow: ["VIEW_CHANNEL"],
+				type: 1
+			},
+			{
+				id: moderatorIDs.roleId,
+				allow: ["VIEW_CHANNEL"],
+				type: 1
+			},
+			{
+				id: guild.id,
+				deny: ["VIEW_CHANNEL"],
+				type: 0
+			}
+		],
+		type: "GUILD_TEXT"
+	}).then(channel => {
+		var petitions = exports.getPetitions();
+		if (!petitions[topicName]) {
+			petitions[topicName] = [];
+		}
 
-				// Make channel viewable by petitioners, and BountyBot
-				guild.members.fetch({
-					user: petitions[topicName].concat(["536330483852771348"])
-				}).then(allowedCollection => {
-					allowedCollection.mapValues(member => {
-						channel.permissionOverwrites.create(member.user, {
-							"VIEW_CHANNEL": true
-						});
-					})
-
-					if (petitions[topicName].length > 0) {
-						channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
-					}
-					delete petitions[topicName];
-					exports.setPetitions(petitions, guild.channels);
-					exports.addTopic(channel.id, channel.name);
-					exports.updateList(guild.channels, "topics");
-					exports.saveObject(exports.getTopicIDs(), 'topicList.json');
-				})
-				return channel;
+		// Make channel viewable by petitioners, and BountyBot
+		guild.members.fetch({
+			user: petitions[topicName].concat(["536330483852771348"])
+		}).then(allowedCollection => {
+			allowedCollection.mapValues(member => {
+				channel.permissionOverwrites.create(member.user, {
+					"VIEW_CHANNEL": true
+				});
 			})
+
+			if (petitions[topicName].length > 0) {
+				channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
+			}
+			delete petitions[topicName];
+			exports.setPetitions(petitions, guild.channels);
+			exports.addTopic(channel.id, channel.name);
+			exports.updateList(guild.channels, "topics");
+			exports.saveObject(exports.getTopicIDs(), 'topicList.json');
 		})
+		return channel;
 	}).catch(console.log);
 }
 
