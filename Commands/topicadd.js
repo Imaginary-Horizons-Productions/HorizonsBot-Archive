@@ -1,5 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { addChannel, isModerator } = require('../helpers.js');
+const { isModerator, addTopicChannel } = require('../helpers.js');
 
 var command = new Command("topic-add", "Set up a topic");
 
@@ -9,7 +9,7 @@ command.execute = (interaction) => {
 	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels
 	if (isModerator(interaction.user.id)) {
 		let channelName = interaction.options.getString('topicname');
-		addChannel(interaction.guild, channelName).then(channel => {
+		addTopicChannel(interaction.guild, channelName).then(channel => {
 			interaction.reply(`A new topic channel has been created: ${channel}`)
 				.catch(console.error);
 		});
