@@ -63,6 +63,7 @@ exports.getPetitions = function () {
 exports.setPetitions = function (petitionListInput, channelManager) {
 	petitions = petitionListInput;
 	exports.saveObject(petitions, 'petitionList.json');
+	exports.updateList(channelManager, "topics");
 }
 
 // {textChannelID: Club}
@@ -374,10 +375,9 @@ exports.addTopicChannel = function (guild, topicName) {
 				channel.send(`This channel has been created thanks to: <@${petitions[topicName].join('> <@')}>`);
 			}
 			delete petitions[topicName];
-			exports.setPetitions(petitions, guild.channels);
 			exports.addTopic(channel.id, channel.name);
-			exports.updateList(guild.channels, "topics");
 			exports.saveObject(exports.getTopicIDs(), 'topicList.json');
+			exports.setPetitions(petitions, guild.channels);
 		})
 		return channel;
 	}).catch(console.log);

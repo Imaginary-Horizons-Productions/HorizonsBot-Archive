@@ -13,8 +13,7 @@ command.execute = (interaction) => {
 		let petitionersIDs = petitions[vetoedPetition];
 		if (petitionersIDs) {
 			delete petitions[vetoedPetition];
-			setPetitions(petitions);
-			updateList(interaction.guild.channels, "topics");
+			setPetitions(petitions, interaction.guild.channels);
 			interaction.reply(`The petition for ${vetoedPetition} has been vetoed.`)
 				.catch(console.error);
 		} else {
