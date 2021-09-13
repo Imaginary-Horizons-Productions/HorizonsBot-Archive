@@ -15,7 +15,7 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	} else {
 		checkPetition(interaction.guild, topicName, interaction.user);
-		interaction.reply({ content: "Petition recorded!", ephemeral: true })
+		interaction.reply(`Your petition for **${topicName}** has been recorded!`)
 			.catch(console.error);
 	}
 }
