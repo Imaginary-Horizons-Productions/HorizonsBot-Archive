@@ -120,6 +120,7 @@ client.on('guildMemberRemove', member => {
     }
 
     // Remove member from petitions and check if member leaving completes any petitions
+    let petitions = helpers.getPetitions();
     Object.keys(helpers.getPetitions()).forEach(topicName => {
         petitions[topicName] = petitions[topicName].filter(id => id != memberId);
         helpers.setPetitions(petitions, guild.channels);

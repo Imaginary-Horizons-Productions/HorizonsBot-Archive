@@ -183,7 +183,7 @@ exports.topicListBuilder = function (channelManager) {
 	messageOptions.components = [listSelectBuilder("topics"), listSelectBuilder("petitions")];
 
 	// Generate Message Body
-	let description = "Here's a list of the opt-in topic channels for the server. Join them by typing `/join (channel name)` or by using the select menu under this message (jump to message in pins).\n";
+	let description = "Here's a list of the opt-in topic channels for the server. Join them by using `/join` or by using the select menu under this message (jump to message in pins).\n";
 	let topics = exports.getTopicIDs();
 
 	for (let i = 0; i < topics.length; i += 1) {
@@ -195,7 +195,7 @@ exports.topicListBuilder = function (channelManager) {
 	}
 
 	let petitionNames = Object.keys(petitions);
-	let petitionText = `Here are the topic channels that have been petitioned for. They will automatically be added when reaching **${Math.ceil(channelManager.guild.memberCount * 0.05)} petitions** (5% of the server). You can sign onto an already open petition with the select menu under this message (jump to message in pins).\n`;
+	let petitionText = `Here are the topic channels that have been petitioned for. Note that petitions will be converted to lowercase to match with Discord text channels being all lowercase. They will automatically be added when reaching **${Math.ceil(channelManager.guild.memberCount * 0.05)} petitions** (5% of the server). You can sign onto an already open petition with the select menu under this message (jump to message in pins).\n`;
 	if (petitionNames.length > 0) {
 		petitionNames.forEach(topicName => {
 			petitionText += `\n${topicName}: ${petitions[topicName].length} petitioner(s) so far`;
