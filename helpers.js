@@ -332,7 +332,7 @@ exports.checkPetition = function (guild, topicName, author = null) {
 	} else {
 		exports.setPetitions(petitions, guild.channels);
 	}
-	exports.updateList(channelManager, "topics");
+	exports.updateList(guild.channels, "topics");
 }
 
 exports.addTopicChannel = function (guild, topicName) {
