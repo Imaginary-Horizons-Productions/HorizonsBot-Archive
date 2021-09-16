@@ -1,6 +1,5 @@
 const Command = require('../Classes/Command.js');
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { getClubs, clubInvite } = require('../helpers.js');
+const { clubInvite } = require('../helpers.js');
 
 var command = new Command("club-invite", "Send the user (default: self) an invite to the club by channel mention, or by sending from club");
 
