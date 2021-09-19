@@ -190,7 +190,7 @@ exports.topicListBuilder = function (channelManager) {
 		let id = topics[i];
 		let channel = channelManager.resolve(id);
 		if (channel) {
-			description += `\n__${channel.name}__${channel.description ? channel.description : ""}`;
+			description += `\n__${channel.name}__${channel.topic ? channel.topic : ""}`;
 		}
 	}
 
