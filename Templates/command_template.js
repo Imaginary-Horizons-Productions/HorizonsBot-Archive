@@ -1,9 +1,7 @@
 const Command = require('../Classes/Command.js');
 
-var command = new Command("", ""); // (name, description)
+module.exports = new Command("", ""); // (name, description)
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Command specifications go here
 }
-
-module.exports = command;

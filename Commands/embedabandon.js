@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 const { customEmbeds, isModerator, saveObject } = require('../helpers.js');
 
-var command = new Command("embed-abandon", "Stop managing the given embed(s)");
+module.exports = new Command("embed-abandon", "Stop managing the given embed(s)");
 
-command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true));
+module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Stop managing the given embed(s)
 	if (isModerator(interaction.user.id)) {
 		var messageId = interaction.options.getString("messageid");
@@ -23,5 +23,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

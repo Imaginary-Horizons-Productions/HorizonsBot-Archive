@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 var { getModRoleID, isModerator, addModerator } = require('../helpers.js');
 
-var command = new Command("mod-promote", "Add a Moderator to HorizonsBot's list and give them the role");
+module.exports = new Command("mod-promote", "Add a Moderator to HorizonsBot's list and give them the role");
 
-command.data.addMentionableOption(option => option.setName("promotee").setDescription("The user to promote to moderator").setRequired(true));
+module.exports.data.addMentionableOption(option => option.setName("promotee").setDescription("The user to promote to moderator").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Add a Moderator: add to list, give role and channel permissions
 	if (isModerator(interaction.user.id) || !interaction.member.manageable) {
 		let promotee = interaction.options.getMentionable("promotee");
@@ -23,5 +23,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

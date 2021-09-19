@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, pinTopicsList, pinClubsList } = require('../helpers.js');
 
-var command = new Command("pin-list", "Pin the list message for topics or clubs in this channel");
+module.exports = new Command("pin-list", "Pin the list message for topics or clubs in this channel");
 
-command.data.addStringOption(option => option.setName("listtype").setDescription(`Pin the list message for topics or clubs in this channel`).setRequired(true).addChoice("Pin the topic list", "topic").addChoice("Pin the club list", "club"));
+module.exports.data.addStringOption(option => option.setName("listtype").setDescription(`Pin the list message for topics or clubs in this channel`).setRequired(true).addChoice("Pin the topic list", "topic").addChoice("Pin the club list", "club"));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Pin the list message for topics or clubs to the receiving channel
 	if (isModerator(interaction.user.id)) {
 		let listType = interaction.options.getString("listtype").toLowerCase();
@@ -26,5 +26,3 @@ command.execute = (interaction) => {
 			.catch(console.log);
 	}
 }
-
-module.exports = command;

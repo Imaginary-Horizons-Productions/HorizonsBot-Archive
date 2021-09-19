@@ -1,15 +1,13 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command("data-policy",	"Shows types of user data HorizonsBot collects and how it's used");
+module.exports = new Command("data-policy",	"Shows types of user data HorizonsBot collects and how it's used");
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Command specifications go here
 	interaction.reply({ embeds: [dataPolicyBuilder(interaction.client.user.displayAvatarURL())], ephemeral: true })
 		.catch(console.error);
 }
-
-module.exports = command;
 
 function dataPolicyBuilder(footerURL) {
 	return new MessageEmbed().setColor(`6b81eb`)

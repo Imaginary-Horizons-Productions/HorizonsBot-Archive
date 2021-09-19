@@ -1,15 +1,13 @@
 const Command = require('./../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command("support", "Show ways to support the community");
+module.exports = new Command("support", "Show ways to support the community");
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Lists ways users can support development
 	interaction.reply({ embeds: [supportBuilder(interaction.client.user.displayAvatarURL())], ephemeral: true })
 		.catch(console.error);
 }
-
-module.exports = command;
 
 function supportBuilder(footerURL) {
 	return new MessageEmbed().setColor('6b81eb')

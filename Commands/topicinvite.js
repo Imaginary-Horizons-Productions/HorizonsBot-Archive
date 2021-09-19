@@ -2,12 +2,12 @@ const Command = require('../Classes/Command.js');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { getTopicIDs } = require('../helpers.js');
 
-var command = new Command("topic-invite", "Invite users to this topic");
+module.exports = new Command("topic-invite", "Invite users to this topic");
 
-command.data.addUserOption(option => option.setName("invitee").setDescription("The user to invite (copy-paste from another channel)").setRequired(true))
+module.exports.data.addUserOption(option => option.setName("invitee").setDescription("The user to invite (copy-paste from another channel)").setRequired(true))
 	.addChannelOption(option => option.setName("channel").setDescription("The topic channel to invite to").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Invite users to the given topic
 	var channel = interaction.options.getChannel("channel");
 	if (getTopicIDs().includes(channel.id)) {
@@ -36,5 +36,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

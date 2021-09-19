@@ -1,14 +1,14 @@
 const Command = require('../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../helpers.js');
 
-var command = new Command("embed-add-field", "Add a custom embed field");
+module.exports = new Command("embed-add-field", "Add a custom embed field");
 
-command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("header").setDescription("The header for the new field").setRequired(true))
 	.addStringOption(option => option.setName("text").setDescription("The text of the new field").setRequired(true))
 	.addBooleanOption(option => option.setName("inline").setDescription("Whether to show the field in-line with previous embed fields").setRequired(false));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Add a field to the given embed
 	if (isModerator(interaction.user.id)) {
 		let messageID = interaction.options.getString("messageid");
@@ -30,5 +30,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

@@ -1,9 +1,9 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command("about", "Provides details about HorizonsBot and its contributors");
+module.exports = new Command("about", "Provides details about HorizonsBot and its contributors");
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Private message author with description of the bot and contributors
 	let embed = new MessageEmbed().setColor(`6b81eb`)
 		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
@@ -19,5 +19,3 @@ command.execute = (interaction) => {
 
 	interaction.reply({ embeds: [embed], ephemeral: true });
 }
-
-module.exports = command;
