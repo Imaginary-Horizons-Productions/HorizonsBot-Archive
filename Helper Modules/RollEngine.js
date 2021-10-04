@@ -37,6 +37,15 @@ const two_ops = { // Mathematical operations we currently support for rolls that
 	MULTIPLY: '*'
 }
 
+const keep_ops = { // Operations for keeping or dropping rolls of a result set
+	KEEP: 'k',
+	KEEP_HIGHEST: 'kh',
+	DROP_LOWEST: 'dl',
+	DROP: 'd',
+	DROP_HIGHEST: 'dh',
+	KEEP_LOWEST: 'kl'
+}
+
 class ResultSet {
 
 	constructor() {}
@@ -67,11 +76,16 @@ class ResultSet {
 		var parsingString = value.slice(0); // Copy the string
 		parsingString = parsingString.replace(/\s/g,''); //Remove all white space
 		parsingString = parsingString.replace(/\+\s*\-/g,'-'); //Simplify adding a negative to subtraction
-		if (parsingString[0] == '(' && parsingString[parsingString.length-1] == ')') { // If parentheses wrap the expression, remove them
+		while (parsingString[0] == '(' && parsingString[parsingString.length-1] == ')') { // If parentheses wrap the expression, remove them
 			parsingString = parsingString.slice(1, value.length-1);
 		}
 		// Handle base cases
-		if (/^[02-9]+d[0-9]+$/.test(parsingString)) { //parse multiple die roll
+		if (/^[02-9]+d[0-9]+[dk][lh]?[0-9]+$/.test(parsingString)) {
+			var dPos = parsingString.search('d');
+			var selPos = parsingString.search(/[dk][lh]?[0-9]+$/);
+			var endNumPos = parsingString.search(/[0-9]+$/);
+			return new DieSelectResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length, selPos), parsingString.slice(selPos - parsingString.length, endNumPos), parsingString.slice(endNumPos = parsingString.length))
+		} else if (/^[02-9]+d[0-9]+$/.test(parsingString)) { //parse multiple die roll
 			var dPos = parsingString.search('d');
 			return new MultiDieResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length));
 		} else if (/^1?d[0-9]+$/.test(parsingString)) { //parse single die roll
@@ -285,6 +299,189 @@ class SumSeriesResultSet extends ResultSet {
 	}
 }
 
+class DieSelectResultSet extends ResultSet {
+	#dieList = []
+	#dieSides
+	#selectOp
+	#selectNum
+
+	constructor(numDice,dieSides,selectOp,selectNum) {
+		super();
+		this.#dieSides = parseInt(dieSides.replace('d',''));
+		this.#selectNum = selectNum ? parseInt(selectNum) : 1;
+		this.#selectOp = selectOp;
+		var numDice = parseInt(numDice);
+		if (numDice - selectNum <= 0) {
+			switch (this.#selectOp) {
+				case keep_ops.KEEP:
+				case keep_ops.KEEP_HIGHEST:
+				case keep_ops.KEEP_LOWEST:
+					this.#selectNum = numDice;
+					for(var i = 0; i < numDice; i+=1) {
+						this.#dieList.push(new RollResult(this.#dieSides));
+					}
+					break;
+				case keep_ops.DROP:
+				case keep_ops.DROP_LOWEST:
+				case keep_ops.DROP_HIGHEST:
+					this.#dieList = [];
+					this.#selectNum = 0;
+					break;
+			}
+		} else {
+			for(var i = 0; i < parseInt(numDice); i+=1) {
+				this.#dieList.push(new RollResult(this.#dieSides));
+			}
+		}
+	}
+
+	getResults() {
+		if (this.#dieList.length == 0) {
+			return 0;
+		}
+		var kept = [],
+		resultDice = this.#dieList.slice().sort((r1, r2) => r1.getResult() - r2.getResult());
+		switch (this.#selectOp) {
+			case keep_ops.KEEP:
+			case keep_ops.KEEP_HIGHEST:
+				kept = resultDice.slice(-this.#selectNum);
+				break;
+			case keep_ops.KEEP_LOWEST:
+				kept = resultDice.slice(0,this.#selectNum);
+				break;
+			case keep_ops.DROP:
+			case keep_ops.DROP_LOWEST:
+				kept = resultDice.slice(this.#selectNum);
+				break;
+			case keep_ops.DROP_HIGHEST:
+				kept = resultDice.slice(0,-this.#selectNum);
+				break;
+		}
+		return kept.reduce((acc, roll) => acc + roll.getResult(),0);
+	}
+
+	getMaxResults() {
+		if (this.#dieList.length == 0) {
+			return 0;
+		}
+		var trueDieLength = this.#dieList.length;
+		switch (this.#selectOp) {
+			case keep_ops.KEEP:
+			case keep_ops.KEEP_HIGHEST:
+			case keep_ops.KEEP_LOWEST:
+				trueDieLength = this.#selectNum;
+				break;
+			case keep_ops.DROP:
+			case keep_ops.DROP_LOWEST:
+			case keep_ops.DROP_HIGHEST:
+				trueDieLength -= this.#selectNum;
+				break;
+		}
+		return trueDieLength * this.#dieSides;
+	}
+
+	getMinResults() {
+		if (this.#dieList.length == 0) {
+			return 0;
+		}
+		var trueDieLength = this.#dieList.length;
+		switch (this.#selectOp) {
+			case keep_ops.KEEP:
+			case keep_ops.KEEP_HIGHEST:
+			case keep_ops.KEEP_LOWEST:
+				trueDieLength = this.#selectNum;
+				break;
+			case keep_ops.DROP:
+			case keep_ops.DROP_LOWEST:
+			case keep_ops.DROP_HIGHEST:
+				trueDieLength -= this.#selectNum;
+				break;
+		}
+		return trueDieLength;
+	}
+
+	toString(frac = false) { // TODO
+		if (this.#dieList.length == 0) {
+			return frac ? `0/0` : `0`;
+		}
+		var isDrop = this.#selectOp.startsWith('d');
+		var dieMap = this.#dieList.map(result => { return { roll: result, keep: isDrop } });
+		switch (this.#selectOp) {
+			case keep_ops.KEEP:
+			case keep_ops.KEEP_HIGHEST:
+				var skipIndices = [];
+				var repeats = this.#selectNum;
+				while (repeats > 0) {
+					var highIndex = -1;
+					var highValue = -1;
+					for (var i = 0; i < dieMap.length; i++) {
+						if (!skipIndices.includes(i) && dieMap[i].roll.getResult() > highValue) {
+							highValue = dieMap[i].roll.getResult();
+							highIndex = i;
+						}
+					}
+					dieMap[highIndex].keep = true;
+					skipIndices.push(highIndex);
+					repeats--;
+				}
+				break;
+			case keep_ops.KEEP_LOWEST:
+				var skipIndices = [];
+				var repeats = this.#selectNum;
+				while (repeats > 0) {
+					var lowIndex = -1;
+					var lowValue = Number.POSITIVE_INFINITY;
+					for (var i = 0; i < dieMap.length; i++) {
+						if (!skipIndices.includes(i) && dieMap[i].roll.getResult() < lowValue) {
+							lowValue = dieMap[i].roll.getResult();
+							lowIndex = i;
+						}
+					}
+					dieMap[lowIndex].keep = true;
+					skipIndices.push(lowIndex);
+					repeats--;
+				}
+				break;
+			case keep_ops.DROP:
+			case keep_ops.DROP_LOWEST:
+				var skipIndices = [];
+				var repeats = this.#selectNum;
+				while (repeats > 0) {
+					var lowIndex = -1;
+					var lowValue = Number.POSITIVE_INFINITY;
+					for (var i = 0; i < dieMap.length; i++) {
+						if (!skipIndices.includes(i) && dieMap[i].roll.getResult() < lowValue) {
+							lowValue = dieMap[i].roll.getResult();
+							lowIndex = i;
+						}
+					}
+					dieMap[lowIndex].keep = false;
+					skipIndices.push(lowIndex);
+					repeats--;
+				}
+				break;
+			case keep_ops.DROP_HIGHEST:
+				var skipIndices = [];
+				var repeats = this.#selectNum;
+				while (repeats > 0) {
+					var highIndex = -1;
+					var highValue = -1;
+					for (var i = 0; i < dieMap.length; i++) {
+						if (!skipIndices.includes(i) && dieMap[i].roll.getResult() > highValue) {
+							highValue = dieMap[i].roll.getResult();
+							highIndex = i;
+						}
+					}
+					dieMap[highIndex].keep = false;
+					skipIndices.push(highIndex);
+					repeats--;
+				}
+				break;
+		}
+		return `(${dieMap.map(dieInfo => dieInfo.keep ? dieInfo.roll.toString(frac) : `~~${dieInfo.roll.toString(frac)} dropped~~${frac ? '0/0' : '0'}`).join(' + ')})`;
+	}
+}
+
 class ResultBundle {
 	#resultset
 	#extraText
@@ -298,6 +495,14 @@ class ResultBundle {
 		}
 		this.#resultset = resultSet;
 		this.#extraText = et;
+	}
+
+	getResultSet() {
+		return this.#resultset;
+	}
+
+	getExtraText() {
+		return this.#extraText;
 	}
 
 	toString(frac = false, simple = false) {
@@ -319,7 +524,7 @@ function parseRoll(input) { //This needs some wild revision before it'll work
 	var rollArray = splitInput.reduce((acc, cur) => {
 		if (acc[acc.length-1] == '║' || cur == '') {
 			return acc;
-		} else if (/[\+\-\*]/.test(cur) || /([0-9]+|[0-9]+d[0-9]+)([\+\-\*]([0-9]+|[0-9]+d[0-9]+))*$/.test(cur) || /\(/.test(cur) || /\)/.test(cur)) {
+		} else if (/[\+\-\*]/.test(cur) || /([0-9]+|[0-9]+d[0-9]+([dk][lh]?[0-9]+)?)([\+\-\*]([0-9]+|[0-9]+d[0-9]+([dk][lh]?[0-9]+)?))*$/.test(cur) || /\(/.test(cur) || /\)/.test(cur)) {
 			acc.push(cur);
 			return acc;
 		} else { //stop on the first non-roll
@@ -331,7 +536,7 @@ function parseRoll(input) { //This needs some wild revision before it'll work
 	var textArray = splitInput.reduceRight((acc, cur) => {
 		if (acc[0] == '║' || cur == '') {
 			return acc;
-		} else if (/([0-9]+|[0-9]+d[0-9]+)([\+\-\*]([0-9]+|[0-9]+d[0-9]+))*$/.test(cur) || /[0-9]+$/.test(cur) || /\)/.test(cur)) {
+		} else if (/([0-9]+|[0-9]+d[0-9]+([dk][lh]?[0-9]+)?)([\+\-\*]([0-9]+|[0-9]+d[0-9]+([dk][lh]?[0-9]+)?))*$/.test(cur) || /[0-9]+$/.test(cur) || /\)/.test(cur)) {
 			acc.unshift('║');
 			return acc;
 		} else {
