@@ -2,9 +2,9 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../Classes/Command.js');
 const { getManagedChannels, getClubs, updateClub } = require('../helpers.js');
 
-var command = new Command("leave", "Leave an opt-in channel or club");
+module.exports = new Command("leave", "Leave an opt-in channel or club");
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	let userID = interaction.user.id;
 	var channelID = interaction.channel.id;
 	if (getManagedChannels().includes(channelID)) {
@@ -41,5 +41,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

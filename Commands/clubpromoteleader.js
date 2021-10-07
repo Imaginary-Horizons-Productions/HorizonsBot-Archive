@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, getClubs, updateClub } = require("../helpers.js");
 
-var command = new Command("club-promote-leader", "Promote another user to club leader");
+module.exports = new Command("club-promote-leader", "Promote another user to club leader");
 
-command.data.addUserOption(option => option.setName("user").setDescription("The user to promote to club leader").setRequired(true));
+module.exports.data.addUserOption(option => option.setName("user").setDescription("The user to promote to club leader").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
@@ -24,5 +24,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

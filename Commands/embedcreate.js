@@ -2,9 +2,9 @@ const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 const { isModerator, customEmbeds, saveObject } = require('../helpers.js');
 
-var command = new Command("embed-create", "Make a new MessageEmbed, configurable with other commands");
+module.exports = new Command("embed-create", "Make a new MessageEmbed, configurable with other commands");
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Create a new MessageEmbed
 	if (interaction.guild) {
 		if (isModerator(interaction.user.id)) {
@@ -23,5 +23,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

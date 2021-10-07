@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, getManagedChannels } = require('../helpers.js');
 
-var command = new Command("delete", "Delete a topic or club channel, delay supported");
+module.exports = new Command("delete", "Delete a topic or club channel, delay supported");
 
-command.data.addIntegerOption(option => option.setName("delay").setDescription("Number of hours to delay deleting the channel").setRequired(false));
+module.exports.data.addIntegerOption(option => option.setName("delay").setDescription("Number of hours to delay deleting the channel").setRequired(false));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Delete a topic or club channel, or set it to be deleted on a delay
 	if (isModerator(interaction.user.id)) {
 		if (getManagedChannels().includes(interaction.channel.id)) {
@@ -30,5 +30,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

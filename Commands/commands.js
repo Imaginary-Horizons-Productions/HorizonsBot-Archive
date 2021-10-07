@@ -1,9 +1,9 @@
 const Command = require('../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-var command = new Command("commands", "List HorizonsBot command(s)");
+module.exports = new Command("commands", "List HorizonsBot command(s)");
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
     //TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set
     const { commandSets } = require(`./CommandsList.js`);
 
@@ -40,5 +40,3 @@ command.execute = (interaction) => {
     interaction.reply({ embeds: [embed], ephemeral: true })
         .catch(console.error);
 }
-
-module.exports = command;

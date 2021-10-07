@@ -2,11 +2,11 @@ const Command = require('../Classes/Command.js');
 const Club = require('../Classes/Club.js');
 const { isModerator, getModRoleID, updateClub } = require("../helpers.js");
 
-var command = new Command("club-add", "Set up a text and voice channels for a club");
+module.exports = new Command("club-add", "Set up a text and voice channels for a club");
 
-command.data.addUserOption(option => option.setName("clubleader").setDescription("The user to set as club leader").setRequired(true));
+module.exports.data.addUserOption(option => option.setName("clubleader").setDescription("The user to set as club leader").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Create a new club including a text and voice channel in the receiving channel's category and set the mentioned user as host
 	if (isModerator(interaction.user.id)) {
 		let host = interaction.options.getUser("clubleader");
@@ -82,5 +82,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

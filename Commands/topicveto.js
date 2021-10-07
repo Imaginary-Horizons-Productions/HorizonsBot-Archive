@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, getPetitions, setPetitions, updateList } = require('../helpers.js');
 
-var command = new Command("topic-veto", "Veto a petition");
+module.exports = new Command("topic-veto", "Veto a petition");
 
-command.data.addStringOption(option => option.setName("topic").setDescription("The petition to close").setRequired(true));
+module.exports.data.addStringOption(option => option.setName("topic").setDescription("The petition to close").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Remove the given petition from the petition list
 	if (isModerator(interaction.user.id)) {
 		let vetoedPetition = interaction.options.getString('topic');
@@ -25,5 +25,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

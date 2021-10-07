@@ -1,12 +1,12 @@
 const Command = require('../Classes/Command.js');
 const { joinChannel, findTopicID } = require('../helpers.js');
 
-var command = new Command("join", "Join one or many opt-in channels or club");
+module.exports = new Command("join", "Join one or many opt-in channels or club");
 
-command.data.addStringOption(option => option.setName("channel").setDescription("The name (or ID) of the topic or club to join").setRequired(true));
+module.exports.data.addStringOption(option => option.setName("channel").setDescription("The name (or ID) of the topic or club to join").setRequired(true));
 // can't use channel mention because users can't mention channels that are invisible to them (even by constructing the mention manually)
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions
 	var guild = interaction.guild;
 	var channelName = interaction.options.getString("channel");
@@ -23,5 +23,3 @@ command.execute = (interaction) => {
 		interaction.reply({ content: "Channel joined!", ephemeral: true });
 	}
 }
-
-module.exports = command;

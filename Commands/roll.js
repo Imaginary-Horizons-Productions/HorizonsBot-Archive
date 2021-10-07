@@ -1,9 +1,9 @@
 const Command = require('../Classes/Command.js');
 const { getRollString } = require('../Helper Modules/RollEngine.js');
 
-var command = new Command("roll", "Roll dice");
+module.exports = new Command("roll", "Roll dice");
 
-command.data.addStringOption(option => option.setName("dice").setDescription("The number and type of dice, use #d# format").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("dice").setDescription("The number and type of dice, use #d# format").setRequired(true))
 	.addStringOption(option => option.setName("display").setDescription("Choose output display options").setRequired(false)
 		.addChoice("Result only", "simple")
 		.addChoice("Compare to max total roll", "max")
@@ -11,7 +11,7 @@ command.data.addStringOption(option => option.setName("dice").setDescription("Th
 		.addChoice("Compare each die to max roll", "verbose"))
 	.addStringOption(option => option.setName("label").setDescription("Text label for the roll").setRequired(false));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Roll the specified dice
 	var rollInput = interaction.options.getString('dice');
 	var label = interaction.options.getString('label');
@@ -34,5 +34,3 @@ command.execute = (interaction) => {
 	}
 	interaction.reply(`Roll Result:\n\`${rollResult}\``);
 }
-
-module.exports = command;

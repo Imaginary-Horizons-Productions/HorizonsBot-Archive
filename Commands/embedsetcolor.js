@@ -1,12 +1,12 @@
 const Command = require('../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../helpers.js');
 
-var command = new Command("embed-set-color", "Assign a custom embed's color");
+module.exports = new Command("embed-set-color", "Assign a custom embed's color");
 
-command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("color").setDescription("The hexcode of the color").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Set the color for the given embed
 	if (isModerator(interaction.user.id)) {
 		let messageID = interaction.options.getString("messageid");
@@ -31,5 +31,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

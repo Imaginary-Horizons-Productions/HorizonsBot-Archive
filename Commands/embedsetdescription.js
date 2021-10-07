@@ -1,12 +1,12 @@
 const Command = require('../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../helpers.js');
 
-var command = new Command("embed-set-description", "Assign a custom embed's description");
+module.exports = new Command("embed-set-description", "Assign a custom embed's description");
 
-command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("text").setDescription("The text to put in the description field").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Set the description for the given embed
 	if (isModerator(interaction.user.id)) {
 		let messageID = interaction.options.getString("messageid");
@@ -26,5 +26,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

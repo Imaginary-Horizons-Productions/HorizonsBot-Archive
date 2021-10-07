@@ -1,14 +1,14 @@
 const Command = require('../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../helpers.js');
 
-var command = new Command("embed-set-author", "Assign a custom embed's author");
+module.exports = new Command("embed-set-author", "Assign a custom embed's author");
 
-command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("text").setDescription("The text to put in the author field").setRequired(true))
 	.addStringOption(option => option.setName("iconurl").setDescription("The url to the image in the author field").setRequired(false))
 	.addStringOption(option => option.setName("url").setDescription("The url to open when the author field is clicked").setRequired(false))
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Set the author for the given embed
 	if (isModerator(interaction.user.id)) {
 		let messageID = interaction.options.getString("messageid");
@@ -34,5 +34,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

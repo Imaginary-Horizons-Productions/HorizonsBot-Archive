@@ -1,12 +1,12 @@
 const Command = require('../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../helpers.js');
 
-var command = new Command("embed-set-thumbnail", "Assign a custom embed's thumbnail");
+module.exports = new Command("embed-set-thumbnail", "Assign a custom embed's thumbnail");
 
-command.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("url").setDescription("The url to a picture for the thumbnail field").setRequired(true));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Set the thumbnail for the given embed
 	if (isModerator(interaction.user.id)) {
 		let messageID = interaction.options.getString("messageid");
@@ -32,5 +32,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

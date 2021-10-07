@@ -1,15 +1,15 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, getClubs, updateClub } = require("../helpers.js");
 
-var command = new Command("club-config", "Configure a club's information");
+module.exports = new Command("club-config", "Configure a club's information");
 
-command.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
+module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
 	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))
 	.addStringOption(option => option.setName("game").setDescription("The text to set as the club game").setRequired(false))
 	.addIntegerOption(option => option.setName("maxmembers").setDescription("The maximum number of members for the club").setRequired(false))
 	.addStringOption(option => option.setName("timeslot").setDescription("The text to set for the club timeslot").setRequired(false));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
@@ -50,5 +50,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;

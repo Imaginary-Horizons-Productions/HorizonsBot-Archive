@@ -1,11 +1,11 @@
 const Command = require('../Classes/Command.js');
 const { isModerator, getClubs, updateClub } = require("../helpers.js");
 
-var command = new Command("club-set-image", "Set or clear a club's image url");
+module.exports = new Command("club-set-image", "Set or clear a club's image url");
 
-command.data.addStringOption(option => option.setName("url").setDescription("The url to the image to set for the club").setRequired(false));
+module.exports.data.addStringOption(option => option.setName("url").setDescription("The url to the image to set for the club").setRequired(false));
 
-command.execute = (interaction) => {
+module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
@@ -36,5 +36,3 @@ command.execute = (interaction) => {
 			.catch(console.error);
 	}
 }
-
-module.exports = command;
