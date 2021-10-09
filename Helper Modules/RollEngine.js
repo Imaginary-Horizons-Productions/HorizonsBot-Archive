@@ -80,16 +80,16 @@ class ResultSet {
 			parsingString = parsingString.slice(1, value.length-1);
 		}
 		// Handle base cases
-		if (/^[02-9]+d[0-9]+[dk][lh]?[0-9]+$/.test(parsingString)) {
+		if (/^1?d[0-9]+$/.test(parsingString)) { //parse single die roll
+			return new SingleResultSet(parsingString);
+		} else if (/^[0-9]+d[0-9]+[dk][lh]?[0-9]+$/.test(parsingString)) { //parse multiple die with selection
 			var dPos = parsingString.search('d');
 			var selPos = parsingString.search(/[dk][lh]?[0-9]+$/);
 			var endNumPos = parsingString.search(/[0-9]+$/);
 			return new DieSelectResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length, selPos), parsingString.slice(selPos - parsingString.length, endNumPos), parsingString.slice(endNumPos,parsingString.length))
-		} else if (/^[02-9]+d[0-9]+$/.test(parsingString)) { //parse multiple die roll
+		} else if (/^[0-9]+d[0-9]+$/.test(parsingString)) { //parse multiple die roll
 			var dPos = parsingString.search('d');
 			return new MultiDieResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length));
-		} else if (/^1?d[0-9]+$/.test(parsingString)) { //parse single die roll
-			return new SingleResultSet(parsingString);
 		} else if (/^-?[0-9]+$/.test(parsingString)) { //parse number result
 			return new SingleResultSet(parsingString,false);
 		}
