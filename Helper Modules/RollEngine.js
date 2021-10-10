@@ -80,16 +80,16 @@ class ResultSet {
 			parsingString = parsingString.slice(1, value.length-1);
 		}
 		// Handle base cases
-		if (/^[02-9]+d[0-9]+[dk][lh]?[0-9]+$/.test(parsingString)) {
+		if (/^1?d[0-9]+$/.test(parsingString)) { //parse single die roll
+			return new SingleResultSet(parsingString);
+		} else if (/^[0-9]+d[0-9]+[dk][lh]?[0-9]+$/.test(parsingString)) { //parse multiple die with selection
 			var dPos = parsingString.search('d');
 			var selPos = parsingString.search(/[dk][lh]?[0-9]+$/);
 			var endNumPos = parsingString.search(/[0-9]+$/);
-			return new DieSelectResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length, selPos), parsingString.slice(selPos - parsingString.length, endNumPos), parsingString.slice(endNumPos = parsingString.length))
-		} else if (/^[02-9]+d[0-9]+$/.test(parsingString)) { //parse multiple die roll
+			return new DieSelectResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length, selPos), parsingString.slice(selPos - parsingString.length, endNumPos), parsingString.slice(endNumPos,parsingString.length))
+		} else if (/^[0-9]+d[0-9]+$/.test(parsingString)) { //parse multiple die roll
 			var dPos = parsingString.search('d');
 			return new MultiDieResultSet(parsingString.slice(0,dPos),parsingString.slice(dPos - parsingString.length));
-		} else if (/^1?d[0-9]+$/.test(parsingString)) { //parse single die roll
-			return new SingleResultSet(parsingString);
 		} else if (/^-?[0-9]+$/.test(parsingString)) { //parse number result
 			return new SingleResultSet(parsingString,false);
 		}
@@ -311,7 +311,7 @@ class DieSelectResultSet extends ResultSet {
 		this.#selectNum = selectNum ? parseInt(selectNum) : 1;
 		this.#selectOp = selectOp;
 		var numDice = parseInt(numDice);
-		if (numDice - selectNum <= 0) {
+		if (numDice - this.#selectNum <= 0) {
 			switch (this.#selectOp) {
 				case keep_ops.KEEP:
 				case keep_ops.KEEP_HIGHEST:
@@ -404,8 +404,8 @@ class DieSelectResultSet extends ResultSet {
 		if (this.#dieList.length == 0) {
 			return frac ? `0/0` : `0`;
 		}
-		var isDrop = this.#selectOp.startsWith('d');
-		var dieMap = this.#dieList.map(result => { return { roll: result, keep: isDrop } });
+		var isKeep = this.#selectOp.startsWith('k'),
+		dieMap = this.#dieList.map(result => { return { roll: result, keep: isKeep } });
 		switch (this.#selectOp) {
 			case keep_ops.KEEP:
 			case keep_ops.KEEP_HIGHEST:
