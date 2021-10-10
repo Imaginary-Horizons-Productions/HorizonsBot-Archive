@@ -405,12 +405,11 @@ class DieSelectResultSet extends ResultSet {
 			return frac ? `0/0` : `0`;
 		}
 		var isKeep = this.#selectOp.startsWith('k'),
-		dieMap = this.#dieList.map(result => { return { roll: result, keep: isKeep } });
+		dieMap = this.#dieList.map(result => { return { roll: result, keep: !isKeep } });
+		var skipIndices = [], repeats = this.#selectNum;
 		switch (this.#selectOp) {
 			case keep_ops.KEEP:
 			case keep_ops.KEEP_HIGHEST:
-				var skipIndices = [];
-				var repeats = this.#selectNum;
 				while (repeats > 0) {
 					var highIndex = -1;
 					var highValue = -1;
@@ -426,12 +425,11 @@ class DieSelectResultSet extends ResultSet {
 				}
 				break;
 			case keep_ops.KEEP_LOWEST:
-				var skipIndices = [];
-				var repeats = this.#selectNum;
 				while (repeats > 0) {
 					var lowIndex = -1;
 					var lowValue = Number.POSITIVE_INFINITY;
 					for (var i = 0; i < dieMap.length; i++) {
+						console.log(`high index: ${highIndex}\nhigh value: ${highValue}`);
 						if (!skipIndices.includes(i) && dieMap[i].roll.getResult() < lowValue) {
 							lowValue = dieMap[i].roll.getResult();
 							lowIndex = i;
@@ -444,8 +442,6 @@ class DieSelectResultSet extends ResultSet {
 				break;
 			case keep_ops.DROP:
 			case keep_ops.DROP_LOWEST:
-				var skipIndices = [];
-				var repeats = this.#selectNum;
 				while (repeats > 0) {
 					var lowIndex = -1;
 					var lowValue = Number.POSITIVE_INFINITY;
@@ -461,8 +457,6 @@ class DieSelectResultSet extends ResultSet {
 				}
 				break;
 			case keep_ops.DROP_HIGHEST:
-				var skipIndices = [];
-				var repeats = this.#selectNum;
 				while (repeats > 0) {
 					var highIndex = -1;
 					var highValue = -1;
