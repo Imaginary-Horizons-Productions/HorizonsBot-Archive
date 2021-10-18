@@ -2,6 +2,12 @@ const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
 exports.guildID = require('./Config/auth.json').guildID;
 
+exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
+exports.timeSlotToString = (timeslot) => {
+	return `${exports.DAYS[timeslot[0]]}s at ${exports.HOURS[timeslot[1]]}`;
+}
+
 // [userID]
 let moderatorIDs = require('./Config/moderatorIDs.json');
 exports.isModerator = function (id) {
@@ -265,7 +271,13 @@ exports.clubListBuilder = function (channelManager) {
 
 	Object.keys(clubs).forEach(id => {
 		let club = clubs[id];
-		description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
+		description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n`;
+		if (club.system) {
+			description += `**Game**: ${club.system}\n`;
+		}
+		if (club.timeslot[0]) {
+			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
+		}
 	})
 
 	if (description.length > 2048) {
@@ -437,9 +449,13 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 				.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
 				.setDescription(club.description)
 				.addField("Club Host", `<@${club.hostID}>`)
-				.addField("Game", club.system)
-				.addField("Time Slot", club.timeslot)
 				.setImage(club.imageURL);
+			if (club.system) {
+				embed.addField("Game", club.system);
+			}
+			if (club.timeslot[0]) {
+				embed.addField("Time Slot", exports.timeSlotToString(club.timeslot))
+			}
 			if (recipient.id === club.hostID || club.userIDs.includes(recipient.id)) {
 				interaction.reply({ content: "Here is a preview of your club's info sheet. When sent to server members not in the club already, it'll also include an option to join.", embeds: [embed], ephemeral: true })
 					.catch(console.error);

@@ -1,4 +1,5 @@
 const { Client } = require('discord.js');
+const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
 const { getCommand } = require('./Data/Commands/_commandDictionary.js');
 var helpers = require('./helpers.js');
 
@@ -102,19 +103,7 @@ client.on("interactionCreate", interaction => {
 		getCommand(interaction.commandName).execute(interaction);
 	} else if (interaction.isButton()) {
 		var buttonArguments = interaction.customId.split("-");
-		switch (buttonArguments[0]) {
-			case "join":
-				interaction.client.guilds.fetch(helpers.guildID).then(guild => {
-					guild.channels.fetch(buttonArguments[1]).then(channel => {
-						helpers.joinChannel(channel, interaction.user);
-					})
-				})
-				interaction.message.edit({ components: [] });
-				break;
-			case "delete":
-				interaction.guild.channels.fetch(buttonArguments[1]).then(channel => channel.delete("Club leader left"));
-				break;
-		}
+		getButton(buttonArguments.shift()).execute(interaction, buttonArguments);
 	}
 })
 

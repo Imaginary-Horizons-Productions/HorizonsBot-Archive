@@ -1,12 +1,15 @@
-const fs = require('fs');
-
 var buttonWhitelist = [
+	"delete.js",
+	"join.js"
 ];
 
-const buttonFiles = fs.readdirSync('./Data/Buttons').filter(file => file.endsWith('.js') && buttonWhitelist.includes(file));
-exports.buttonDictionary = {};
+const buttonDictionary = {};
 
-for (const file of buttonFiles) {
+for (const file of buttonWhitelist) {
 	const button = require(`./${file}`);
-	exports.buttonDictionary[button.name] = button;
+	buttonDictionary[button.name] = button;
+}
+
+exports.getButton = (buttonId) => {
+	return buttonDictionary[buttonId];
 }
