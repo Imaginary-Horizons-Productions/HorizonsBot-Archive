@@ -129,7 +129,7 @@ function listSelectBuilder(listType) {
 			})
 		}
 
-		selectCutomId = "topicListSelect";
+		selectCutomId = "topicList";
 	} else if (listType === "petitions") {
 		for (var petition of Object.keys(exports.getPetitions())) {
 			entries.push({
@@ -138,7 +138,7 @@ function listSelectBuilder(listType) {
 				value: petition
 			})
 		}
-		selectCutomId = "petitionListSelect";
+		selectCutomId = "petitionList";
 	} else {
 		entries = Object.values(exports.getClubs()).map(club => {
 			return {
@@ -147,7 +147,7 @@ function listSelectBuilder(listType) {
 				value: club.channelID
 			}
 		})
-		selectCutomId = "clubListSelect";
+		selectCutomId = "clubList";
 	}
 
 	if (entries.length < 1) {
@@ -450,7 +450,7 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 				.setDescription(club.description)
 				.addField("Club Host", `<@${club.hostID}>`)
 				.setImage(club.imageURL);
-			if (club.system) {
+			if (club.system !== "\u200B") {
 				embed.addField("Game", club.system);
 			}
 			if (club.timeslot[0]) {
@@ -480,9 +480,9 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 
 exports.saveObject = function (object, fileName) {
 	var filePath = `./`;
-	filePath += 'data/' + fileName;
-	if (!fs.existsSync('./data')) {
-		fs.mkdirSync('./data');
+	filePath += 'Config/' + fileName;
+	if (!fs.existsSync('./Config')) {
+		fs.mkdirSync('./Config');
 	}
 	let textToSave = '';
 	if (object instanceof Collection) {

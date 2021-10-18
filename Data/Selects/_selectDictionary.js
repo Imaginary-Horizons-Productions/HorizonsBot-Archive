@@ -1,9 +1,16 @@
 var selectWhitelist = [
+	"clubList.js",
+	"petitionList.js",
+	"topicList.js"
 ];
 
-exports.selectDictionary = {};
+const selectDictionary = {};
 
 for (const file of selectWhitelist) {
 	const select = require(`./${file}`);
-	exports.selectDictionary[select.name] = select;
+	selectDictionary[select.name] = select;
+}
+
+exports.getSelect = (selectName) => {
+	return selectDictionary[selectName];
 }

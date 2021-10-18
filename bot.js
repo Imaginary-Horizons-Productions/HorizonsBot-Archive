@@ -1,6 +1,7 @@
 const { Client } = require('discord.js');
 const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
 const { getCommand } = require('./Data/Commands/_commandDictionary.js');
+const { getSelect } = require('./Data/Selects/_selectDictionary.js');
 var helpers = require('./helpers.js');
 
 const client = new Client({
@@ -82,23 +83,7 @@ client.on('messageCreate', receivedMessage => {
 
 client.on("interactionCreate", interaction => {
 	if (interaction.isSelectMenu()) {
-		if (interaction.customId === "topicListSelect") {
-			interaction.values.forEach(channelID => {
-				interaction.guild.channels.fetch(channelID).then(channel => {
-					helpers.joinChannel(channel, interaction.user);
-				})
-			})
-			interaction.update("\u200B");
-		} else if (interaction.customId === "petitionListSelect") {
-			interaction.values.forEach(petition => {
-				helpers.checkPetition(interaction.guild, petition, interaction.user);
-			})
-			interaction.update("\u200B");
-		} else if (interaction.customId === "clubListSelect") {
-			interaction.values.forEach(channelID => {
-				helpers.clubInvite(interaction, channelID, interaction.user);
-			})
-		}
+		getSelect(interaction.customId).execute(interaction);
 	} else if (interaction.isCommand()) {
 		getCommand(interaction.commandName).execute(interaction);
 	} else if (interaction.isButton()) {
