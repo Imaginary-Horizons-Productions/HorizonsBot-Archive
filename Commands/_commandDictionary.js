@@ -1,5 +1,5 @@
 const fs = require('fs');
-const CommandSet = require('./../Classes/CommandSet.js');
+const CommandSet = require('../Classes/CommandSet.js');
 
 // Total commands (new CommandSet when exceeding 25): 15
 exports.commandSets = [
@@ -10,7 +10,7 @@ exports.commandSets = [
 	new CommandSet("Topic Commands", "Commands for managing opt-in topic text channels.",
 		["topicinvite.js", "topicadd.js", "topicveto.js"]),
 	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
-		["clubinvite.js", "clubadd.js", "clubconfig.js", "clubsetimage.js", "clubpromoteleader.js"]),
+		["clubinvite.js", "clubadd.js", "clubconfig.js", "clubsettimeslot.js", "clubsetimage.js", "clubpromoteleader.js"]),
 	new CommandSet("Moderation Commands", "Commands for managing HorizonsBot's list of moderators.",
 		['modpromote.js', 'moddemote.js'])
 ];

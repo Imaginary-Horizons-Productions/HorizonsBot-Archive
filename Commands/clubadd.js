@@ -70,7 +70,7 @@ module.exports.execute = (interaction) => {
 							club.channelID = textChannel.id;
 							club.voiceChannelID = voiceChannel.id;
 							updateClub(club, interaction.guild.channels);
-							textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\` and \`/club-set-image\`. Then, when you're ready, invite people to join with \`/club-invite\`!`);
+							textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\`, \`/club-set-image\`, and \`/club-set-timeslot\`. Then, when you're ready, invite people to join with \`/club-invite\`!`);
 							interaction.reply("The new club has been created.");
 						}).catch(console.error);
 					})

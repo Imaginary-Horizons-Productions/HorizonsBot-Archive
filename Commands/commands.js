@@ -5,7 +5,7 @@ module.exports = new Command("commands", "List HorizonsBot command(s)");
 
 module.exports.execute = (interaction) => {
     //TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set
-    const { commandSets } = require(`./CommandsList.js`);
+    const { commandSets } = require(`./_commandDictionary.js`);
 
     let titleString = "HorizonsBot Commands";
     let descriptionString = "Here are HorizonsBots commands. Check a command's details to see what the usage requirements are!";

@@ -6,8 +6,7 @@ module.exports = new Command("club-config", "Configure a club's information");
 module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
 	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))
 	.addStringOption(option => option.setName("game").setDescription("The text to set as the club game").setRequired(false))
-	.addIntegerOption(option => option.setName("maxmembers").setDescription("The maximum number of members for the club").setRequired(false))
-	.addStringOption(option => option.setName("timeslot").setDescription("The text to set for the club timeslot").setRequired(false));
+	.addIntegerOption(option => option.setName("maxmembers").setDescription("The maximum number of members for the club").setRequired(false));
 
 module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
@@ -33,10 +32,6 @@ module.exports.execute = (interaction) => {
 			if (interaction.options.getInteger("maxmembers")) {
 				club.seats = interaction.options.getInteger("maxmembers");
 				updatedSettings.push("max members");
-			}
-			if (interaction.options.getString("timeslot")) {
-				club.timeslot = interaction.options.getString("timeslot");
-				updatedSettings.push("timeslot");
 			}
 			updateClub(club, interaction.guild.channels);
 			interaction.reply({ content: `The following club setting(s) have been updated: ${updatedSettings.join(', ')}`, ephemeral: true })

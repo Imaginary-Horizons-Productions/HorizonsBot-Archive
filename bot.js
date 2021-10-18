@@ -1,5 +1,5 @@
 const { Client } = require('discord.js');
-const { getCommand } = require('./Commands/CommandsList.js');
+const { getCommand } = require('./Commands/_commandDictionary.js');
 var helpers = require('./helpers.js');
 
 const client = new Client({
@@ -32,10 +32,23 @@ client.on('ready', () => {
 
 		// Generate topic collection
 		require('./data/topicList.json').forEach(id => {
-			guild.channels.fetch(id).then(channel => {
+			channelManager.fetch(id).then(channel => {
 				helpers.addTopic(id, channel.name);
 			})
 		})
+
+		// Begin checking for club reminders
+		setInterval(() => {
+			let thisHour = new Date();
+			Object.values(helpers.getClubs()).forEach(club => {
+				let dayBefore = (club.timeslot[0] - 1 + 7) % 7;
+				if (thisHour.getDay() === dayBefore && thisHour.getHours() === club.timeslot[1]) {
+					channelManager.fetch(club.channelID).then(textChannel => {
+						textChannel.send(`@here ${club.timeslot[2] ? club.timeslot[2] : "Reminder: this club meets in 24 hours"}`);
+					})
+				}
+			})
+		}, 3600000);
 	})
 })
 
