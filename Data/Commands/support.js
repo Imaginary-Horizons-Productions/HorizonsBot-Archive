@@ -17,8 +17,7 @@ function supportBuilder(footerURL) {
 		.setDescription("Thanks for being a part of the Imaginary Horizons Community. Here are a few ways to support us:")
 		.addField("Invite Friends", "Ask a moderator how to get an invite link for the server!")
 		.addField("Vote for us on top.gg", "top.gg is a Discord bot/server listing and distrabution service. Voting causes us to appear earlier in searches. [Vote here!](https://top.gg/servers/353575133157392385/vote)")
-		.addField("Contribute Code", "Check out our [github](https://github.com/Imaginary-Horizons-Productions) and tackle some issues!")
-		.addField("Become a Patron", "Chip in for server costs at the [Imaginary Horizons Productions Patreon](https://www.patreon.com/imaginaryhorizonsproductions). Patrons enjoy various benefits, including premium features for other bots!")
+		.addField("Check out the github", "Check out our [github](https://github.com/Imaginary-Horizons-Productions) and tackle some issues or sponsor a project!")
 		.setFooter("Thanks in advanced!", footerURL)
 		.setTimestamp();
 }
