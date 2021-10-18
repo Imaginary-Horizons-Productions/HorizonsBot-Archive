@@ -1,5 +1,5 @@
 const { Client } = require('discord.js');
-const { getCommand } = require('./Commands/_commandDictionary.js');
+const { getCommand } = require('./Data/Commands/_commandDictionary.js');
 var helpers = require('./helpers.js');
 
 const client = new Client({
@@ -13,7 +13,7 @@ const client = new Client({
 	intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES']
 });
 
-client.login(require('./data/auth.json').token)
+client.login(require('./Config/auth.json').token)
 	.catch(console.error);
 
 client.on('ready', () => {
@@ -31,7 +31,7 @@ client.on('ready', () => {
 		}
 
 		// Generate topic collection
-		require('./data/topicList.json').forEach(id => {
+		require('./Config/topicList.json').forEach(id => {
 			channelManager.fetch(id).then(channel => {
 				helpers.addTopic(id, channel.name);
 			})

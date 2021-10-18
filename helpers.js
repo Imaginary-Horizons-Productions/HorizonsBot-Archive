@@ -1,9 +1,9 @@
 const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
-exports.guildID = require('./data/auth.json').guildID;
+exports.guildID = require('./Config/auth.json').guildID;
 
 // [userID]
-let moderatorIDs = require('./data/moderatorIDs.json');
+let moderatorIDs = require('./Config/moderatorIDs.json');
 exports.isModerator = function (id) {
 	return moderatorIDs.userIds.includes(id);
 }
@@ -19,15 +19,15 @@ exports.removeModerator = function (removedID) {
 }
 
 exports.getModRoleID = function () {
-	if (!moderatorIDs.roleId) console.error("./data/moderatorIDs.json/roleId not defined");
+	if (!moderatorIDs.roleId) console.error("./Config/moderatorIDs.json/roleId not defined");
 	return moderatorIDs.roleId;
 }
 
 // {messageID: channelID}
-exports.customEmbeds = require('./data/embedsList.json');
+exports.customEmbeds = require('./Config/embedsList.json');
 
 // {type: {messageID: number, channelID: number}}
-exports.listMessages = require('./data/listMessageIDs.json');
+exports.listMessages = require('./Config/listMessageIDs.json');
 
 // Collection <channelID, channelName>
 let topics = new Collection();
@@ -55,7 +55,7 @@ exports.removeTopic = function (channel) {
 }
 
 // {name: [petitioner IDs]}
-let petitions = require('./data/petitionList.json');
+let petitions = require('./Config/petitionList.json');
 exports.getPetitions = function () {
 	return petitions;
 }
@@ -67,7 +67,7 @@ exports.setPetitions = function (petitionListInput, channelManager) {
 }
 
 // {textChannelID: Club}
-let clubs = require('./data/clubList.json');
+let clubs = require('./Config/clubList.json');
 exports.getClubs = function () {
 	return clubs;
 }
