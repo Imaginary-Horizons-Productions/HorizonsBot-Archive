@@ -1,9 +1,15 @@
 const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
-exports.guildID = require('./data/auth.json').guildID;
+exports.guildID = require('./Config/auth.json').guildID;
+
+exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
+exports.timeSlotToString = (timeslot) => {
+	return `${exports.DAYS[timeslot[0]]}s at ${exports.HOURS[timeslot[1]]}`;
+}
 
 // [userID]
-let moderatorIDs = require('./data/moderatorIDs.json');
+let moderatorIDs = require('./Config/moderatorIDs.json');
 exports.isModerator = function (id) {
 	return moderatorIDs.userIds.includes(id);
 }
@@ -19,15 +25,15 @@ exports.removeModerator = function (removedID) {
 }
 
 exports.getModRoleID = function () {
-	if (!moderatorIDs.roleId) console.error("./data/moderatorIDs.json/roleId not defined");
+	if (!moderatorIDs.roleId) console.error("./Config/moderatorIDs.json/roleId not defined");
 	return moderatorIDs.roleId;
 }
 
 // {messageID: channelID}
-exports.customEmbeds = require('./data/embedsList.json');
+exports.customEmbeds = require('./Config/embedsList.json');
 
 // {type: {messageID: number, channelID: number}}
-exports.listMessages = require('./data/listMessageIDs.json');
+exports.listMessages = require('./Config/listMessageIDs.json');
 
 // Collection <channelID, channelName>
 let topics = new Collection();
@@ -55,7 +61,7 @@ exports.removeTopic = function (channel) {
 }
 
 // {name: [petitioner IDs]}
-let petitions = require('./data/petitionList.json');
+let petitions = require('./Config/petitionList.json');
 exports.getPetitions = function () {
 	return petitions;
 }
@@ -67,7 +73,7 @@ exports.setPetitions = function (petitionListInput, channelManager) {
 }
 
 // {textChannelID: Club}
-let clubs = require('./data/clubList.json');
+let clubs = require('./Config/clubList.json');
 exports.getClubs = function () {
 	return clubs;
 }
@@ -123,7 +129,7 @@ function listSelectBuilder(listType) {
 			})
 		}
 
-		selectCutomId = "topicListSelect";
+		selectCutomId = "topicList";
 	} else if (listType === "petitions") {
 		for (var petition of Object.keys(exports.getPetitions())) {
 			entries.push({
@@ -132,7 +138,7 @@ function listSelectBuilder(listType) {
 				value: petition
 			})
 		}
-		selectCutomId = "petitionListSelect";
+		selectCutomId = "petitionList";
 	} else {
 		entries = Object.values(exports.getClubs()).map(club => {
 			return {
@@ -141,7 +147,7 @@ function listSelectBuilder(listType) {
 				value: club.channelID
 			}
 		})
-		selectCutomId = "clubListSelect";
+		selectCutomId = "clubList";
 	}
 
 	if (entries.length < 1) {
@@ -265,7 +271,13 @@ exports.clubListBuilder = function (channelManager) {
 
 	Object.keys(clubs).forEach(id => {
 		let club = clubs[id];
-		description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n**Game**: ${club.system}\n**Timeslot**: ${club.timeslot}\n`;
+		description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n`;
+		if (club.system) {
+			description += `**Game**: ${club.system}\n`;
+		}
+		if (club.timeslot[0] !== undefined) {
+			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
+		}
 	})
 
 	if (description.length > 2048) {
@@ -437,21 +449,24 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 				.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
 				.setDescription(club.description)
 				.addField("Club Host", `<@${club.hostID}>`)
-				.addField("Game", club.system)
-				.addField("Time Slot", club.timeslot)
 				.setImage(club.imageURL);
+			if (club.system !== "\u200B") {
+				embed.addField("Game", club.system);
+			}
+			if (club.timeslot[0] !== undefined) {
+				embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
+			}
 			if (recipient.id === club.hostID || club.userIDs.includes(recipient.id)) {
 				interaction.reply({ content: "Here is a preview of your club's info sheet. When sent to server members not in the club already, it'll also include an option to join.", embeds: [embed], ephemeral: true })
 					.catch(console.error);
 			} else {
-				var joinButton = new MessageActionRow()
-					.addComponents(
-						new MessageButton()
-							.setCustomId(`join-${clubId}`)
-							.setLabel(`Join ${club.title}`)
-							.setStyle("SUCCESS")
-					);
-				recipient.send({ embeds: [embed], components: [joinButton] }).then(() => {
+				let buttons = [new MessageButton().setCustomId(`join-${clubId}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS")];
+				if (club.timeslot[0] !== undefined) {
+					buttons.push(new MessageButton().setCustomId(`countdown-${clubId}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
+				}
+				let buttonRow = new MessageActionRow()
+					.addComponents(...buttons);
+				recipient.send({ embeds: [embed], components: [buttonRow] }).then(() => {
 					interaction.reply({ content: "Club details have been sent.", ephemeral: true });
 				}).catch(console.error);
 			}
@@ -462,11 +477,23 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 	}
 }
 
+exports.clubCountdown = function (interaction, clubId) {
+	let club = exports.getClubs()[clubId];
+	let today = new Date();
+	let days = (club.timeslot[0] - today.getDay() + 7) % 7;
+	let hours = club.timeslot[1] - today.getHours();
+	if (hours < 0) {
+		days--;
+		hours += 24;
+	}
+	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (US Central)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
+}
+
 exports.saveObject = function (object, fileName) {
 	var filePath = `./`;
-	filePath += 'data/' + fileName;
-	if (!fs.existsSync('./data')) {
-		fs.mkdirSync('./data');
+	filePath += 'Config/' + fileName;
+	if (!fs.existsSync('./Config')) {
+		fs.mkdirSync('./Config');
 	}
 	let textToSave = '';
 	if (object instanceof Collection) {

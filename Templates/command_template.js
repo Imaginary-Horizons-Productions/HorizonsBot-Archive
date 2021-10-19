@@ -1,4 +1,4 @@
-const Command = require('../Classes/Command.js');
+const Command = require('../../Classes/Command.js');
 
 module.exports = new Command("", ""); // (name, description)
 

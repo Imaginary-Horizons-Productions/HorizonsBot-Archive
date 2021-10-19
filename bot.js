@@ -1,5 +1,7 @@
 const { Client } = require('discord.js');
-const { getCommand } = require('./Commands/CommandsList.js');
+const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
+const { getCommand } = require('./Data/Commands/_commandDictionary.js');
+const { getSelect } = require('./Data/Selects/_selectDictionary.js');
 var helpers = require('./helpers.js');
 
 const client = new Client({
@@ -13,7 +15,7 @@ const client = new Client({
 	intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES']
 });
 
-client.login(require('./data/auth.json').token)
+client.login(require('./Config/auth.json').token)
 	.catch(console.error);
 
 client.on('ready', () => {
@@ -31,11 +33,24 @@ client.on('ready', () => {
 		}
 
 		// Generate topic collection
-		require('./data/topicList.json').forEach(id => {
-			guild.channels.fetch(id).then(channel => {
+		require('./Config/topicList.json').forEach(id => {
+			channelManager.fetch(id).then(channel => {
 				helpers.addTopic(id, channel.name);
 			})
 		})
+
+		// Begin checking for club reminders
+		setInterval(() => {
+			let thisHour = new Date();
+			Object.values(helpers.getClubs()).forEach(club => {
+				let dayBefore = (club.timeslot[0] - 1 + 7) % 7;
+				if (thisHour.getDay() === dayBefore && thisHour.getHours() === club.timeslot[1]) {
+					channelManager.fetch(club.channelID).then(textChannel => {
+						textChannel.send(`@everyone ${club.timeslot[2] ? club.timeslot[2] : "Reminder: this club meets in 24 hours"}`);
+					})
+				}
+			})
+		}, 3600000);
 	})
 })
 
@@ -68,40 +83,12 @@ client.on('messageCreate', receivedMessage => {
 
 client.on("interactionCreate", interaction => {
 	if (interaction.isSelectMenu()) {
-		if (interaction.customId === "topicListSelect") {
-			interaction.values.forEach(channelID => {
-				interaction.guild.channels.fetch(channelID).then(channel => {
-					helpers.joinChannel(channel, interaction.user);
-				})
-			})
-			interaction.update("\u200B");
-		} else if (interaction.customId === "petitionListSelect") {
-			interaction.values.forEach(petition => {
-				helpers.checkPetition(interaction.guild, petition, interaction.user);
-			})
-			interaction.update("\u200B");
-		} else if (interaction.customId === "clubListSelect") {
-			interaction.values.forEach(channelID => {
-				helpers.clubInvite(interaction, channelID, interaction.user);
-			})
-		}
+		getSelect(interaction.customId).execute(interaction);
 	} else if (interaction.isCommand()) {
 		getCommand(interaction.commandName).execute(interaction);
 	} else if (interaction.isButton()) {
 		var buttonArguments = interaction.customId.split("-");
-		switch (buttonArguments[0]) {
-			case "join":
-				interaction.client.guilds.fetch(helpers.guildID).then(guild => {
-					guild.channels.fetch(buttonArguments[1]).then(channel => {
-						helpers.joinChannel(channel, interaction.user);
-					})
-				})
-				interaction.message.edit({ components: [] });
-				break;
-			case "delete":
-				interaction.guild.channels.fetch(buttonArguments[1]).then(channel => channel.delete("Club leader left"));
-				break;
-		}
+		getButton(buttonArguments.shift()).execute(interaction, buttonArguments);
 	}
 })
 

@@ -1,13 +1,13 @@
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { token, botId, guildID} = require('./data/auth.json');
+const { token, botId, guildID} = require('./Config/auth.json');
 const fs = require('fs');
 
 const commands = [];
-const commandFiles = fs.readdirSync('./Commands').filter(name => name !== "CommandsList.js");
+const commandFiles = fs.readdirSync('./Data/Commands').filter(name => name !== "_commandDictionary.js");
 
 for (const file of commandFiles) {
-	const command = require(`./Commands/${file}`);
+	const command = require(`./Data/Commands/${file}`);
 	if (command.data) {
 		commands.push(command.data.toJSON());
 	}
