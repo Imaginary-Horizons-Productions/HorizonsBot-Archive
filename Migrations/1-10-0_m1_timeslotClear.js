@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 // 1. Read clubs file
-let clubsPath = "../data/clubList.json";
+let clubsPath = "../Config/clubList.json";
 let clubs = require(clubsPath);
 
 // 2. Make backup of clubs file
