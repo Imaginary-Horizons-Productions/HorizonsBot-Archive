@@ -275,7 +275,7 @@ exports.clubListBuilder = function (channelManager) {
 		if (club.system) {
 			description += `**Game**: ${club.system}\n`;
 		}
-		if (club.timeslot[0] !== undefined) {
+		if (club.timeslot[0] !== null) {
 			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
 		}
 	})
@@ -453,7 +453,7 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 			if (club.system !== "\u200B") {
 				embed.addField("Game", club.system);
 			}
-			if (club.timeslot[0] !== undefined) {
+			if (club.timeslot[0] !== null) {
 				embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
 			}
 			if (recipient.id === club.hostID || club.userIDs.includes(recipient.id)) {
@@ -461,7 +461,7 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 					.catch(console.error);
 			} else {
 				let buttons = [new MessageButton().setCustomId(`join-${clubId}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS")];
-				if (club.timeslot[0] !== undefined) {
+				if (club.timeslot[0] !== null) {
 					buttons.push(new MessageButton().setCustomId(`countdown-${clubId}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
 				}
 				let buttonRow = new MessageActionRow()
