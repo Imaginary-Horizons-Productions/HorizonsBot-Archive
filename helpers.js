@@ -275,7 +275,7 @@ exports.clubListBuilder = function (channelManager) {
 		if (club.system) {
 			description += `**Game**: ${club.system}\n`;
 		}
-		if (club.timeslot[0]) {
+		if (club.timeslot[0] !== undefined) {
 			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
 		}
 	})
@@ -453,21 +453,20 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 			if (club.system !== "\u200B") {
 				embed.addField("Game", club.system);
 			}
-			if (club.timeslot[0]) {
-				embed.addField("Time Slot", exports.timeSlotToString(club.timeslot))
+			if (club.timeslot[0] !== undefined) {
+				embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
 			}
 			if (recipient.id === club.hostID || club.userIDs.includes(recipient.id)) {
 				interaction.reply({ content: "Here is a preview of your club's info sheet. When sent to server members not in the club already, it'll also include an option to join.", embeds: [embed], ephemeral: true })
 					.catch(console.error);
 			} else {
-				var joinButton = new MessageActionRow()
-					.addComponents(
-						new MessageButton()
-							.setCustomId(`join-${clubId}`)
-							.setLabel(`Join ${club.title}`)
-							.setStyle("SUCCESS")
-					);
-				recipient.send({ embeds: [embed], components: [joinButton] }).then(() => {
+				let buttons = [new MessageButton().setCustomId(`join-${clubId}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS")];
+				if (club.timeslot[0] !== undefined) {
+					buttons.push(new MessageButton().setCustomId(`countdown-${clubId}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
+				}
+				let buttonRow = new MessageActionRow()
+					.addComponents(...buttons);
+				recipient.send({ embeds: [embed], components: [buttonRow] }).then(() => {
 					interaction.reply({ content: "Club details have been sent.", ephemeral: true });
 				}).catch(console.error);
 			}
@@ -476,6 +475,18 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 		interaction.reply({ content: `The club you indicated could not be found. Please check for typos!`, ephemeral: true })
 			.catch(console.error);
 	}
+}
+
+exports.clubCountdown = function (interaction, clubId) {
+	let club = exports.getClubs()[clubId];
+	let today = new Date();
+	let days = (club.timeslot[0] - today.getDay() + 7) % 7;
+	let hours = club.timeslot[1] - today.getHours();
+	if (hours < 0) {
+		days--;
+		hours += 24;
+	}
+	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (US Central)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
 exports.saveObject = function (object, fileName) {

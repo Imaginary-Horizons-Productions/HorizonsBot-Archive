@@ -46,7 +46,7 @@ client.on('ready', () => {
 				let dayBefore = (club.timeslot[0] - 1 + 7) % 7;
 				if (thisHour.getDay() === dayBefore && thisHour.getHours() === club.timeslot[1]) {
 					channelManager.fetch(club.channelID).then(textChannel => {
-						textChannel.send(`@here ${club.timeslot[2] ? club.timeslot[2] : "Reminder: this club meets in 24 hours"}`);
+						textChannel.send(`@everyone ${club.timeslot[2] ? club.timeslot[2] : "Reminder: this club meets in 24 hours"}`);
 					})
 				}
 			})

@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { DAYS, HOURS, getClubs, isModerator, timeslotToString, updateClub } = require('../../helpers.js');
+const { DAYS, HOURS, getClubs, isModerator, timeSlotToString, updateClub } = require('../../helpers.js');
 
 module.exports = new Command("club-set-timeslot", "Set a meeting time; a reminder will be sent a day before");
 
@@ -19,7 +19,7 @@ module.exports.execute = (interaction) => {
 			let hourIndex = interaction.options.getInteger("hour");
 			let timeslotArray = [dayIndex, hourIndex, interaction.options.getString("remindertext") || ""];
 			club.timeslot = timeslotArray;
-			interaction.reply(`The timeslot for this club has been set for **${timeslotToString(club.timeslot)}**.`);
+			interaction.reply(`The timeslot for this club has been set for **${timeSlotToString(club.timeslot)}**.`);
 			updateClub(club, interaction.guild.channels);
 		} else {
 			interaction.reply({ content: `Setting a club time slot is restricted to the host of that club or Moderators from that club channel.`, ephemeral: true })
