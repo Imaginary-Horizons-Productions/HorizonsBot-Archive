@@ -7,7 +7,7 @@ module.exports.execute = (interaction) => {
 	// Calculate the time until the next meeting of the given club
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
-		if (club.timeslot[0] !== undefined) {
+		if (club.timeslot[0] !== null) {
 			clubCountdown(interaction, interaction.channel.id);
 		} else {
 			interaction.reply({ content: "This club doesn't appear to have set a meeting time yet.", ephemeral: true })

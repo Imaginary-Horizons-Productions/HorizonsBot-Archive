@@ -8,7 +8,7 @@ module.exports = class Club {
 		this.userIDs = []; // An array containing the allowed user snowflakes (excluding the host)
 		this.seats = -1; // Maximum number of players in the club, 0 = unlimited
 		this.system = '\u200B'; // string for TRPG system name
-		this.timeslot = [undefined, undefined, ""]; // [day of week index, hour, reminder text]
+		this.timeslot = [null, null, ""]; // [day of week index, hour, reminder text]
 		this.imageURL = ''; // URL for club image
 	}
 }
