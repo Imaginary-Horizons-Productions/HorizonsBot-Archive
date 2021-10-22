@@ -6,7 +6,7 @@ module.exports = new Command("club-set-timeslot", "Set a meeting time; a reminde
 module.exports.data
 	.addIntegerOption(option => option.setName("day").setDescription("The day of the week").setRequired(true)
 		.addChoices(DAYS.map((day, i) => [day, i])))
-	.addIntegerOption(option => option.setName("hour").setDescription("The hour of the meeting in server time (US Central)").setRequired(true)
+	.addIntegerOption(option => option.setName("hour").setDescription("The hour of the meeting in server time (GMT)").setRequired(true)
 		.addChoices(HOURS.map((hour, i) => [hour, i])))
 	.addStringOption(option => option.setName("remindertext").setDescription("The text to post with the reminder").setRequired(false));
 

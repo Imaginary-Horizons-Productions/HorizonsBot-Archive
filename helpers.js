@@ -486,7 +486,7 @@ exports.clubCountdown = function (interaction, clubId) {
 		days--;
 		hours += 24;
 	}
-	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (US Central)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
+	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (GMT)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
 exports.saveObject = function (object, fileName) {
