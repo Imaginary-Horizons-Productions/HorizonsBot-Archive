@@ -8,7 +8,7 @@ module.exports.execute = (interaction) => {
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
 		if (club.timeslot[0] !== null) {
-			clubCountdown(interaction, interaction.channel.id);
+			clubCountdown(interaction, club.timeslot);
 		} else {
 			interaction.reply({ content: "This club doesn't appear to have set a meeting time yet.", ephemeral: true })
 				.catch(console.error);

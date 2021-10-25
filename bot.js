@@ -43,14 +43,14 @@ client.on('ready', () => {
 		setInterval(() => {
 			let thisHour = new Date();
 			Object.values(helpers.getClubs()).forEach(club => {
-				let dayBefore = (club.timeslot[0] - 1 + 7) % 7;
-				if (thisHour.getDay() === dayBefore && thisHour.getHours() === club.timeslot[1]) {
+				let [dayBefore, hour] = helpers.applyTimezone(club.timeslot, 1);
+				if (thisHour.getDay() === dayBefore && thisHour.getHours() === hour) {
 					channelManager.fetch(club.channelID).then(textChannel => {
-						textChannel.send(`@everyone ${club.timeslot[2] ? club.timeslot[2] : "Reminder: this club meets in 24 hours"}`);
+						textChannel.send(`@everyone ${club.timeslot[3] ? club.timeslot[3] : "Reminder: this club meets in 24 hours"}`);
 					})
 				}
 			})
-		}, 3600000);
+		}, 10000);//3600000);
 	})
 })
 
