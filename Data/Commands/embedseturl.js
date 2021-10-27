@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-url", "Assign a custom embed's title url");
+module.exports = new Command("embed-set-url", "(moderator) Assign a custom embed's title url");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("url").setDescription("The url to go to when clicking the title field").setRequired(true));

@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator, saveObject } = require('../../helpers.js');
 
-module.exports = new Command("embed-abandon", "Stop managing the given embed(s)");
+module.exports = new Command("embed-abandon", "(moderator) Stop managing the given embed(s)");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true));
 

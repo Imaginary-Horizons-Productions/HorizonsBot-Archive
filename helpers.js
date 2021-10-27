@@ -431,6 +431,7 @@ exports.joinChannel = function (channel, user) {
 							})
 							channel.send(`Welcome to ${channel.name}, ${user}!`);
 						})
+						exports.updateClubDetails(club, channel);
 						exports.updateClub(club, channel.guild.channels);
 					} else {
 						user.send(`You are already in ${club.title}.`)
@@ -448,6 +449,37 @@ exports.joinChannel = function (channel, user) {
 	}
 }
 
+exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
+	// Generate Embed
+	let embed = new MessageEmbed()
+		.setAuthor("Click here to visit the Imaginary Horizons GitHub", IHPAvatarURL, "https://github.com/Imaginary-Horizons-Productions")
+		.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
+		.setDescription(club.description)
+		.addField("Club Host", `<@${club.hostID}>`)
+		.setImage(club.imageURL);
+	if (club.system !== "\u200B") {
+		embed.addField("Game", club.system);
+	}
+	if (club.timeslot[0] !== null) {
+		embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
+	}
+
+	// Generate Components
+	let buttons = [];
+	if (includeJoinButton) {
+		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
+	}
+	if (club.timeslot[0] !== null) {
+		buttons.push(new MessageButton().setCustomId(`countdown-${club.channelID}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
+	}
+	let buttonRow = [];
+	if (buttons.length > 0) {
+		buttonRow.push(new MessageActionRow().addComponents(...buttons));
+	}
+
+	return [embed, buttonRow];
+}
+
 exports.clubInvite = function (interaction, clubId, recipient) {
 	let club = exports.getClubs()[clubId];
 	if (club) {
@@ -455,31 +487,14 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 			recipient = interaction.user;
 		}
 		if (!recipient.bot) {
-			let embed = new MessageEmbed()
-				.setAuthor("Click here to visit the Imaginary Horizons Patreon", interaction.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
-				.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
-				.setDescription(club.description)
-				.addField("Club Host", `<@${club.hostID}>`)
-				.setImage(club.imageURL);
-			if (club.system !== "\u200B") {
-				embed.addField("Game", club.system);
-			}
-			if (club.timeslot[0] !== null) {
-				embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
-			}
-			if (recipient.id === club.hostID || club.userIDs.includes(recipient.id)) {
-				interaction.reply({ content: "Here is a preview of your club's info sheet. When sent to server members not in the club already, it'll also include an option to join.", embeds: [embed], ephemeral: true })
-					.catch(console.error);
-			} else {
-				let buttons = [new MessageButton().setCustomId(`join-${clubId}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS")];
-				if (club.timeslot[0] !== null) {
-					buttons.push(new MessageButton().setCustomId(`countdown-${clubId}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
-				}
-				let buttonRow = new MessageActionRow()
-					.addComponents(...buttons);
-				recipient.send({ embeds: [embed], components: [buttonRow] }).then(() => {
+			if (recipient.id !== club.hostID && !club.userIDs.includes(recipient.id)) {
+				let [embed, buttonComponents] = exports.clubInviteBuilder(club, interaction.client.user.displayAvatarURL(), true);
+				recipient.send({ embeds: [embed], components: buttonComponents }).then(() => {
 					interaction.reply({ content: "Club details have been sent.", ephemeral: true });
 				}).catch(console.error);
+			} else {
+				interaction.reply({ content: "If the club details are not pinned, the club leader can have them reposted and pinned with `/club-details`.", ephemeral: true })
+					.catch(console.error);
 			}
 		}
 	} else {
@@ -488,10 +503,31 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 	}
 }
 
-exports.clubCountdown = function (interaction, timeslot) {
+exports.updateClubDetails = (club, channel) => {
+	channel.messages.fetch(club.detailSummaryId).then(message => {
+		let [embed, buttonComponents] = exports.clubInviteBuilder(club, channel.client.user.displayAvatarURL(), false);
+		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
+			detailSummaryMessage.pin();
+			club.detailSummaryId = detailSummaryMessage.id;
+			exports.updateClub(club, channel.guild.channels);
+		}).catch(console.error);
+	}).catch(error => {
+		console.error(error);
+		// message not found
+		let [embed, buttonComponents] = exports.clubInviteBuilder(club, channel.client.user.displayAvatarURL(), false);
+		channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
+			detailSummaryMessage.pin();
+			club.detailSummaryId = detailSummaryMessage.id;
+			exports.updateClub(club, channel.guild.channels);
+		}).catch(console.error);
+	});
+}
+
+exports.clubCountdown = function (interaction, clubId) {
+	let club = exports.getClubs()[clubId];
 	let today = new Date();
-	let [days, hours] = exports.applyTimezone(timeslot, today.getDay(), today.getHours());
-	interaction.reply(`This club meets on *${exports.timeSlotToString(timeslot)} (GMT)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
+	let [days, hours] = exports.applyTimezone(club.timeslot, today.getDay(), today.getHours());
+	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (GMT)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
 exports.saveObject = function (object, fileName) {

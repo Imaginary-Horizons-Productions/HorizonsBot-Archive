@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub } = require("../../helpers.js");
+const { isModerator, getClubs, updateClub, updateClubDetails } = require("../../helpers.js");
 
-module.exports = new Command("club-set-image", "Set or clear a club's image url");
+module.exports = new Command("club-set-image", "(club leader or moderator) Set or clear a club's image url");
 
 module.exports.data.addStringOption(option => option.setName("url").setDescription("The url to the image to set for the club").setRequired(false));
 
@@ -26,6 +26,7 @@ module.exports.execute = (interaction) => {
 				interaction.reply({ content: `${club.title}'s image has been cleared.`, ephemeral: true })
 					.catch(console.error);
 			}
+			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);
 		} else {
 			interaction.reply({ content: `Setting a club image is restricted to the host of that club or Moderators from that club channel.`, ephemeral: true })

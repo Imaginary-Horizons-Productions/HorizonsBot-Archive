@@ -1,8 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const Club = require('../../Classes/Club.js');
-const { isModerator, getModRoleID, updateClub } = require("../../helpers.js");
+const { isModerator, getModRoleID, updateClub, clubInviteBuilder } = require("../../helpers.js");
 
-module.exports = new Command("club-add", "Set up a text and voice channels for a club");
+module.exports = new Command("club-add", "(moderator) Set up a text and voice channels for a club");
 
 module.exports.data.addUserOption(option => option.setName("clubleader").setDescription("The user to set as club leader").setRequired(true));
 
@@ -69,8 +69,13 @@ module.exports.execute = (interaction) => {
 							club.hostID = host.id;
 							club.channelID = textChannel.id;
 							club.voiceChannelID = voiceChannel.id;
-							updateClub(club, interaction.guild.channels);
-							textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\`, \`/club-set-image\`, and \`/club-set-timeslot\`. Then, when you're ready, invite people to join with \`/club-invite\`!`);
+							textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\`, \`/club-set-image\`, and \`/club-set-timeslot\`.`);
+							let [embed, buttonComponents] = clubInviteBuilder(club, interaction.client.user.displayAvatarURL(), false);
+							textChannel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents }).then(detailSummaryMessage => {
+								detailSummaryMessage.pin();
+								club.detailSummaryId = detailSummaryMessage.id;
+								updateClub(club, interaction.guild.channels);
+							})
 							interaction.reply("The new club has been created.");
 						}).catch(console.error);
 					})

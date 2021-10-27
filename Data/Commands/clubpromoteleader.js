@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub } = require("../../helpers.js");
+const { isModerator, getClubs, updateClub, updateClubDetails } = require("../../helpers.js");
 
-module.exports = new Command("club-promote-leader", "Promote another user to club leader");
+module.exports = new Command("club-promote-leader", "(club leader or moderator) Promote another user to club leader");
 
 module.exports.data.addUserOption(option => option.setName("user").setDescription("The user to promote to club leader").setRequired(true));
 
@@ -14,6 +14,7 @@ module.exports.execute = (interaction) => {
 			club.hostID = promotee.id;
 			interaction.reply(`${promotee} has been promoted to club leader of this club.`)
 				.catch(console.error);
+			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);
 		} else {
 			interaction.reply({ content: `Promoting a club leader is restricted to the current club leader and Moderators.`, ephemeral: true })

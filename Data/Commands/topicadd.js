@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, addTopicChannel } = require('../../helpers.js');
 
-module.exports = new Command("topic-add", "Set up a topic");
+module.exports = new Command("topic-add", "(moderator) Set up a topic");
 
 module.exports.data.addStringOption(option => option.setName("topicname").setDescription("The new topic").setRequired(true))
 

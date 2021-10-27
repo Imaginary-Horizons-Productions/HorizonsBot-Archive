@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-add-field", "Add a custom embed field");
+module.exports = new Command("embed-add-field", "(moderator) Add a custom embed field");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("header").setDescription("The header for the new field").setRequired(true))

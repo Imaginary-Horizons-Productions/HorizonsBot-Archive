@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-thumbnail", "Assign a custom embed's thumbnail");
+module.exports = new Command("embed-set-thumbnail", "(moderator) Assign a custom embed's thumbnail");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("url").setDescription("The url to a picture for the thumbnail field").setRequired(true));

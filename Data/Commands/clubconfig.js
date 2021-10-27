@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub } = require("../../helpers.js");
+const { isModerator, getClubs, updateClub, updateClubDetails } = require("../../helpers.js");
 
-module.exports = new Command("club-config", "Configure a club's information");
+module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information");
 
 module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
 	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))
@@ -33,6 +33,7 @@ module.exports.execute = (interaction) => {
 				club.seats = interaction.options.getInteger("maxmembers");
 				updatedSettings.push("max members");
 			}
+			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);
 			interaction.reply({ content: `The following club setting(s) have been updated: ${updatedSettings.join(', ')}`, ephemeral: true })
 				.catch(console.error);

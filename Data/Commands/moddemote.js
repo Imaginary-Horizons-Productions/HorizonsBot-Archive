@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
-var { getModRoleID, isModerator, removeModerator } = require('../../helpers.js');
+const { getModRoleID, isModerator, removeModerator } = require('../../helpers.js');
 
-module.exports = new Command("mod-demote", "Remove a Moderator from HorizonsBot's list and remove the role");
+module.exports = new Command("mod-demote", "(moderator) Remove a Moderator from HorizonsBot's list and remove the role");
 
 module.exports.data.addMentionableOption(option => option.setName("demotee").setDescription("The user to demote from moderator").setRequired(true));
 
