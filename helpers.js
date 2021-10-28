@@ -510,16 +510,19 @@ exports.updateClubDetails = (club, channel) => {
 			detailSummaryMessage.pin();
 			club.detailSummaryId = detailSummaryMessage.id;
 			exports.updateClub(club, channel.guild.channels);
-		}).catch(console.error);
+		});
 	}).catch(error => {
-		console.error(error);
-		// message not found
-		let [embed, buttonComponents] = exports.clubInviteBuilder(club, channel.client.user.displayAvatarURL(), false);
-		channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
-			detailSummaryMessage.pin();
-			club.detailSummaryId = detailSummaryMessage.id;
-			exports.updateClub(club, channel.guild.channels);
-		}).catch(console.error);
+		if (error.message === "Unknown Message") {
+			// message not found
+			let [embed, buttonComponents] = exports.clubInviteBuilder(club, channel.client.user.displayAvatarURL(), false);
+			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
+				detailSummaryMessage.pin();
+				club.detailSummaryId = detailSummaryMessage.id;
+				exports.updateClub(club, channel.guild.channels);
+			});
+		} else {
+			console.error(error);
+		}
 	});
 }
 
