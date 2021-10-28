@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, getPetitions, setPetitions } = require('../../helpers.js');
 
-module.exports = new Command("topic-veto", "Veto a petition");
+module.exports = new Command("topic-veto", "(moderator) Veto a petition");
 
 module.exports.data.addStringOption(option => option.setName("topic").setDescription("The petition to close").setRequired(true));
 

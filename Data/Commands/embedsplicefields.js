@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-splice-fields", "Remove fields from a custom embed (replace unsupported)");
+module.exports = new Command("embed-splice-fields", "(moderator) Remove fields from a custom embed (replace unsupported)");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addIntegerOption(option => option.setName("index").setDescription("The field number to start removing fields from (count starts from 0)").setRequired(true))

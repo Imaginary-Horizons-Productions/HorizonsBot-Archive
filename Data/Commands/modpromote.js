@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
-var { getModRoleID, isModerator, addModerator } = require('../../helpers.js');
+const { getModRoleID, isModerator, addModerator } = require('../../helpers.js');
 
-module.exports = new Command("mod-promote", "Add a Moderator to HorizonsBot's list and give them the role");
+module.exports = new Command("mod-promote", "(moderator) Add a Moderator to HorizonsBot's list and give them the role");
 
 module.exports.data.addMentionableOption(option => option.setName("promotee").setDescription("The user to promote to moderator").setRequired(true));
 

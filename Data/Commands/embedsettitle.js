@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-title", "Assign a custom embed's title");
+module.exports = new Command("embed-set-title", "(moderator) Assign a custom embed's title");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("title").setDescription("The text to set in the title field").setRequired(true));

@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-color", "Assign a custom embed's color");
+module.exports = new Command("embed-set-color", "(moderator) Assign a custom embed's color");
 
 module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("color").setDescription("The hexcode of the color").setRequired(true));
