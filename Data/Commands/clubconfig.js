@@ -1,12 +1,14 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub, updateClubDetails } = require("../../helpers.js");
+const { isModerator, getClubs, updateClub, updateClubDetails, COLORS } = require("../../helpers.js");
 
 module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information");
 
 module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
 	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))
 	.addStringOption(option => option.setName("game").setDescription("The text to set as the club game").setRequired(false))
-	.addIntegerOption(option => option.setName("maxmembers").setDescription("The maximum number of members for the club").setRequired(false));
+	.addIntegerOption(option => option.setName("maxmembers").setDescription("The maximum number of members for the club").setRequired(false))
+	.addStringOption(option => option.setName("color").setDescription("The color of the details embed").setRequired(false)
+		.addChoices(COLORS.map(color => [color, color])));
 
 module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
@@ -32,6 +34,10 @@ module.exports.execute = (interaction) => {
 			if (interaction.options.getInteger("maxmembers")) {
 				club.seats = interaction.options.getInteger("maxmembers");
 				updatedSettings.push("max members");
+			}
+			if (interaction.options.getString("color")) {
+				club.color = interaction.options.getString("color");
+				updatedSettings.push("color");
 			}
 			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);
