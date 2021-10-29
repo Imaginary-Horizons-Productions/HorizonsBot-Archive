@@ -11,5 +11,6 @@ module.exports = class Club {
 		this.timeslot = [null, null, null, ""]; // [day of week index, hour, reminder text]
 		this.imageURL = ""; // URL for club image
 		this.detailSummaryId = "";
+		this.color = "";
 	}
 }
