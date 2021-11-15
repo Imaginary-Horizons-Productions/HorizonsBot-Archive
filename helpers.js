@@ -8,12 +8,12 @@ exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
 exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
 exports.TIMEZONES = ["UTC-11", "UTC-10", "UTC-9", "UTC-8 (PST)", "UTC-7", "UTC-6", "UTC-5 (EST)", "UTC-4", "UTC-3", "UTC-2", "UTC-1", "UTC", "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12"];
 exports.timeSlotToString = (timeslot) => {
-	return `${exports.DAYS[timeslot[0]]}s at ${exports.HOURS[timeslot[1]]} ${exports.TIMEZONES[11 - timeslot[2]]}`;
+	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[11 - timeslot.timezone]}`;
 }
 
 exports.applyTimezone = (timeslot, dayOffset = 0, hourOffset = 0) => {
-	let day = timeslot[0] - dayOffset;
-	let hour = timeslot[1] - timeslot[2] - hourOffset;
+	let day = timeslot.day - dayOffset;
+	let hour = timeslot.hour - timeslot.timezone - hourOffset;
 	while (hour < 0) {
 		day--;
 		hour += 24;
@@ -288,7 +288,7 @@ exports.clubListBuilder = function (channelManager) {
 		if (club.system) {
 			description += `**Game**: ${club.system}\n`;
 		}
-		if (club.timeslot[0] !== null) {
+		if (club.timeslot.day !== null) {
 			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
 		}
 	})
@@ -462,7 +462,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	if (club.system !== "\u200B") {
 		embed.addField("Game", club.system);
 	}
-	if (club.timeslot[0] !== null) {
+	if (club.timeslot.day !== null) {
 		embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
 	}
 	if (club.color) {
@@ -474,7 +474,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	if (includeJoinButton) {
 		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
 	}
-	if (club.timeslot[0] !== null) {
+	if (club.timeslot.day !== null) {
 		buttons.push(new MessageButton().setCustomId(`countdown-${club.channelID}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
 	}
 	let buttonRow = [];
