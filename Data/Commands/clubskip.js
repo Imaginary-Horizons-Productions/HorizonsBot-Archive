@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { updateClub, getClubs, isModerator } = require('../../helpers.js');
+const { updateClub, getClubs, isModerator, updateClubDetails } = require('../../helpers.js');
 
 module.exports = new Command("club-skip", "(club leader or moderator) Set a number of weeks to skip club reminders"); // (name, description)
 
@@ -13,8 +13,9 @@ module.exports.execute = (interaction) => {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
 			let weeksInput = interaction.options.getInteger("weeks");
 			if (weeksInput > -1) {
-				club.timeslot.skip = weeksInput;
+				club.timeslot.skip += weeksInput;
 				interaction.reply(`Club reminders will be skipped for ${weeksInput} weeks.`);
+				updateClubDetails(club, interaction.channel);
 				updateClub(club, interaction.guild.channels);
 			} else {
 				interaction.reply({ content: "Please set a positive number of weeks to skip club reminders.", ephemeral: true });

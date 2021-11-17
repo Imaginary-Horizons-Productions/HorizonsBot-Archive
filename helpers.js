@@ -8,7 +8,7 @@ exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
 exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
 exports.TIMEZONES = ["UTC-11", "UTC-10", "UTC-9", "UTC-8 (PST)", "UTC-7", "UTC-6", "UTC-5 (EST)", "UTC-4", "UTC-3", "UTC-2", "UTC-1", "UTC", "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12"];
 exports.timeSlotToString = (timeslot) => {
-	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[11 - timeslot.timezone]}`;
+	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[11 - timeslot.timezone]}${timeslot.skip > 0 ? ` (on break for ${timeslot.skip} weeks)` : ""}`;
 }
 
 exports.applyTimezone = (timeslot, dayOffset = 0, hourOffset = 0) => {
@@ -535,7 +535,7 @@ exports.clubCountdown = function (interaction, clubId) {
 	let club = exports.getClubs()[clubId];
 	let today = new Date();
 	let [days, hours] = exports.applyTimezone(club.timeslot, today.getDay(), today.getHours());
-	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (GMT)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
+	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)}*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
 exports.saveObject = function (object, fileName) {
