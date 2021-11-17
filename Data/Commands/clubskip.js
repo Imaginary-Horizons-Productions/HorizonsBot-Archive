@@ -13,7 +13,7 @@ module.exports.execute = (interaction) => {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
 			let weeksInput = interaction.options.getInteger("weeks");
 			if (weeksInput > -1) {
-				club.timeslot.skip += weeksInput;
+				club.timeslot.skip = weeksInput;
 				interaction.reply(`Club reminders will be skipped for ${weeksInput} weeks.`);
 				updateClubDetails(club, interaction.channel);
 				updateClub(club, interaction.guild.channels);
