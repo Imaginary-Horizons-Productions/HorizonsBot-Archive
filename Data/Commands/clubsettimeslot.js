@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { DAYS, HOURS, getClubs, isModerator, timeSlotToString, updateClub, TIMEZONES, updateClubDetails } = require('../../helpers.js');
+const { DAYS, HOURS, getClubs, isModerator, timeSlotToString, updateClub, TIMEZONES, updateClubDetails, setClubReminderTimeout } = require('../../helpers.js');
 
 module.exports = new Command("club-set-timeslot", "(club leader or moderator) Set a meeting time; a reminder will be sent a day before");
 
@@ -11,7 +11,7 @@ module.exports.data
 	.addIntegerOption(option => option.setName("timezone").setDescription("The timezone of the meeting time").setRequired(false)
 		.addChoices(TIMEZONES.map((timezone, i) => [timezone, 11 - i])))
 	.addStringOption(option => option.setName("remindertext").setDescription("The text to post with the reminder").setRequired(false))
-	.addIntegerOption(option => option.setName("start").setDescription("How many weeks to skip before starting reminders (default: 0)").setRequired(false));
+	.addIntegerOption(option => option.setName("start").setDescription("How many weeks to wait before starting reminders (default: 0)").setRequired(false));
 
 module.exports.execute = (interaction) => {
 	// Receive a day of the week and hour (in server time) from the user, store to allow ready checks
@@ -22,7 +22,7 @@ module.exports.execute = (interaction) => {
 			let hourInput = interaction.options.getInteger("hour");
 			let timezoneInput = interaction.options.getInteger("timezone");
 			let messageInput = interaction.options.getString("remindertext") || "";
-			let skipInput = interaction.options.getInteger("start") || 0;
+			let breakInput = interaction.options.getInteger("start") || 0;
 			if (dayInput || hourInput || timezoneInput || messageInput) {
 				if (dayInput !== undefined) {
 					if (hourInput !== undefined) {
@@ -32,7 +32,7 @@ module.exports.execute = (interaction) => {
 								hour: hourInput,
 								timezone: timezoneInput,
 								message: messageInput,
-								skip: skipInput
+								break: breakInput
 							};
 							interaction.reply(`The timeslot for this club has been set for **${timeSlotToString(club.timeslot)}**.`);
 						} else {
@@ -50,10 +50,12 @@ module.exports.execute = (interaction) => {
 					hour: null,
 					timezone: null,
 					message: "",
-					skip: 0
+					break: 0
 				};
 				interaction.reply({ content: "The club's time slot has been cleared.", ephemeral: true });
 			}
+
+			setClubReminderTimeout(club, interaction.guild.channels);
 			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);
 		} else {

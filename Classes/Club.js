@@ -13,7 +13,7 @@ module.exports = class Club {
 			hour: null,
 			timezone: null,
 			message: null,
-			skip: null
+			break: null
 		};
 		this.imageURL = ""; // URL for club image
 		this.detailSummaryId = "";

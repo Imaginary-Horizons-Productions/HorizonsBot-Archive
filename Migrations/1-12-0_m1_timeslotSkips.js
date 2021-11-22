@@ -24,7 +24,7 @@ Object.values(clubs).forEach(club => {
 			hour: oldTimeslot[1],
 			timezone: oldTimeslot[2],
 			message: oldTimeslot[3],
-			skip: 0
+			break: 0
 		}
 		club.timeslot = timeslotObject;
 	}
