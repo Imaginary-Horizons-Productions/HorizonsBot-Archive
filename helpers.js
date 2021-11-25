@@ -8,12 +8,12 @@ exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
 exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
 exports.TIMEZONES = ["UTC-11", "UTC-10", "UTC-9", "UTC-8 (PST)", "UTC-7", "UTC-6", "UTC-5 (EST)", "UTC-4", "UTC-3", "UTC-2", "UTC-1", "UTC", "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12"];
 exports.timeSlotToString = (timeslot) => {
-	return `${exports.DAYS[timeslot[0]]}s at ${exports.HOURS[timeslot[1]]} ${exports.TIMEZONES[11 - timeslot[2]]}`;
+	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[11 - timeslot.timezone]}${timeslot.break > 0 ? ` (on break for ${timeslot.break} weeks)` : ""}`;
 }
 
 exports.applyTimezone = (timeslot, dayOffset = 0, hourOffset = 0) => {
-	let day = timeslot[0] - dayOffset;
-	let hour = timeslot[1] - timeslot[2] - hourOffset;
+	let day = timeslot.day - dayOffset;
+	let hour = timeslot.hour - timeslot.timezone - hourOffset;
 	while (hour < 0) {
 		day--;
 		hour += 24;
@@ -101,6 +101,9 @@ exports.removeClub = function (id) {
 	delete clubs[id];
 	exports.saveObject(clubs, 'clubList.json');
 }
+
+// {textChannelId: timeout}
+exports.reminderTimeouts = {};
 
 // Functions
 exports.getManagedChannels = function () {
@@ -288,7 +291,7 @@ exports.clubListBuilder = function (channelManager) {
 		if (club.system) {
 			description += `**Game**: ${club.system}\n`;
 		}
-		if (club.timeslot[0] !== null) {
+		if (club.timeslot.day !== null) {
 			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
 		}
 	})
@@ -462,7 +465,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	if (club.system !== "\u200B") {
 		embed.addField("Game", club.system);
 	}
-	if (club.timeslot[0] !== null) {
+	if (club.timeslot.day !== null) {
 		embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
 	}
 	if (club.color) {
@@ -474,7 +477,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	if (includeJoinButton) {
 		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
 	}
-	if (club.timeslot[0] !== null) {
+	if (club.timeslot.day !== null) {
 		buttons.push(new MessageButton().setCustomId(`countdown-${club.channelID}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
 	}
 	let buttonRow = [];
@@ -531,11 +534,44 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
+exports.setClubReminderTimeout = function (club, channelManager) {
+	if (exports.reminderTimeouts[club.id]) {
+		clearTimeout(exports.reminderTimeouts[club.id]);
+		delete exports.reminderTimeouts[club.id];
+	}
+
+	let timeslot = club.timeslot;
+	if (timeslot.day !== null) {
+		let now = new Date();
+		let msUntilReminder = 604800000; // ms in a week
+
+		msUntilReminder -= (7 - (timeslot.day - now.getDay())) * 86400000;
+		msUntilReminder -= (23 - (timeslot.hour - now.getHours())) * 3600000;
+		msUntilReminder -= (59 + now.getMinutes()) * 60000;
+		msUntilReminder -= (59 + now.getSeconds()) * 1000;
+		let timeout = setTimeout(() => {
+			if (timeslot.break === 0) {
+				let [dayBefore, hour] = exports.applyTimezone(timeslot, 1);
+				if (now.getDay() === dayBefore && now.getHours() === hour) { // Remember offsets are set for server (GMT), not local
+					channelManager.fetch(club.channelID).then(textChannel => {
+						textChannel.send(`@everyone ${timeslot.message ? timeslot.message : "Reminder: this club meets in about 24 hours"}`);
+					})
+				}
+			} else {
+				club.timeslot.break--;
+			}
+			exports.setClubReminderTimeout(club, channelManager);
+		}, msUntilReminder);
+		exports.reminderTimeouts[club.id] = timeout;
+		exports.updateClub(club, channelManager);
+	}
+}
+
 exports.clubCountdown = function (interaction, clubId) {
 	let club = exports.getClubs()[clubId];
 	let today = new Date();
 	let [days, hours] = exports.applyTimezone(club.timeslot, today.getDay(), today.getHours());
-	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)} (GMT)*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
+	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)}*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
 exports.saveObject = function (object, fileName) {

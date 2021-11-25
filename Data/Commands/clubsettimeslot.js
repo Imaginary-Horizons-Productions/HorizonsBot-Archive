@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { DAYS, HOURS, getClubs, isModerator, timeSlotToString, updateClub, TIMEZONES, updateClubDetails } = require('../../helpers.js');
+const { DAYS, HOURS, getClubs, isModerator, timeSlotToString, updateClub, TIMEZONES, updateClubDetails, setClubReminderTimeout } = require('../../helpers.js');
 
 module.exports = new Command("club-set-timeslot", "(club leader or moderator) Set a meeting time; a reminder will be sent a day before");
 
@@ -10,19 +10,30 @@ module.exports.data
 		.addChoices(HOURS.map((hour, i) => [hour, i])))
 	.addIntegerOption(option => option.setName("timezone").setDescription("The timezone of the meeting time").setRequired(false)
 		.addChoices(TIMEZONES.map((timezone, i) => [timezone, 11 - i])))
-	.addStringOption(option => option.setName("remindertext").setDescription("The text to post with the reminder").setRequired(false));
+	.addStringOption(option => option.setName("remindertext").setDescription("The text to post with the reminder").setRequired(false))
+	.addIntegerOption(option => option.setName("start").setDescription("How many weeks to wait before starting reminders (default: 0)").setRequired(false));
 
 module.exports.execute = (interaction) => {
 	// Receive a day of the week and hour (in server time) from the user, store to allow ready checks
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
-			let timeslotArray = [interaction.options.getInteger("day"), interaction.options.getInteger("hour"), interaction.options.getInteger("timezone"), interaction.options.getString("remindertext") || ""];
-			if (timeslotArray.every(input => input !== undefined && input !== null)) {
-				if (timeslotArray[0] !== undefined && timeslotArray[0] !== null) {
-					if (timeslotArray[1] !== undefined && timeslotArray[1] !== null) {
-						if (timeslotArray[2] !== undefined && timeslotArray[2] !== null) {
-							club.timeslot = timeslotArray;
+			let dayInput = interaction.options.getInteger("day");
+			let hourInput = interaction.options.getInteger("hour");
+			let timezoneInput = interaction.options.getInteger("timezone");
+			let messageInput = interaction.options.getString("remindertext") || "";
+			let breakInput = interaction.options.getInteger("start") || 0;
+			if (dayInput || hourInput || timezoneInput || messageInput) {
+				if (dayInput !== undefined) {
+					if (hourInput !== undefined) {
+						if (timezoneInput !== undefined) {
+							club.timeslot = {
+								day: dayInput,
+								hour: hourInput,
+								timezone: timezoneInput,
+								message: messageInput,
+								break: breakInput
+							};
 							interaction.reply(`The timeslot for this club has been set for **${timeSlotToString(club.timeslot)}**.`);
 						} else {
 							interaction.reply({ content: "Please select a time zone for the timeslot or leave all inputs empty to clear.", ephemeral: true });
@@ -34,9 +45,17 @@ module.exports.execute = (interaction) => {
 					interaction.reply({ content: "Please select a day for the timeslot or leave all inputs empty to clear.", ephemeral: true });
 				}
 			} else {
-				club.timeslot = [null, null, null, ""];
+				club.timeslot = {
+					day: null,
+					hour: null,
+					timezone: null,
+					message: "",
+					break: 0
+				};
 				interaction.reply({ content: "The club's time slot has been cleared.", ephemeral: true });
 			}
+
+			setClubReminderTimeout(club, interaction.guild.channels);
 			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);
 		} else {

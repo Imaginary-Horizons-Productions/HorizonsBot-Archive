@@ -7,8 +7,14 @@ module.exports = class Club {
 		this.hostID = 0; // The host's Discord snowflake
 		this.userIDs = []; // An array containing the allowed user snowflakes (excluding the host)
 		this.seats = -1; // Maximum number of players in the club, 0 = unlimited
-		this.system = "\u200B"; // string for TRPG system name
-		this.timeslot = [null, null, null, ""]; // [day of week index, hour, reminder text]
+		this.system = "\u200B"; // string for club game
+		this.timeslot = {
+			day: null,
+			hour: null,
+			timezone: null,
+			message: null,
+			break: null
+		};
 		this.imageURL = ""; // URL for club image
 		this.detailSummaryId = "";
 		this.color = "";

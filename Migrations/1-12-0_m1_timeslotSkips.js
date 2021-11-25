@@ -15,9 +15,19 @@ fs.writeFile(backupPath + "clublist.json", JSON.stringify(clubs), "utf8", (error
 	}
 })
 
-// 3. forEach club, insert 0 at club.timeslot[2]
+// 3. forEach club, convert to object format
 Object.values(clubs).forEach(club => {
-	club.timeslot.splice(2, 0, 0);
+	let oldTimeslot = club.timeslot;
+	if (Array.isArray(oldTimeslot)) {
+		let timeslotObject = {
+			day: oldTimeslot[0],
+			hour: oldTimeslot[1],
+			timezone: oldTimeslot[2],
+			message: oldTimeslot[3],
+			break: 0
+		}
+		club.timeslot = timeslotObject;
+	}
 })
 
 // 4. Save to clubs file
