@@ -18,7 +18,7 @@ exports.applyTimezone = (timeslot, dayOffset = 0, hourOffset = 0) => {
 		day--;
 		hour += 24;
 	}
-	return [(day + 7) % 7, hour % 24];
+	return { days: (day + 7) % 7, hours: hour % 24 };
 }
 
 // [userID]
@@ -543,15 +543,15 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 	let timeslot = club.timeslot;
 	if (timeslot.day !== null) {
 		let now = new Date();
-		let msUntilReminder = 604800000; // ms in a week
+		let msUntilReminder = 0; // ms in a week
 
-		msUntilReminder -= (7 - (timeslot.day - now.getDay())) * 86400000;
-		msUntilReminder -= (23 - (timeslot.hour - now.getHours())) * 3600000;
-		msUntilReminder -= (59 + now.getMinutes()) * 60000;
-		msUntilReminder -= (59 + now.getSeconds()) * 1000;
+		msUntilReminder += (6 - now.getDay() + timeslot.day) % 7 * 86400000;
+		msUntilReminder += (24 - now.getHours() + timeslot.hour) % 24 * 3600000;
+		msUntilReminder += (60 - now.getMinutes()) * 60000;
+		msUntilReminder += (60 - now.getSeconds()) * 1000;
 		let timeout = setTimeout(() => {
 			if (timeslot.break === 0) {
-				let [dayBefore, hour] = exports.applyTimezone(timeslot, 1);
+				let { days: dayBefore, hours: hour } = exports.applyTimezone(timeslot, 1);
 				if (now.getDay() === dayBefore && now.getHours() === hour) { // Remember offsets are set for server (GMT), not local
 					channelManager.fetch(club.channelID).then(textChannel => {
 						textChannel.send(`@everyone ${timeslot.message ? timeslot.message : "Reminder: this club meets in about 24 hours"}`);
@@ -570,7 +570,8 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 exports.clubCountdown = function (interaction, clubId) {
 	let club = exports.getClubs()[clubId];
 	let today = new Date();
-	let [days, hours] = exports.applyTimezone(club.timeslot, today.getDay(), today.getHours());
+	let { days, hours } = exports.applyTimezone(club.timeslot, today.getDay(), today.getHours());
+	days += club.timeslot.break * 7;
 	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)}*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
