@@ -212,7 +212,7 @@ exports.topicListBuilder = function (channelManager) {
 		let id = topics[i];
 		let channel = channelManager.resolve(id);
 		if (channel) {
-			description += `\n__${channel.name}__${channel.topic ? channel.topic : ""}`;
+			description += `\n__${channel.name}__${channel.topic ? ` ${channel.topic}` : ""}`;
 		}
 	}
 
