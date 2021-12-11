@@ -9,42 +9,37 @@ module.exports.data
 	.addIntegerOption(option => option.setName("hour").setDescription("The hour of the meeting").setRequired(false)
 		.addChoices(HOURS.map((hour, i) => [hour, i])))
 	.addIntegerOption(option => option.setName("timezone").setDescription("The timezone of the meeting time").setRequired(false)
-		.addChoices(TIMEZONES.map((timezone, i) => [timezone, 11 - i])))
+		.addChoices(TIMEZONES.map((timezone, i) => [timezone, i - 11]))) // subtracting 11 converts index to timezone offset
 	.addStringOption(option => option.setName("remindertext").setDescription("The text to post with the reminder").setRequired(false))
-	.addIntegerOption(option => option.setName("start").setDescription("How many weeks to wait before starting reminders (default: 0)").setRequired(false));
+	.addIntegerOption(option => option.setName("delayweeks").setDescription("How many (non-negative) weeks to wait before starting reminders (default: 0)").setRequired(false));
 
 module.exports.execute = (interaction) => {
 	// Receive a day of the week and hour (in server time) from the user, store to allow ready checks
 	let club = getClubs()[interaction.channel.id];
 	if (club) {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
-			let dayInput = interaction.options.getInteger("day");
-			let hourInput = interaction.options.getInteger("hour");
-			let timezoneInput = interaction.options.getInteger("timezone");
-			let messageInput = interaction.options.getString("remindertext") || "";
-			let breakInput = interaction.options.getInteger("start") || 0;
-			if (dayInput || hourInput || timezoneInput || messageInput) {
-				if (dayInput !== undefined) {
-					if (hourInput !== undefined) {
-						if (timezoneInput !== undefined) {
-							club.timeslot = {
-								day: dayInput,
-								hour: hourInput,
-								timezone: timezoneInput,
-								message: messageInput,
-								break: breakInput
-							};
-							interaction.reply(`The timeslot for this club has been set for **${timeSlotToString(club.timeslot)}**.`);
-						} else {
-							interaction.reply({ content: "Please select a time zone for the timeslot or leave all inputs empty to clear.", ephemeral: true });
-						}
-					} else {
-						interaction.reply({ content: "Please select an hour for the timeslot or leave all inputs empty to clear.", ephemeral: true });
-					}
-				} else {
-					interaction.reply({ content: "Please select a day for the timeslot or leave all inputs empty to clear.", ephemeral: true });
-				}
-			} else {
+			let incorrectInputs = [];
+			// reference on ?? --> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing_operator
+			let dayInput = interaction.options.getInteger("day") ?? incorrectInputs.push("day");
+			let hourInput = interaction.options.getInteger("hour") ?? incorrectInputs.push("hour");
+			let timezoneInput = interaction.options.getInteger("timezone") ?? incorrectInputs.push("time zone");
+			let messageInput = interaction.options.getString("remindertext") ?? "";
+			let breakInput = interaction.options.getInteger("delayweeks") ?? 0;
+
+			if (breakInput < 0) {
+				incorrectInputs.push("delay weeks");
+			}
+
+			if (!incorrectInputs.length) {
+				club.timeslot = {
+					day: dayInput,
+					hour: hourInput,
+					timezone: timezoneInput,
+					message: messageInput,
+					break: breakInput
+				};
+				interaction.reply(`The timeslot for this club has been set for **${timeSlotToString(club.timeslot)}**.`);
+			} else if (incorrectInputs.length === 3 && !messageInput && breakInput === 0) {
 				club.timeslot = {
 					day: null,
 					hour: null,
@@ -53,6 +48,8 @@ module.exports.execute = (interaction) => {
 					break: 0
 				};
 				interaction.reply({ content: "The club's time slot has been cleared.", ephemeral: true });
+			} else {
+				interaction.reply({ content: `Your timeslot could not be set. The following values were missing or invalid: *${incorrectInputs.join(", ")}*`, ephemeral: true });
 			}
 
 			setClubReminderTimeout(club, interaction.guild.channels);
