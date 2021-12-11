@@ -8,12 +8,13 @@ exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"
 exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
 exports.TIMEZONES = ["UTC-11", "UTC-10", "UTC-9", "UTC-8 (PST)", "UTC-7", "UTC-6", "UTC-5 (EST)", "UTC-4", "UTC-3", "UTC-2", "UTC-1", "UTC", "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12"];
 exports.timeSlotToString = (timeslot) => {
-	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[11 - timeslot.timezone]}${timeslot.break > 0 ? ` (on break for ${timeslot.break} weeks)` : ""}`;
+	// adding 11 to timezone converts it to array index
+	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[timeslot.timezone + 11]}${timeslot.break > 0 ? ` (on break for ${timeslot.break} weeks)` : ""}`;
 }
 
 exports.applyTimezone = (timeslot, dayOffset = 0, hourOffset = 0) => {
 	let day = timeslot.day - dayOffset;
-	let hour = timeslot.hour - timeslot.timezone - hourOffset;
+	let hour = timeslot.hour + timeslot.timezone - hourOffset;  // Server time is UTC
 	while (hour < 0) {
 		day--;
 		hour += 24;
@@ -212,7 +213,7 @@ exports.topicListBuilder = function (channelManager) {
 		let id = topics[i];
 		let channel = channelManager.resolve(id);
 		if (channel) {
-			description += `\n__${channel.name}__${channel.topic ? channel.topic : ""}`;
+			description += `\n__${channel.name}__${channel.topic ? ` ${channel.topic}` : ""}`;
 		}
 	}
 
@@ -540,28 +541,24 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 		delete exports.reminderTimeouts[club.id];
 	}
 
-	let timeslot = club.timeslot;
-	if (timeslot.day !== null) {
+	if (club.timeslot.day !== null) {
 		let now = new Date();
-		let msUntilReminder = 0; // ms in a week
-
-		msUntilReminder += (6 - now.getDay() + timeslot.day) % 7 * 86400000;
-		msUntilReminder += (24 - now.getHours() + timeslot.hour) % 24 * 3600000;
+		let msUntilReminder = 0;
+		const { days, hours } = exports.applyTimezone(club.timeslot, 1);
+		msUntilReminder += (7 - now.getDay() + days) % 7 * 86400000;
+		msUntilReminder += (24 - now.getHours() + hours) % 24 * 3600000;
 		msUntilReminder += (60 - now.getMinutes()) * 60000;
 		msUntilReminder += (60 - now.getSeconds()) * 1000;
-		let timeout = setTimeout(() => {
-			if (timeslot.break === 0) {
-				let { days: dayBefore, hours: hour } = exports.applyTimezone(timeslot, 1);
-				if (now.getDay() === dayBefore && now.getHours() === hour) { // Remember offsets are set for server (GMT), not local
-					channelManager.fetch(club.channelID).then(textChannel => {
-						textChannel.send(`@everyone ${timeslot.message ? timeslot.message : "Reminder: this club meets in about 24 hours"}`);
-					})
-				}
+		let timeout = setTimeout((timeoutClub) => {
+			if (timeoutClub.timeslot.break < 1) {
+				channelManager.fetch(timeoutClub.channelID).then(textChannel => {
+					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
+				});
 			} else {
-				club.timeslot.break--;
+				timeoutClub.timeslot.break--;
 			}
-			exports.setClubReminderTimeout(club, channelManager);
-		}, msUntilReminder);
+			exports.setClubReminderTimeout(timeoutClub, channelManager);
+		}, msUntilReminder, club);
 		exports.reminderTimeouts[club.id] = timeout;
 		exports.updateClub(club, channelManager);
 	}

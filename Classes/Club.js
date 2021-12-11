@@ -12,8 +12,8 @@ module.exports = class Club {
 			day: null,
 			hour: null,
 			timezone: null,
-			message: null,
-			break: null
+			message: "",
+			break: 0
 		};
 		this.imageURL = ""; // URL for club image
 		this.detailSummaryId = "";
