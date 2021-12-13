@@ -536,9 +536,9 @@ exports.updateClubDetails = (club, channel) => {
 }
 
 exports.setClubReminderTimeout = function (club, channelManager) {
-	if (exports.reminderTimeouts[club.id]) {
-		clearTimeout(exports.reminderTimeouts[club.id]);
-		delete exports.reminderTimeouts[club.id];
+	if (exports.reminderTimeouts[club.channelID]) {
+		clearTimeout(exports.reminderTimeouts[club.channelID]);
+		delete exports.reminderTimeouts[club.channelID];
 	}
 
 	if (club.timeslot.day !== null) {
@@ -559,7 +559,7 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 			}
 			exports.setClubReminderTimeout(timeoutClub, channelManager);
 		}, msUntilReminder, club);
-		exports.reminderTimeouts[club.id] = timeout;
+		exports.reminderTimeouts[club.channelID] = timeout;
 		exports.updateClub(club, channelManager);
 	}
 }
