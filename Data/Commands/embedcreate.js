@@ -10,7 +10,7 @@ module.exports.execute = (interaction) => {
 		if (isModerator(interaction.user.id)) {
 			let embed = new MessageEmbed().setFooter("Custom Embed").setTimestamp();
 			interaction.channel.send({ embeds: [embed] }).then(message => {
-				customEmbeds[message.id] = message.channel.id;
+				customEmbeds[message.id] = message.channelId;
 				saveObject(customEmbeds, "embedsList.json");
 				interaction.reply({ content: "Here's your new embed.", ephemeral: true });
 			}).catch(console.error);

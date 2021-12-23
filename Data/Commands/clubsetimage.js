@@ -7,7 +7,7 @@ module.exports.data.addStringOption(option => option.setName("url").setDescripti
 
 module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel
-	let club = getClubs()[interaction.channel.id];
+	let club = getClubs()[interaction.channelId];
 	if (club) {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
 			let url = interaction.options.getString("url");

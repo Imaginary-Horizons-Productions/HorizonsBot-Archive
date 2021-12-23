@@ -3,13 +3,13 @@ const { customEmbeds, isModerator } = require('../../helpers.js');
 
 module.exports = new Command("embed-set-message", "(moderator) Assign a custom embed's message content");
 
-module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("text").setDescription("The text to put in the message (above the embed)").setRequired(true));
 
 module.exports.execute = (interaction) => {
 	// Set the message for the given embed
 	if (isModerator(interaction.user.id)) {
-		let messageID = interaction.options.getString("messageid");
+		let messageID = interaction.options.getString("message-id");
 		if (customEmbeds[messageID]) {
 			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
 				message.edit({ content: interaction.options.getString("text") });

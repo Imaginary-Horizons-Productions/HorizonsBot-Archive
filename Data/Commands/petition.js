@@ -3,11 +3,11 @@ const { joinChannel, getTopicNames, findTopicID, checkPetition } = require('../.
 
 module.exports = new Command("petition", "Petition for a topic");
 
-module.exports.data.addStringOption(option => option.setName("topicname").setDescription("The topic channel to petition for").setRequired(true));
+module.exports.data.addStringOption(option => option.setName("topic-name").setDescription("The topic channel to petition for").setRequired(true));
 
 module.exports.execute = (interaction) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions
-	let topicName = interaction.options.getString("topicname").toLowerCase();
+	let topicName = interaction.options.getString("topic-name").toLowerCase();
 	if (getTopicNames().includes(topicName)) {
 		let channelID = findTopicID(topicName);
 		joinChannel(interaction.guild.channels.resolve(channelID), interaction.user);

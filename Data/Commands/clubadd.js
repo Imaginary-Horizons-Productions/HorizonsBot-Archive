@@ -4,16 +4,16 @@ const { isModerator, getModRoleID, updateClub, clubInviteBuilder } = require("..
 
 module.exports = new Command("club-add", "(moderator) Set up a text and voice channels for a club");
 
-module.exports.data.addUserOption(option => option.setName("clubleader").setDescription("The user to set as club leader").setRequired(true));
+module.exports.data.addUserOption(option => option.setName("club-leader").setDescription("The user to set as club leader").setRequired(true));
 
 module.exports.execute = (interaction) => {
 	// Create a new club including a text and voice channel in the receiving channel's category and set the mentioned user as host
 	if (isModerator(interaction.user.id)) {
-		let host = interaction.options.getUser("clubleader");
+		let host = interaction.options.getUser("club-leader");
 		let channelManager = interaction.guild.channels;
 		let categoryId = interaction.channel.parentId;
 
-		interaction.guild.roles.fetch(interaction.guild.id).then(everyoneRole => {
+		interaction.guild.roles.fetch(interaction.guildId).then(everyoneRole => {
 			interaction.guild.roles.fetch(getModRoleID()).then(modRole => {
 				interaction.guild.members.fetch("536330483852771348").then(bountyBot => {
 					channelManager.create("new-club-text", {

@@ -3,14 +3,14 @@ const { customEmbeds, isModerator } = require('../../helpers.js');
 
 module.exports = new Command("embed-splice-fields", "(moderator) Remove fields from a custom embed (replace unsupported)");
 
-module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
 	.addIntegerOption(option => option.setName("index").setDescription("The field number to start removing fields from (count starts from 0)").setRequired(true))
 	.addIntegerOption(option => option.setName("count").setDescription("The number of fields to remove").setRequired(true));
 
 module.exports.execute = (interaction) => {
 	// Splice fields from the given embed
 	if (isModerator(interaction.user.id)) {
-		let messageID = interaction.options.getString("messageid");
+		let messageID = interaction.options.getString("message-id");
 		if (customEmbeds[messageID]) {
 			let deleteCount = interaction.options.getInteger("count");
 			let index = interaction.options.getInteger("index");

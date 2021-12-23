@@ -8,7 +8,7 @@ module.exports.data.addIntegerOption(option => option.setName("delay").setDescri
 module.exports.execute = (interaction) => {
 	// Delete a topic or club channel, or set it to be deleted on a delay
 	if (isModerator(interaction.user.id)) {
-		if (getManagedChannels().includes(interaction.channel.id)) {
+		if (getManagedChannels().includes(interaction.channelId)) {
 			let delay = parseFloat(interaction.options.getInteger("delay"));
 			interaction.reply(`This channel has been scheduled to be deleted in ${delay} hour(s).`)
 				.catch(console.error);

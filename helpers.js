@@ -4,22 +4,50 @@ exports.guildID = require('./Config/auth.json').guildID;
 
 exports.COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
 
-exports.DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-exports.HOURS = ["Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM"];
-exports.TIMEZONES = ["UTC-11", "UTC-10", "UTC-9", "UTC-8 (PST)", "UTC-7", "UTC-6", "UTC-5 (EST)", "UTC-4", "UTC-3", "UTC-2", "UTC-1", "UTC", "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12"];
-exports.timeSlotToString = (timeslot) => {
-	// adding 11 to timezone converts it to array index
-	return `${exports.DAYS[timeslot.day]}s at ${exports.HOURS[timeslot.hour]} ${exports.TIMEZONES[timeslot.timezone + 11]}${timeslot.break > 0 ? ` (on break for ${timeslot.break} weeks)` : ""}`;
-}
-
-exports.applyTimezone = (timeslot, dayOffset = 0, hourOffset = 0) => {
-	let day = timeslot.day - dayOffset;
-	let hour = timeslot.hour + timeslot.timezone - hourOffset;  // Server time is UTC
-	while (hour < 0) {
-		day--;
-		hour += 24;
+exports.timeConversion = function (value, startingUnit, resultUnit) {
+	let unknownUnits = [];
+	let msPerStartUnit = 1;
+	switch (startingUnit.toLowerCase()) {
+		case "w":
+			msPerStartUnit *= 7;
+		case "d":
+			msPerStartUnit *= 24;
+		case "h":
+			msPerStartUnit *= 60;
+		case "m":
+			msPerStartUnit *= 60;
+		case "s":
+			msPerStartUnit *= 1000;
+		case "ms":
+			msPerStartUnit *= 1;
+			break;
+		default:
+			unknownUnits.push(startingUnit);
 	}
-	return { days: (day + 7) % 7, hours: hour % 24 };
+
+	let msPerResultUnit = 1;
+	switch (resultUnit.toLowerCase()) {
+		case "w":
+			msPerResultUnit *= 7;
+		case "d":
+			msPerResultUnit *= 24;
+		case "h":
+			msPerResultUnit *= 60;
+		case "m":
+			msPerResultUnit *= 60;
+		case "s":
+			msPerResultUnit *= 1000;
+		case "ms":
+			msPerResultUnit *= 1;
+			break;
+		default:
+			unknownUnits.push(resultUnit);
+	}
+	if (!unknownUnits.length) {
+		return value * msPerStartUnit / msPerResultUnit;
+	} else {
+		throw new Error(`Unknown unit used: ${unknownUnits.join(", ")} (allowed units: ms, s, m, h, d, w)`)
+	}
 }
 
 // [userID]
@@ -270,7 +298,7 @@ exports.pinTopicsList = function (channelManager, channel) {
 		channel.send(messageOptions).then(message => {
 			exports.listMessages.topics = {
 				"messageID": message.id,
-				"channelID": message.channel.id
+				"channelID": message.channelId
 			}
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
 			message.pin();
@@ -292,8 +320,8 @@ exports.clubListBuilder = function (channelManager) {
 		if (club.system) {
 			description += `**Game**: ${club.system}\n`;
 		}
-		if (club.timeslot.day !== null) {
-			description += `**Timeslot**: ${exports.timeSlotToString(club.timeslot)}\n`;
+		if (club.timeslot.nextMeeting) {
+			description += `**Next Meeting**: <t:${club.timeslot.nextMeeting}>\n`;
 		}
 	})
 
@@ -334,7 +362,7 @@ exports.pinClubsList = function (channelManager, channel) {
 		channel.send(messageOptions).then(message => {
 			exports.listMessages.clubs = {
 				"messageID": message.id,
-				"channelID": message.channel.id
+				"channelID": message.channelId
 			}
 			message.pin();
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
@@ -466,8 +494,8 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	if (club.system !== "\u200B") {
 		embed.addField("Game", club.system);
 	}
-	if (club.timeslot.day !== null) {
-		embed.addField("Time Slot", exports.timeSlotToString(club.timeslot));
+	if (club.timeslot.nextMeeting) {
+		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}>`);
 	}
 	if (club.color) {
 		embed.setColor(club.color);
@@ -477,9 +505,6 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	let buttons = [];
 	if (includeJoinButton) {
 		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
-	}
-	if (club.timeslot.day !== null) {
-		buttons.push(new MessageButton().setCustomId(`countdown-${club.channelID}`).setLabel(`Next meeting time`).setStyle("SECONDARY"));
 	}
 	let buttonRow = [];
 	if (buttons.length > 0) {
@@ -541,35 +566,19 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 		delete exports.reminderTimeouts[club.channelID];
 	}
 
-	if (club.timeslot.day !== null) {
-		let now = new Date();
-		let msUntilReminder = 0;
-		const { days, hours } = exports.applyTimezone(club.timeslot, 1);
-		msUntilReminder += (7 - now.getDay() + days) % 7 * 86400000;
-		msUntilReminder += (24 - now.getHours() + hours) % 24 * 3600000;
-		msUntilReminder += (60 - now.getMinutes()) * 60000;
-		msUntilReminder += (60 - now.getSeconds()) * 1000;
-		let timeout = setTimeout((timeoutClub) => {
-			if (timeoutClub.timeslot.break < 1) {
-				channelManager.fetch(timeoutClub.channelID).then(textChannel => {
-					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
-				});
-			} else {
-				timeoutClub.timeslot.break--;
-			}
+	if (club.timeslot.nextMeeting && club.timeslot.periodCount) {
+		let msTimestamp = Date.now();
+		let msToDayBeforeNextMeeting = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - msTimestamp;
+		let timeout = setTimeout(timeoutClub => {
+			channelManager.fetch(timeoutClub.channelID).then(textChannel => {
+				textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
+			});
+			timeoutClub.timeslot.nextMeeting += exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
 			exports.setClubReminderTimeout(timeoutClub, channelManager);
-		}, msUntilReminder, club);
+		}, msToDayBeforeNextMeeting, club);
 		exports.reminderTimeouts[club.channelID] = timeout;
 		exports.updateClub(club, channelManager);
 	}
-}
-
-exports.clubCountdown = function (interaction, clubId) {
-	let club = exports.getClubs()[clubId];
-	let today = new Date();
-	let { days, hours } = exports.applyTimezone(club.timeslot, today.getDay(), today.getHours());
-	days += club.timeslot.break * 7;
-	interaction.reply(`This club meets on *${exports.timeSlotToString(club.timeslot)}*. The next meeting will be **${days > 0 ? `${days} day(s) and ` : ""}${hours} hour(s)** from now.`);
 }
 
 exports.saveObject = function (object, fileName) {

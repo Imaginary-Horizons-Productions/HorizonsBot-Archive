@@ -6,7 +6,7 @@ module.exports = new Command("leave", "Leave an opt-in channel or club");
 
 module.exports.execute = (interaction) => {
 	let userID = interaction.user.id;
-	var channelID = interaction.channel.id;
+	var channelID = interaction.channelId;
 	if (getManagedChannels().includes(channelID)) {
 		let club = getClubs()[channelID];
 		if (club) {

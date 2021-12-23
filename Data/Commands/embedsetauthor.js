@@ -3,19 +3,19 @@ const { customEmbeds, isModerator } = require('../../helpers.js');
 
 module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author");
 
-module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
+module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
 	.addStringOption(option => option.setName("text").setDescription("The text to put in the author field").setRequired(true))
-	.addStringOption(option => option.setName("iconurl").setDescription("The url to the image in the author field").setRequired(false))
+	.addStringOption(option => option.setName("icon-url").setDescription("The url to the image in the author field").setRequired(false))
 	.addStringOption(option => option.setName("url").setDescription("The url to open when the author field is clicked").setRequired(false))
 
 module.exports.execute = (interaction) => {
 	// Set the author for the given embed
 	if (isModerator(interaction.user.id)) {
-		let messageID = interaction.options.getString("messageid");
+		let messageID = interaction.options.getString("message-id");
 		if (customEmbeds[messageID]) {
 			let name = interaction.options.getString("text");
 			var urlRegex = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,})/, 'gi');
-			let iconURL = interaction.options.getString("iconurl");
+			let iconURL = interaction.options.getString("icon-url");
 			var validIcon = urlRegex.test(iconURL);
 			let url = interaction.options.getString("url");
 			var validURL = urlRegex.test(url);

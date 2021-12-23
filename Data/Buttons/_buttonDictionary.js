@@ -1,5 +1,4 @@
 var buttonWhitelist = [
-	"countdown.js",
 	"delete.js",
 	"join.js"
 ];

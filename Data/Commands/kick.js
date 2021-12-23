@@ -9,9 +9,9 @@ module.exports.data.addUserOption(option => option.setName("target").setDescript
 module.exports.execute = (interaction) => {
 	// Remove visibility of receiving channel from mentioned user
 	if (isModerator(interaction.user.id)) {
-		if (getManagedChannels().includes(interaction.channel.id)) {
+		if (getManagedChannels().includes(interaction.channelId)) {
 			var user = interaction.options.getUser("target");
-			var club = getClubs()[interaction.channel.id];
+			var club = getClubs()[interaction.channelId];
 			if (club) {
 				club.userIDs = club.userIDs.filter(memberId => memberId != user.id);
 				updateClub(club, interaction.guild.chanels);

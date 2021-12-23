@@ -7,7 +7,7 @@ module.exports.data.addUserOption(option => option.setName("user").setDescriptio
 
 module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel
-	let club = getClubs()[interaction.channel.id];
+	let club = getClubs()[interaction.channelId];
 	if (club) {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
 			var promotee = interaction.options.getUser("user");
