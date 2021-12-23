@@ -1,12 +1,13 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-add-field", "(moderator) Add a custom embed field");
-
-module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
-	.addStringOption(option => option.setName("header").setDescription("The header for the new field").setRequired(true))
-	.addStringOption(option => option.setName("text").setDescription("The text of the new field").setRequired(true))
-	.addBooleanOption(option => option.setName("inline").setDescription("Whether to show the field in-line with previous embed fields").setRequired(false));
+let options = [
+	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
+	{ type: "String", name: "header", description: "The header for the new field", required: true, choices: {} },
+	{ type: "String", name: "text", description: "The text of the new field", required: true, choices: {} },
+	{ type: "Boolean", name: "inline", description: "Whether to show the field in-line with previous embed fields", required: false, choices: {} }
+];
+module.exports = new Command("embed-add-field", "(moderator) Add a custom embed field", options);
 
 module.exports.execute = (interaction) => {
 	// Add a field to the given embed

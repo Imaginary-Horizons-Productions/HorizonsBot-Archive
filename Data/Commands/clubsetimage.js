@@ -1,9 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, getClubs, updateClub, updateClubDetails } = require("../../helpers.js");
 
-module.exports = new Command("club-set-image", "(club leader or moderator) Set or clear a club's image url");
-
-module.exports.data.addStringOption(option => option.setName("url").setDescription("The url to the image to set for the club").setRequired(false));
+let options = [{ type: "String", name: "url", description: "The url to the image to set for the club", required: false, choices: {} }];
+module.exports = new Command("club-set-image", "(club leader or moderator) Set or clear a club's image url", options);
 
 module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel

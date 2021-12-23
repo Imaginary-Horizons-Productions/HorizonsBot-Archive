@@ -1,11 +1,12 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-splice-fields", "(moderator) Remove fields from a custom embed (replace unsupported)");
-
-module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
-	.addIntegerOption(option => option.setName("index").setDescription("The field number to start removing fields from (count starts from 0)").setRequired(true))
-	.addIntegerOption(option => option.setName("count").setDescription("The number of fields to remove").setRequired(true));
+let options = [
+	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
+	{ type: "Integer", name: "index", description: "The field number to start removing fields from (count starts from 0)", required: true, choices: {} },
+	{ type: "String", name: "count", description: "The number of fields to remove", required: true, choices: {} }
+];
+module.exports = new Command("embed-splice-fields", "(moderator) Remove fields from a custom embed (replace unsupported)", options);
 
 module.exports.execute = (interaction) => {
 	// Splice fields from the given embed

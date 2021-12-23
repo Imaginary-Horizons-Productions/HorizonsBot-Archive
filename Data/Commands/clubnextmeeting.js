@@ -1,9 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const { getClubs, timeConversion, updateClubDetails, updateClub, setClubReminderTimeout } = require('../../helpers.js');
 
-module.exports = new Command("club-next-meeting", "Set the club's next meeting by timestamp (use /timestamp to calculate)"); // (name, description)
-
-module.exports.data.addStringOption(option => option.setName("timestamp").setDescription("The timestamp for the next meeting (use <t:seconds> format)").setRequired(true));
+let options = [{ type: "String", name: "timestamp", description: "The timestamp for the next meeting (use <t:seconds> format)", required: true, choices: {} }]
+module.exports = new Command("club-next-meeting", "Set the club's next meeting by timestamp (use /timestamp to calculate)", options);
 
 module.exports.execute = (interaction) => {
 	// Set the club's next meeting

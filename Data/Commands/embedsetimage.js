@@ -1,10 +1,11 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-image", "(moderator) Assign an custom embed's image");
-
-module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
-	.addStringOption(option => option.setName("url").setDescription("The url to a picture for the image field").setRequired(true));
+let options = [
+	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
+	{ type: "String", name: "url", description: "The url to a picture for the image field", required: true, choices: {} }
+];
+module.exports = new Command("embed-set-image", "(moderator) Assign an custom embed's image", options);
 
 module.exports.execute = (interaction) => {
 	// Set the image for the given embed

@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, getClubs, updateClub, updateClubDetails, COLORS } = require("../../helpers.js");
 
-module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information");
+let options = [];
+module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information", options);
 
 module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
 	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))

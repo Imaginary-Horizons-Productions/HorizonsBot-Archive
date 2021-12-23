@@ -1,9 +1,10 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, addTopicChannel } = require('../../helpers.js');
 
-module.exports = new Command("topic-add", "(moderator) Set up a topic");
-
-module.exports.data.addStringOption(option => option.setName("topic-name").setDescription("The new topic").setRequired(true))
+let options = [
+	{ type: "String", name: "topic-name", description: "The new topic", required: true, choices: {} },
+];
+module.exports = new Command("topic-add", "(moderator) Set up a topic", options);
 
 module.exports.execute = (interaction) => {
 	// Creates a new opt-in text channel for the given topic, adds it to list of topic channels

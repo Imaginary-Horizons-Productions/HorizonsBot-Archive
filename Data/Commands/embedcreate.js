@@ -2,7 +2,8 @@ const Command = require('../../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 const { isModerator, customEmbeds, saveObject } = require('../../helpers.js');
 
-module.exports = new Command("embed-create", "(moderator) Make a new MessageEmbed, configurable with other commands");
+let options = [];
+module.exports = new Command("embed-create", "(moderator) Make a new MessageEmbed, configurable with other commands", options);
 
 module.exports.execute = (interaction) => {
 	// Create a new MessageEmbed

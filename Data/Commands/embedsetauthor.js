@@ -1,12 +1,13 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author");
-
-module.exports.data.addStringOption(option => option.setName("message-id").setDescription("The ID of the embed's message").setRequired(true))
-	.addStringOption(option => option.setName("text").setDescription("The text to put in the author field").setRequired(true))
-	.addStringOption(option => option.setName("icon-url").setDescription("The url to the image in the author field").setRequired(false))
-	.addStringOption(option => option.setName("url").setDescription("The url to open when the author field is clicked").setRequired(false))
+let options = [
+	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
+	{ type: "String", name: "text", description: "The text to put in the author field", required: true, choices: {} },
+	{ type: "String", name: "icon-url", description: "The url to the image in the author field", required: false, choices: {} },
+	{ type: "String", name: "url", description: "The url to open when the author field is clicked", required: false, choices: {} }
+];
+module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author", options);
 
 module.exports.execute = (interaction) => {
 	// Set the author for the given embed

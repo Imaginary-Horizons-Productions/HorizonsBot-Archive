@@ -1,10 +1,11 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, getManagedChannels, getClubs, updateClub } = require('../../helpers.js');
 
-module.exports = new Command("kick", "(moderator) Remove mentioned users from a topic or club channel");
-
-module.exports.data.addUserOption(option => option.setName("target").setDescription("The user to remove from the topic or club").setRequired(true))
-	.addBooleanOption(option => option.setName("ban").setDescription("Prevent user from rejoining?").setRequired(false));
+let options = [
+	{ type: "User", name: "target", description: "The user to remove from the topic or club", required: true, choices: {} },
+	{ type: "Boolean", name: "ban", description: "Prevent the user from rejoining?", required: false, choices: {} }
+];
+module.exports = new Command("kick", "(moderator) Remove mentioned users from a topic or club channel", options);
 
 module.exports.execute = (interaction) => {
 	// Remove visibility of receiving channel from mentioned user

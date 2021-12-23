@@ -1,13 +1,13 @@
 const Command = require('../../Classes/Command.js');
 const { timeConversion } = require('../../helpers.js');
 
-module.exports = new Command("timestamp", "Calculate the unix timestamp for a moment in time, which Discord displays with timezones applied"); // (name, description)
-
-module.exports.data
-	.addNumberOption(option => option.setName("days-from-now").setDescription("How many days from now for the timestamp").setRequired(false))
-	.addNumberOption(option => option.setName("hours-from-now").setDescription("How many hours from now for the timestamp").setRequired(false))
-	.addNumberOption(option => option.setName("minutes-from-now").setDescription("How many minutes from now for the timestamp").setRequired(false))
-	.addNumberOption(option => option.setName("seconds-from-now").setDescription("How many seconds from now for the timestamp").setRequired(false))
+let options = [
+	{ type: "Number", name: "days-from-now", description: "How many days from now for the timestamp", required: false, choices: {} },
+	{ type: "Number", name: "hours-from-now", description: "How many hours from now for the timestamp", required: false, choices: {} },
+	{ type: "Number", name: "minutes-from-now", description: "How many minutes from now for the timestamp", required: false, choices: {} },
+	{ type: "Number", name: "seconds-from-now", description: "How many seconds from now for the timestamp", required: false, choices: {} },
+];
+module.exports = new Command("timestamp", "Calculate the unix timestamp for a moment in time, which Discord displays with timezones applied", options);
 
 module.exports.execute = (interaction) => {
 	// Calculate the unix timestamp given days, hours, minutes, and seconds from now

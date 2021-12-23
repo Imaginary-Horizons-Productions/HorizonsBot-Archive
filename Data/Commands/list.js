@@ -1,9 +1,15 @@
 const Command = require('../../Classes/Command.js');
 const { topicListBuilder, clubListBuilder } = require('../../helpers.js');
 
-module.exports = new Command("list", "Get a list of topic or club channels");
-
-module.exports.data.addStringOption(option => option.setName("list-type").setDescription(`Get a list of topic or club channels`).setRequired(true).addChoice("Get the topic list", "topic").addChoice("Get the club list", "club"));
+let options = [
+	{
+		type: "String", name: "list-type", description: "Get a list of topic or club channels", required: true, choices: {
+			"Get the topic list": "topic",
+			"Get the club list": "club"
+		}
+	},
+];
+module.exports = new Command("list", "Get a list of topic or club channels", options);
 
 module.exports.execute = (interaction) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions

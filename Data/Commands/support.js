@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = new Command("support", "Show ways to support the community");
+let options = [];
+module.exports = new Command("support", "Show ways to support the community", options);
 
 module.exports.execute = (interaction) => {
 	// Lists ways users can support development
