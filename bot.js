@@ -52,7 +52,7 @@ let clubBuriedness = 0;
 
 client.on('messageCreate', receivedMessage => {
 	// Count messages for pin bumping
-	if (listMessages.topics && receivedMessage.channel.id === listMessages.topics.channelID) {
+	if (listMessages.topics && receivedMessage.channelId === listMessages.topics.channelID) {
 		topicBuriedness += 1;
 		if (topicBuriedness > 9) {
 			receivedMessage.channel.messages.fetch(listMessages.topics.messageID).then(oldMessage => {
@@ -62,7 +62,7 @@ client.on('messageCreate', receivedMessage => {
 			topicBuriedness = 0;
 		}
 	}
-	if (listMessages.clubs && receivedMessage.channel.id == listMessages.clubs.channelID) {
+	if (listMessages.clubs && receivedMessage.channelId == listMessages.clubs.channelID) {
 		clubBuriedness += 1;
 		if (clubBuriedness > 9) {
 			receivedMessage.channel.messages.fetch(listMessages.clubs.messageID).then(oldMessage => {

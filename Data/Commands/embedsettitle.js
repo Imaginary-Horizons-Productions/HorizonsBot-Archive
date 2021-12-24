@@ -1,15 +1,16 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-title", "(moderator) Assign a custom embed's title");
-
-module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
-	.addStringOption(option => option.setName("title").setDescription("The text to set in the title field").setRequired(true));
+let options = [
+	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
+	{ type: "String", name: "title", description: "The text to set in the title field", required: true, choices: {} }
+];
+module.exports = new Command("embed-set-title", "(moderator) Assign a custom embed's title", options);
 
 module.exports.execute = (interaction) => {
 	// Set the title for the given embed
 	if (isModerator(interaction.user.id)) {
-		let messageID = interaction.options.getString("messageid");
+		let messageID = interaction.options.getString("message-id");
 		if (customEmbeds[messageID]) {
 			let title = interaction.options.getString("title");
 			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {

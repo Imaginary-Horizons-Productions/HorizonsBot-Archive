@@ -2,10 +2,11 @@ const Command = require('../../Classes/Command.js');
 const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
 const { getTopicIDs } = require('../../helpers.js');
 
-module.exports = new Command("topic-invite", "Invite users to this topic");
-
-module.exports.data.addUserOption(option => option.setName("invitee").setDescription("The user to invite (copy-paste from another channel)").setRequired(true))
-	.addChannelOption(option => option.setName("channel").setDescription("The topic channel to invite to").setRequired(true));
+let options = [
+	{ type: "User", name: "invitee", description: "The user to invite (copy-paste from another channel)", required: true, choices: {} },
+	{ type: "Channel", name: "channel", description: "The topic channel to invite to", required: true, choices: {} }
+];
+module.exports = new Command("topic-invite", "Invite users to this topic", options);
 
 module.exports.execute = (interaction) => {
 	// Invite users to the given topic

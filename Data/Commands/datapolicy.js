@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = new Command("data-policy",	"Shows types of user data HorizonsBot collects and how it's used");
+let options = [];
+module.exports = new Command("data-policy", "Shows types of user data HorizonsBot collects and how it's used", options);
 
 module.exports.execute = (interaction) => {
 	// Command specifications go here

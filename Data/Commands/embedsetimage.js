@@ -1,15 +1,16 @@
 const Command = require('../../Classes/Command.js');
 const { customEmbeds, isModerator } = require('../../helpers.js');
 
-module.exports = new Command("embed-set-image", "(moderator) Assign an custom embed's image");
-
-module.exports.data.addStringOption(option => option.setName("messageid").setDescription("The ID of the embed's message").setRequired(true))
-	.addStringOption(option => option.setName("url").setDescription("The url to a picture for the image field").setRequired(true));
+let options = [
+	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
+	{ type: "String", name: "url", description: "The url to a picture for the image field", required: true, choices: {} }
+];
+module.exports = new Command("embed-set-image", "(moderator) Assign an custom embed's image", options);
 
 module.exports.execute = (interaction) => {
 	// Set the image for the given embed
 	if (isModerator(interaction.user.id)) {
-		let messageID = interaction.options.getString("messageid");
+		let messageID = interaction.options.getString("message-id");
 		if (customEmbeds[messageID]) {
 			let url = interaction.options.getString("url");
 			var validURL = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,})/, 'gi').test(url);

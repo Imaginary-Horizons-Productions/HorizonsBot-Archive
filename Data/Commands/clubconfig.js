@@ -1,18 +1,19 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, getClubs, updateClub, updateClubDetails, COLORS } = require("../../helpers.js");
 
-module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information");
+let options = [];
+module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information", options);
 
 module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
 	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))
 	.addStringOption(option => option.setName("game").setDescription("The text to set as the club game").setRequired(false))
-	.addIntegerOption(option => option.setName("maxmembers").setDescription("The maximum number of members for the club").setRequired(false))
+	.addIntegerOption(option => option.setName("max-members").setDescription("The maximum number of members for the club").setRequired(false))
 	.addStringOption(option => option.setName("color").setDescription("The color of the details embed").setRequired(false)
 		.addChoices(COLORS.map(color => [color, color])));
 
 module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
-	let club = getClubs()[interaction.channel.id];
+	let club = getClubs()[interaction.channelId];
 	if (club) {
 		if (isModerator(interaction.user.id) || interaction.user.id == club.hostID) {
 			var updatedSettings = [];
@@ -31,8 +32,8 @@ module.exports.execute = (interaction) => {
 				club.system = interaction.options.getString("game");
 				updatedSettings.push("game");
 			}
-			if (interaction.options.getInteger("maxmembers")) {
-				club.seats = interaction.options.getInteger("maxmembers");
+			if (interaction.options.getInteger("max-members")) {
+				club.seats = interaction.options.getInteger("max-members");
 				updatedSettings.push("max members");
 			}
 			if (interaction.options.getString("color")) {

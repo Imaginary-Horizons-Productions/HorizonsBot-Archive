@@ -9,11 +9,10 @@ module.exports = class Club {
 		this.seats = -1; // Maximum number of players in the club, 0 = unlimited
 		this.system = "\u200B"; // string for club game
 		this.timeslot = {
-			day: null,
-			hour: null,
-			timezone: null,
+			nextMeeting: null,
 			message: "",
-			break: 0
+			periodCount: 1, // Number of units between repeating meetings (eg 1 week)
+			periodUnits: "w"
 		};
 		this.imageURL = ""; // URL for club image
 		this.detailSummaryId = "";

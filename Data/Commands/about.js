@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = new Command("about", "Provides details about HorizonsBot and its contributors");
+let options = [];
+module.exports = new Command("about", "Provides details about HorizonsBot and its contributors", options);
 
 module.exports.execute = (interaction) => {
 	// Private message author with description of the bot and contributors

@@ -1,14 +1,20 @@
 const Command = require('../../Classes/Command.js');
 const { isModerator, pinTopicsList, pinClubsList } = require('../../helpers.js');
 
-module.exports = new Command("pin-list", "(moderator) Pin the list message for topics or clubs in this channel");
-
-module.exports.data.addStringOption(option => option.setName("listtype").setDescription(`Pin the list message for topics or clubs in this channel`).setRequired(true).addChoice("Pin the topic list", "topic").addChoice("Pin the club list", "club"));
+let options = [
+	{
+		type: "String", name: "list-type", description: "Pin the list message for topics or clubs in this channel", required: true, choices: {
+			"Pin the topic list": "topic",
+			"Pin the club list": "club"
+		}
+	}
+];
+module.exports = new Command("pin-list", "(moderator) Pin the list message for topics or clubs in this channel", options);
 
 module.exports.execute = (interaction) => {
 	// Pin the list message for topics or clubs to the receiving channel
 	if (isModerator(interaction.user.id)) {
-		let listType = interaction.options.getString("listtype").toLowerCase();
+		let listType = interaction.options.getString("list-type").toLowerCase();
 		if (listType == "topic") {
 			pinTopicsList(interaction.guild.channels, interaction.channel);
 			interaction.reply({ content: "Pinning the topic list succeded.", ephemeral: true })
