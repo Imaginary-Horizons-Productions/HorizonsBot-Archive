@@ -3,11 +3,10 @@
   # uses: JamesIves/github-sponsors-readme-action@ac1be55f806533c583e34978fe46168615342b35
   uses: JamesIves/github-sponsors-readme-action@1.0.6
   with:
-    secret: ${{ secrets.SPONSORS_NTSENG }}
     # You must provide the action with a Personal Access Token (PAT) with either the user:read or org:read permission scope and store it in the secrets / with menu as a secret.  This should be generated from the account or organization that recieves sponsorship.
 [Learn more about creating and using encrypted secrets here.](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/creating-and-using-encrypted-secrets)
 
-    token:
+    token: ${{ secrets.SPONSORS_NTSENG }}
     # This should point to the file that you're generating, for example README.md or path/to/CREDITS.md
     file: README.md
     # If you're displaying sponsorship information as an organization you should toggle this option to true. You also need to provide the action with an org:read scoped PAT.
