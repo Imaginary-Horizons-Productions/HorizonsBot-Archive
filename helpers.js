@@ -277,7 +277,11 @@ exports.topicListBuilder = function (channelManager) {
 	} else {
 		return new Promise((resolve, reject) => {
 			let embed = new MessageEmbed().setColor("#6b81eb")
-				.setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+				.setAuthor({
+					name: "Click here to visit the Imaginary Horizons GitHub",
+					iconURL: channelManager.guild.iconURL(),
+					url: "https://github.com/Imaginary-Horizons-Productions"
+				})
 				.setTitle("Topic Channels")
 				.setDescription(description)
 				.setFooter("Please do not make bounties to vote for your petitions.")
@@ -346,7 +350,11 @@ exports.clubListBuilder = function (channelManager) {
 		return new Promise((resolve, reject) => {
 			messageOptions.embeds = [
 				new MessageEmbed().setColor("#f07581")
-					.setAuthor("Click here to visit our Patreon", channelManager.guild.iconURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+					.setAuthor({
+						name: "Click here to visit the Imaginary Horizons GitHub",
+						iconURL: channelManager.guild.iconURL(),
+						url: "https://github.com/Imaginary-Horizons-Productions"
+					})
 					.setTitle("Clubs")
 					.setDescription(description)
 					.setTimestamp()
@@ -486,7 +494,11 @@ exports.joinChannel = function (channel, user) {
 exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	// Generate Embed
 	let embed = new MessageEmbed()
-		.setAuthor("Click here to visit the Imaginary Horizons GitHub", IHPAvatarURL, "https://github.com/Imaginary-Horizons-Productions")
+		.setAuthor({
+			name: "Click here to visit the Imaginary Horizons GitHub",
+			iconURL: IHPAvatarURL,
+			url: "https://github.com/Imaginary-Horizons-Productions"
+		})
 		.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
 		.setDescription(club.description)
 		.addField("Club Host", `<@${club.hostID}>`)
