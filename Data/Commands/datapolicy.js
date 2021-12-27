@@ -12,7 +12,11 @@ module.exports.execute = (interaction) => {
 
 function dataPolicyBuilder(footerURL) {
 	return new MessageEmbed().setColor(`6b81eb`)
-		.setAuthor("Imaginary Horizons Productions", `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
+		.setAuthor({
+			name: "Click here to visit the Imaginary Horizons GitHub",
+			iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
+			url: "https://github.com/Imaginary-Horizons-Productions"
+		})
 		.setTitle(`HorizonsBot Data Policy`)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/782019073562378298/shaking-hands.png')
 		.setDescription(`If you leave Imaginary Horizons, your data will be deleted.`)

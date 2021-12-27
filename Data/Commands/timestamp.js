@@ -23,5 +23,7 @@ module.exports.execute = (interaction) => {
 	timestamp += timeConversion(minutes, "m", "s");
 	timestamp += seconds;
 	timestamp = Math.round(timestamp);
-	interaction.reply({ content: `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds from now is:\n<t:${timestamp}>\n\nType the following in chat to have Discord do timezone conversions automatically:\n\`\`\`\n<t:${timestamp}>\`\`\``, ephemeral: true });
+	interaction.reply({ content: `${days} days, ${hours} hours, ${minutes} minutes, and ${seconds} seconds from now is:\n\`<t:${timestamp}>\`\n\nDiscord will automatically convert timezones from the above. Following is an example with the styling removed for copying on mobile:`, ephemeral: true }).then(() => {
+		interaction.followUp({ content: `<t:${timestamp}>`, ephemeral: true });
+	});
 }

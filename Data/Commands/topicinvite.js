@@ -14,7 +14,11 @@ module.exports.execute = (interaction) => {
 	if (getTopicIDs().includes(channel.id)) {
 		var invitee = interaction.options.getUser("invitee");
 		let embed = new MessageEmbed()
-			.setAuthor("Click here to visit the Imaginary Horizons Patreon", interaction.client.user.displayAvatarURL(), "https://www.patreon.com/imaginaryhorizonsproductions")
+			.setAuthor({
+				name: "Click here to visit the Imaginary Horizons GitHub",
+				iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
+				url: "https://github.com/Imaginary-Horizons-Productions"
+			})
 			.setDescription(`${invitee} has invited you to the following opt-in channel on Imaginary Horizons.`)
 			.addField(channel.name, `${channel.topic ? channel.topic : "Description not yet set"}`);
 		if (!invitee.bot) {

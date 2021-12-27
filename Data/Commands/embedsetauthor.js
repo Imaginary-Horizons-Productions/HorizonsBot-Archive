@@ -21,7 +21,11 @@ module.exports.execute = (interaction) => {
 			let url = interaction.options.getString("url");
 			var validURL = urlRegex.test(url);
 			interaction.guild.channels.resolve(customEmbeds[messageID]).messages.fetch(messageID).then(message => {
-				let embed = message.embeds[0].setAuthor(name, validIcon ? iconURL : "", validURL ? url : "").setTimestamp();
+				let embed = message.embeds[0].setAuthor({
+					name,
+					iconURL: validIcon ? iconURL : "",
+					url: validURL ? url : ""
+				}).setTimestamp();
 				message.edit({ embeds: [embed] });
 				interaction.reply({ content: `The author field has been updated. Link: ${message.url}`, ephemeral: true });
 				interaction.followUp({ content: `${validIcon ? "" : "Your input for iconurl does not appear to be a url."}\n${validURL ? "" : "Your input for url does not appear to be a url."}`, ephemeral: true });
