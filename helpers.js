@@ -503,7 +503,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 		.setDescription(club.description)
 		.addField("Club Host", `<@${club.hostID}>`)
 		.setImage(club.imageURL);
-	if (club.system !== "\u200B") {
+	if (club.system) {
 		embed.addField("Game", club.system);
 	}
 	if (club.timeslot.nextMeeting) {
