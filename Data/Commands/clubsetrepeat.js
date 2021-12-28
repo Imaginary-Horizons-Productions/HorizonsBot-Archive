@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { getClubs, updateClub } = require('../../helpers.js');
+const { getClubs, updateClub, updateClubDetails } = require('../../helpers.js');
 
 let options = [
 	{ type: "Integer", name: "count", description: "The number of units between meetings", required: true, choices: {} },
@@ -22,6 +22,7 @@ module.exports.execute = (interaction) => {
 			let units = interaction.options.getString("time-unit");
 			club.timeslot.periodUnits = units;
 			updateClub(club, interaction.guild.channels);
+			updateClubDetails(club, interaction.channel);
 			interaction.reply(count !== 0 ? `This club has been set to repeat meetings every ${count} ${units === "w" ? "week" : "day"}(s).` : "Repeating meetings have been canceled for this club.");
 		} else {
 			interaction.reply({ content: "Please choose a positive non-zero number for count.", ephemeral: true });

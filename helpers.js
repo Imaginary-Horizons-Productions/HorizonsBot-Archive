@@ -325,7 +325,7 @@ exports.clubListBuilder = function (channelManager) {
 			description += `**Game**: ${club.system}\n`;
 		}
 		if (club.timeslot.nextMeeting) {
-			description += `**Next Meeting**: <t:${club.timeslot.nextMeeting}>\n`;
+			description += `**Next Meeting**: <t:${club.timeslot.nextMeeting}>${club.timeslot.periodCount === 0 ? "" : ` repeats every ${club.timeslot.periodCount} ${club.timeslot.periodUnits === "w" ? "week(s)" : "day(s)"}`}\n`;
 		}
 	})
 
@@ -507,7 +507,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 		embed.addField("Game", club.system);
 	}
 	if (club.timeslot.nextMeeting) {
-		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}>`);
+		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}>${club.timeslot.periodCount === 0 ? "" : ` repeats every ${club.timeslot.periodCount} ${club.timeslot.periodUnits === "w" ? "week(s)" : "day(s)"}`}`);
 	}
 	if (club.color) {
 		embed.setColor(club.color);
