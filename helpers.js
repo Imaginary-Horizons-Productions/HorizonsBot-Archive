@@ -523,7 +523,7 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 		buttonRow.push(new MessageActionRow().addComponents(...buttons));
 	}
 
-	return [embed, buttonRow];
+	return [embed, buttonRow]; //TODO #179 convert return of clubInviteBuilder to an object
 }
 
 exports.clubInvite = function (interaction, clubId, recipient) {

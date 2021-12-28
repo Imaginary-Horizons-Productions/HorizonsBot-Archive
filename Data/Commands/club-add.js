@@ -1,6 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const Club = require('../../Classes/Club.js');
 const { isModerator, getModRoleID, updateClub, clubInviteBuilder } = require("../../helpers.js");
+const { clubInstructionsText } = require('./club-instructions.js');
 
 let options = [{ type: "User", name: "club-leader", description: "The user to set as club leader", required: true, choices: {} }]
 module.exports = new Command("club-add", "(moderator) Set up a text and voice channels for a club", options);
@@ -68,14 +69,14 @@ module.exports.execute = (interaction) => {
 							club.hostID = host.id;
 							club.channelID = textChannel.id;
 							club.voiceChannelID = voiceChannel.id;
-							textChannel.send(`Welcome to your new club text channel ${host}! As club host, you can pin and delete messages in this channel. Also, you can configure the club information with \`/club-config\`, \`/club-set-image\`, and \`/club-set-timeslot\`.`);
+							textChannel.send({ content: clubInstructionsText(host), ephemeral: true });
 							let [embed, buttonComponents] = clubInviteBuilder(club, interaction.client.user.displayAvatarURL(), false);
-							textChannel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents }).then(detailSummaryMessage => {
+							textChannel.send({ content: "When invites are sent with \`/club-invite\`, the invitee will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
 								detailSummaryMessage.pin();
 								club.detailSummaryId = detailSummaryMessage.id;
 								updateClub(club, interaction.guild.channels);
 							})
-							interaction.reply("The new club has been created.");
+							interaction.reply({ content: "The new club has been created.", ephemeral: true });
 						}).catch(console.error);
 					})
 				})

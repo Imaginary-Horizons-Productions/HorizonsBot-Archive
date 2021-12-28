@@ -10,7 +10,7 @@ exports.commandSets = [
 	new CommandSet("Topic Commands", "Commands for managing opt-in topic text channels.",
 		["topic-invite.js", "topic-add.js", "topic-veto.js"]),
 	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
-		["club-invite.js", "club-add.js", "club-config.js", "club-next-meeting.js", "club-set-repeat.js", "club-set-image.js", "club-details.js", "club-promote-leader.js"]),
+		["club-instructions.js", "club-invite.js", "club-add.js", "club-config.js", "club-next-meeting.js", "club-set-repeat.js", "club-set-image.js", "club-details.js", "club-promote-leader.js"]),
 	new CommandSet("Moderation Commands", "Commands for managing HorizonsBot's list of moderators.",
 		['mod-promote.js', 'mod-demote.js'])
 ];
