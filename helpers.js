@@ -137,8 +137,8 @@ exports.removeClub = function (id) {
 exports.reminderTimeouts = {};
 
 // Functions
-exports.embedTemplateBuilder = function () {
-	return new MessageEmbed().setColor("#f07581")
+exports.embedTemplateBuilder = function (color = "#6b81eb") {
+	return new MessageEmbed().setColor(color)
 		.setAuthor({
 			name: "Click here to visit the Imaginary Horizons GitHub",
 			iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
@@ -316,7 +316,7 @@ exports.pinTopicsList = function (channelManager, channel) {
 	}).catch(console.log);
 }
 
-exports.clubListBuilder = function (channelManager) {
+exports.clubListBuilder = function () {
 	var messageOptions = {};
 
 	messageOptions.components = [listSelectBuilder("clubs")];
@@ -355,7 +355,7 @@ exports.clubListBuilder = function (channelManager) {
 	} else {
 		return new Promise((resolve, reject) => {
 			messageOptions.embeds = [
-				exports.embedTemplateBuilder()
+				exports.embedTemplateBuilder("#f07581")
 					.setTitle("Clubs")
 					.setDescription(description)
 			];
