@@ -50,8 +50,8 @@ exports.timeConversion = function (value, startingUnit, resultUnit) {
 	}
 }
 
-// [userID]
-let moderatorIDs = require('./Config/moderatorIDs.json');
+//#region moderator handling
+let moderatorIDs = require('./Config/moderatorIDs.json'); // [userID]
 exports.isModerator = function (id) {
 	return moderatorIDs.userIds.includes(id);
 }
@@ -70,6 +70,11 @@ exports.getModRoleID = function () {
 	if (!moderatorIDs.roleId) console.error("./Config/moderatorIDs.json/roleId not defined");
 	return moderatorIDs.roleId;
 }
+//#endregion
+
+//#region /at-channel
+exports.atIds = new Set(); // contains userIds
+//#endregion
 
 // {messageID: channelID}
 exports.customEmbeds = require('./Config/embedsList.json');
