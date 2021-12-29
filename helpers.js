@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
-exports.guildID = require('./Config/auth.json').guildID;
+exports.guildId = require('./Config/_env.json').guildId;
 
 exports.COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
 
@@ -50,29 +50,26 @@ exports.timeConversion = function (value, startingUnit, resultUnit) {
 	}
 }
 
-//#region moderator handling
-let moderatorIDs = require('./Config/moderatorIDs.json'); // [userID]
+//#region moderation
+let moderatorIds = require('./Config/modData.json').modIds; // [userId]
 exports.isModerator = function (id) {
-	return moderatorIDs.userIds.includes(id);
+	return moderatorIds.includes(id);
 }
 
 exports.addModerator = function (id) {
-	moderatorIDs.userIds.push(id);
-	exports.saveObject(moderatorIDs, "moderatorIDs.json");
+	moderatorIds.push(id);
+	exports.saveObject(moderatorIds, "modData.json");
 }
 
 exports.removeModerator = function (removedID) {
-	moderatorIDs.userIds = moderatorIDs.userIds.filter(id => id != removedID);
-	exports.saveObject(moderatorIDs, "moderatorIDs.json");
+	moderatorIds = moderatorIds.filter(id => id != removedID);
+	exports.saveObject(moderatorIds, "modData.json");
 }
 
-exports.getModRoleID = function () {
-	if (!moderatorIDs.roleId) console.error("./Config/moderatorIDs.json/roleId not defined");
-	return moderatorIDs.roleId;
-}
-//#endregion
+exports.modRoleId = require("./Config/_env.json").modRoleId;
 
-//#region /at-channel
+exports.noAts = require("./Config/modData.json").noAts; // [userId]
+
 exports.atIds = new Set(); // contains userIds
 //#endregion
 
@@ -413,7 +410,7 @@ exports.addTopicChannel = function (guild, topicName) {
 				type: 1
 			},
 			{
-				id: moderatorIDs.roleId,
+				id: moderatorIds.roleId,
 				allow: ["VIEW_CHANNEL"],
 				type: 1
 			},

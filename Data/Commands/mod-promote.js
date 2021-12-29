@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { getModRoleID, isModerator, addModerator } = require('../../helpers.js');
+const { modRoleId, isModerator, addModerator } = require('../../helpers.js');
 
 let options = [
 	{ type: "User", name: "promotee", description: "The user to promote to moderator", required: true, choices: {} },
@@ -11,7 +11,7 @@ module.exports.execute = (interaction) => {
 	if (isModerator(interaction.user.id) || !interaction.member.manageable) {
 		let promotee = interaction.options.getMentionable("promotee");
 		if (!isModerator(promotee.id)) {
-			promotee.roles.add(getModRoleID());
+			promotee.roles.add(modRoleId);
 			addModerator(promotee.id);
 			interaction.reply(`${promotee} has been promoted to Moderator.`)
 				.catch(console.error);

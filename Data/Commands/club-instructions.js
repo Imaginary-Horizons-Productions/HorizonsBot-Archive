@@ -15,5 +15,5 @@ module.exports.clubInstructionsText = function (host) {
 	\`/club-next-meeting\` - set the club's next meeting for reminders and events\n\
 	\`/club-set-repeat\` - set the how frequently meetings repeat\n\
 	\`/club-promote-leader\` - give leadership of the club to another user\n\
-	\`/club-instructions\` - get these instructions again`;
+	\`/club-instructions\` - get the latest version of these instructions`;
 }
