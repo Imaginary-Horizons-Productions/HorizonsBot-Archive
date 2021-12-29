@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { getModRoleID, isModerator, removeModerator } = require('../../helpers.js');
+const { isModerator, removeModerator, modRoleId } = require('../../helpers.js');
 
 let options = [
 	{ type: "User", name: "demotee", description: "The user to demote from moderator", required: true, choices: {} }
@@ -11,7 +11,7 @@ module.exports.execute = (interaction) => {
 	if (isModerator(interaction.user.id) || !interaction.member.manageable) {
 		let demotee = interaction.options.getMentionable("demotee");
 		if (isModerator(demotee.id)) {
-			demotee.roles.remove(getModRoleID());
+			demotee.roles.remove(modRoleId);
 			removeModerator(demotee.id);
 			interaction.reply(`${demotee} has been demoted from Moderator.`)
 				.catch(console.error);
