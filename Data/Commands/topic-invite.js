@@ -1,6 +1,6 @@
 const Command = require('../../Classes/Command.js');
-const { MessageEmbed, MessageActionRow, MessageButton } = require('discord.js');
-const { getTopicIDs } = require('../../helpers.js');
+const { MessageActionRow, MessageButton } = require('discord.js');
+const { getTopicIDs, embedTemplateBuilder } = require('../../helpers.js');
 
 let options = [
 	{ type: "User", name: "invitee", description: "The user to invite (copy-paste from another channel)", required: true, choices: {} },
@@ -10,15 +10,10 @@ module.exports = new Command("topic-invite", "Invite users to this topic", optio
 
 module.exports.execute = (interaction) => {
 	// Invite users to the given topic
-	var channel = interaction.options.getChannel("channel");
+	let channel = interaction.options.getChannel("channel");
 	if (getTopicIDs().includes(channel.id)) {
-		var invitee = interaction.options.getUser("invitee");
-		let embed = new MessageEmbed()
-			.setAuthor({
-				name: "Click here to visit the Imaginary Horizons GitHub",
-				iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
-				url: "https://github.com/Imaginary-Horizons-Productions"
-			})
+		let invitee = interaction.options.getUser("invitee");
+		let embed = embedTemplateBuilder()
 			.setDescription(`${invitee} has invited you to the following opt-in channel on Imaginary Horizons.`)
 			.addField(channel.name, `${channel.topic ? channel.topic : "Description not yet set"}`);
 		if (!invitee.bot) {
