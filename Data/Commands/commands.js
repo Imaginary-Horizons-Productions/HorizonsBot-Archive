@@ -21,7 +21,7 @@ module.exports.execute = (interaction) => {
 		.setTitle(titleString)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
 		.setDescription(descriptionString)
-		.setFooter(footerString, interaction.client.user.displayAvatarURL())
+		.setFooter({ text: footerString, iconURL: interaction.client.user.displayAvatarURL() })
 		.setTimestamp();
 	for (commandSet of commandSets) {
 		let commandSetText = commandSet.description + "\n";

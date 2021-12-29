@@ -16,7 +16,7 @@ module.exports.execute = (interaction) => {
 		.setDescription(`HorizonsBot helps with channel management and other stuff on the Imaginary Horizons Community Discord.`)
 		.addField(`Design & Engineering`, `Nathaniel Tseng ( <@106122478715150336> | [Twitter](https://twitter.com/Arcane_ish) )`)
 		.addField(`Dice Roller`, `Lucas Ensign ( <@112785244733628416> | [Twitter](https://twitter.com/SillySalamndr) )`)
-		.setFooter(`Use "@HorizonsBot support" to learn how to support the server!`, interaction.client.user.displayAvatarURL())
+		.setFooter({ text: "Use \"@HorizonsBot support\" to learn how to support the server!", iconURL: interaction.client.user.displayAvatarURL() })
 		.setTimestamp();
 
 	interaction.reply({ embeds: [embed], ephemeral: true });

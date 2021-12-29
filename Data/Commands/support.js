@@ -23,6 +23,6 @@ function supportBuilder(footerURL) {
 		.addField("Invite Friends", "Ask a moderator how to get an invite link for the server!")
 		.addField("Vote for us on top.gg", "top.gg is a Discord bot/server listing and distrabution service. Voting causes us to appear earlier in searches. [Vote here!](https://top.gg/servers/353575133157392385/vote)")
 		.addField("Check out the github", "Check out our [github](https://github.com/Imaginary-Horizons-Productions) and tackle some issues or sponsor a project!")
-		.setFooter("Thanks in advanced!", footerURL)
+		.setFooter({ text: "Thanks in advanced!", iconURL: footerURL })
 		.setTimestamp();
 }

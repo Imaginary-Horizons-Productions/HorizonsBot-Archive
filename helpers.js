@@ -289,7 +289,7 @@ exports.topicListBuilder = function (channelManager) {
 				})
 				.setTitle("Topic Channels")
 				.setDescription(description)
-				.setFooter("Please do not make bounties to vote for your petitions.")
+				.setFooter({ text: "Please do not make bounties to vote for your petitions." })
 				.setTimestamp();
 
 			if (petitionNames.length > 0) {
