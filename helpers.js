@@ -581,6 +581,7 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 
 	if (club.timeslot.eventId) {
 		channelManager.guild.scheduledEvents.delete(club.timeslot.eventId);
+		club.timeslot.eventId = "";
 	}
 
 	if (club.timeslot.nextMeeting) {
