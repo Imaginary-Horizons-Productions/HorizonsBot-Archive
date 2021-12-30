@@ -12,7 +12,7 @@ exports.commandSets = [
 	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
 		["club-instructions.js", "club-invite.js", "club-add.js", "club-config.js", "club-next-meeting.js", "club-set-repeat.js", "club-set-image.js", "club-details.js", "club-promote-leader.js"]),
 	new CommandSet("Moderation Commands", "Commands for moderators.",
-		['mod-promote.js', 'mod-demote.js', "pin-list.js", "kick.js", "delete.js"])
+		['mod-promote.js', 'mod-demote.js', "pin-list.js", "kick.js", "delete.js", "no-ats.js"])
 ];
 
 var commandFileNames = [];

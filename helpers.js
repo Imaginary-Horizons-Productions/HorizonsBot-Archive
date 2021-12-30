@@ -1,6 +1,6 @@
 const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
-exports.guildID = require('./Config/auth.json').guildID;
+exports.guildId = require('./Config/_env.json').guildId;
 
 exports.COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
 
@@ -50,29 +50,32 @@ exports.timeConversion = function (value, startingUnit, resultUnit) {
 	}
 }
 
-//#region moderator handling
-let moderatorIDs = require('./Config/moderatorIDs.json'); // [userID]
+//#region moderation
+let moderatorIds = require('./Config/modData.json').modIds; // [userId]
+
+exports.saveModData = function () {
+	let noAts = exports.noAts;
+	exports.saveObject({ modIds: moderatorIds, noAts }, "modData.json");
+}
+
 exports.isModerator = function (id) {
-	return moderatorIDs.userIds.includes(id);
+	return moderatorIds.includes(id);
 }
 
 exports.addModerator = function (id) {
-	moderatorIDs.userIds.push(id);
-	exports.saveObject(moderatorIDs, "moderatorIDs.json");
+	moderatorIds.push(id);
+	exports.saveModData();
 }
 
 exports.removeModerator = function (removedID) {
-	moderatorIDs.userIds = moderatorIDs.userIds.filter(id => id != removedID);
-	exports.saveObject(moderatorIDs, "moderatorIDs.json");
+	moderatorIds = moderatorIds.filter(id => id != removedID);
+	exports.saveModData();
 }
 
-exports.getModRoleID = function () {
-	if (!moderatorIDs.roleId) console.error("./Config/moderatorIDs.json/roleId not defined");
-	return moderatorIDs.roleId;
-}
-//#endregion
+exports.modRoleId = require("./Config/_env.json").modRoleId;
 
-//#region /at-channel
+exports.noAts = require("./Config/modData.json").noAts; // [userId]
+
 exports.atIds = new Set(); // contains userIds
 //#endregion
 
@@ -140,6 +143,16 @@ exports.removeClub = function (id) {
 exports.reminderTimeouts = {};
 
 // Functions
+exports.embedTemplateBuilder = function (color = "#6b81eb") {
+	return new MessageEmbed().setColor(color)
+		.setAuthor({
+			name: "Click here to visit the Imaginary Horizons GitHub",
+			iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
+			url: "https://github.com/Imaginary-Horizons-Productions"
+		})
+		.setTimestamp();
+}
+
 exports.getManagedChannels = function () {
 	return exports.getTopicIDs().concat(Object.keys(exports.getClubs()));
 }
@@ -281,16 +294,10 @@ exports.topicListBuilder = function (channelManager) {
 		})
 	} else {
 		return new Promise((resolve, reject) => {
-			let embed = new MessageEmbed().setColor("#6b81eb")
-				.setAuthor({
-					name: "Click here to visit the Imaginary Horizons GitHub",
-					iconURL: channelManager.guild.iconURL(),
-					url: "https://github.com/Imaginary-Horizons-Productions"
-				})
+			let embed = exports.embedTemplateBuilder()
 				.setTitle("Topic Channels")
 				.setDescription(description)
-				.setFooter({ text: "Please do not make bounties to vote for your petitions." })
-				.setTimestamp();
+				.setFooter({ text: "Please do not make bounties to vote for your petitions." });
 
 			if (petitionNames.length > 0) {
 				embed.addField("Petitioned Channels", petitionText)
@@ -315,7 +322,7 @@ exports.pinTopicsList = function (channelManager, channel) {
 	}).catch(console.log);
 }
 
-exports.clubListBuilder = function (channelManager) {
+exports.clubListBuilder = function () {
 	var messageOptions = {};
 
 	messageOptions.components = [listSelectBuilder("clubs")];
@@ -354,15 +361,9 @@ exports.clubListBuilder = function (channelManager) {
 	} else {
 		return new Promise((resolve, reject) => {
 			messageOptions.embeds = [
-				new MessageEmbed().setColor("#f07581")
-					.setAuthor({
-						name: "Click here to visit the Imaginary Horizons GitHub",
-						iconURL: channelManager.guild.iconURL(),
-						url: "https://github.com/Imaginary-Horizons-Productions"
-					})
+				exports.embedTemplateBuilder("#f07581")
 					.setTitle("Clubs")
 					.setDescription(description)
-					.setTimestamp()
 			];
 			messageOptions.files = [];
 			resolve(messageOptions);
@@ -415,7 +416,7 @@ exports.addTopicChannel = function (guild, topicName) {
 				type: 1
 			},
 			{
-				id: moderatorIDs.roleId,
+				id: moderatorIds.roleId,
 				allow: ["VIEW_CHANNEL"],
 				type: 1
 			},
@@ -496,14 +497,9 @@ exports.joinChannel = function (channel, user) {
 	}
 }
 
-exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
+exports.clubInviteBuilder = function (club, includeJoinButton) {
 	// Generate Embed
-	let embed = new MessageEmbed()
-		.setAuthor({
-			name: "Click here to visit the Imaginary Horizons GitHub",
-			iconURL: IHPAvatarURL,
-			url: "https://github.com/Imaginary-Horizons-Productions"
-		})
+	let embed = exports.embedTemplateBuilder()
 		.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
 		.setDescription(club.description)
 		.addField("Club Host", `<@${club.hostID}>`)
@@ -523,12 +519,12 @@ exports.clubInviteBuilder = function (club, IHPAvatarURL, includeJoinButton) {
 	if (includeJoinButton) {
 		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
 	}
-	let buttonRow = [];
+	let buttonRow = null;
 	if (buttons.length > 0) {
-		buttonRow.push(new MessageActionRow().addComponents(...buttons));
+		buttonRow = new MessageActionRow().addComponents(...buttons);
 	}
 
-	return [embed, buttonRow]; //TODO #179 convert return of clubInviteBuilder to an object
+	return { embed, buttonRow };
 }
 
 exports.clubInvite = function (interaction, clubId, recipient) {
@@ -539,8 +535,8 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 		}
 		if (!recipient.bot) {
 			if (recipient.id !== club.hostID && !club.userIDs.includes(recipient.id)) {
-				let [embed, buttonComponents] = exports.clubInviteBuilder(club, interaction.client.user.displayAvatarURL(), true);
-				recipient.send({ embeds: [embed], components: buttonComponents }).then(() => {
+				let { embed, buttonRow } = exports.clubInviteBuilder(club, true);
+				recipient.send({ embeds: [embed], components: [buttonRow] }).then(() => {
 					interaction.reply({ content: "Club details have been sent.", ephemeral: true });
 				}).catch(console.error);
 			} else {
@@ -556,8 +552,8 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 
 exports.updateClubDetails = (club, channel) => {
 	channel.messages.fetch(club.detailSummaryId).then(message => {
-		let [embed, buttonComponents] = exports.clubInviteBuilder(club, channel.client.user.displayAvatarURL(), false);
-		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
+		let { embed, buttonRow } = exports.clubInviteBuilder(club, false);
+		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: [buttonRow], fetchReply: true }).then(detailSummaryMessage => {
 			detailSummaryMessage.pin();
 			club.detailSummaryId = detailSummaryMessage.id;
 			exports.updateClub(club, channel.guild.channels);
@@ -565,8 +561,8 @@ exports.updateClubDetails = (club, channel) => {
 	}).catch(error => {
 		if (error.message === "Unknown Message") {
 			// message not found
-			let [embed, buttonComponents] = exports.clubInviteBuilder(club, channel.client.user.displayAvatarURL(), false);
-			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: buttonComponents, fetchReply: true }).then(detailSummaryMessage => {
+			let { embed, buttonRow } = exports.clubInviteBuilder(club, false);
+			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: [buttonRow], fetchReply: true }).then(detailSummaryMessage => {
 				detailSummaryMessage.pin();
 				club.detailSummaryId = detailSummaryMessage.id;
 				exports.updateClub(club, channel.guild.channels);
