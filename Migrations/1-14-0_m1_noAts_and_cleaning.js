@@ -53,7 +53,7 @@ fs.writeFile(backupPath + "auth.json", JSON.stringify(authObject), "utf8", (erro
 })
 
 // 3. Add reorganize variables and add noAts
-let env = { //TODONOW update wiki
+let env = {
 	token: authObject.token,
 	guildId: authObject.guildID,
 	botId: authObject.botId,

@@ -52,18 +52,24 @@ exports.timeConversion = function (value, startingUnit, resultUnit) {
 
 //#region moderation
 let moderatorIds = require('./Config/modData.json').modIds; // [userId]
+
+exports.saveModData = function () {
+	let noAts = exports.noAts;
+	exports.saveObject({ modIds: moderatorIds, noAts }, "modData.json");
+}
+
 exports.isModerator = function (id) {
 	return moderatorIds.includes(id);
 }
 
 exports.addModerator = function (id) {
 	moderatorIds.push(id);
-	exports.saveObject(moderatorIds, "modData.json");
+	exports.saveModData();
 }
 
 exports.removeModerator = function (removedID) {
 	moderatorIds = moderatorIds.filter(id => id != removedID);
-	exports.saveObject(moderatorIds, "modData.json");
+	exports.saveModData();
 }
 
 exports.modRoleId = require("./Config/_env.json").modRoleId;
