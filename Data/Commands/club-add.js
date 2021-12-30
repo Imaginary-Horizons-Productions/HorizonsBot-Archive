@@ -61,7 +61,7 @@ module.exports.execute = (interaction) => {
 					},
 					{
 						id: host,
-						allow: ["VIEW_CHANNEL", "MANAGE_CHANNELS"]
+						allow: ["VIEW_CHANNEL", "MANAGE_CHANNELS", "MANAGE_EVENTS"]
 					}
 				],
 				type: "GUILD_VOICE"
