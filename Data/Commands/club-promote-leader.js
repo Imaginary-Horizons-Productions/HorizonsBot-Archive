@@ -9,8 +9,14 @@ module.exports.execute = (interaction) => {
 	let club = getClubs()[interaction.channelId];
 	if (club) {
 		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
-			var promotee = interaction.options.getUser("user");
+			let promotee = interaction.options.getUser("user");
 			club.hostID = promotee.id;
+			interaction.channel.permissionOverwrites.edit(interaction.user, { "VIEW_CHANNEL": true, "MANAGE_MESSAGES": null }, { type: 1 })
+			interaction.channel.permissionOverwrites.edit(promotee, { "VIEW_CHANNEL": true, "MANAGE_MESSAGES": true }, { type: 1 })
+			interaction.guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+				voiceChannel.permissionOverwrites.edit(interaction.user, { "VIEW_CHANNEL": true, "MANAGE_CHANNELS": null, "MANAGE_EVENTS": null }, { type: 1 });
+				voiceChannel.permissionOverwrites.edit(promotee, { "VIEW_CHANNEL": true, "MANAGE_CHANNELS": true, "MANAGE_EVENTS": true }, { type: 1 });
+			})
 			interaction.reply(`${promotee} has been promoted to club leader of this club.`)
 				.catch(console.error);
 			updateClubDetails(club, interaction.channel);
