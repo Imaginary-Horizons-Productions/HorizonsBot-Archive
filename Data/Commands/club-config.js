@@ -1,15 +1,19 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub, updateClubDetails, COLORS } = require("../../helpers.js");
+const { isModerator, getClubs, updateClub, updateClubDetails, COLORS, setClubReminderTimeout } = require("../../helpers.js");
 
-let options = [];
+let options = [
+	{ type: "String", name: "name", description: "The new name for the club", required: false, choices: {} },
+	{ type: "String", name: "description", description: "The club description is shown in the channel topic", required: false, choices: {} },
+	{ type: "String", name: "game", description: "The text to set as the club game", required: false, choices: {} },
+	{ type: "Integer", name: "max-members", description: "The maximum number of members for the club", required: false, choices: {} },
+	{
+		type: "String", name: "color", description: "The color of the details embed", required: false, choices: COLORS.reduce((object, color) => {
+			object[color.toLowerCase().replace(/_/g, " ")] = color;
+			return object;
+		}, {})
+	}
+];
 module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information", options);
-
-module.exports.data.addStringOption(option => option.setName("name").setDescription("The new name for the club").setRequired(false))
-	.addStringOption(option => option.setName("description").setDescription("The club description is shown in the channel topic").setRequired(false))
-	.addStringOption(option => option.setName("game").setDescription("The text to set as the club game").setRequired(false))
-	.addIntegerOption(option => option.setName("max-members").setDescription("The maximum number of members for the club").setRequired(false))
-	.addStringOption(option => option.setName("color").setDescription("The color of the details embed").setRequired(false)
-		.addChoices(COLORS.map(color => [color, color])));
 
 module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
@@ -32,13 +36,14 @@ module.exports.execute = (interaction) => {
 				club.system = interaction.options.getString("game");
 				updatedSettings.push("game");
 			}
-			if (interaction.options.getInteger("max-members")) {
-				club.seats = interaction.options.getInteger("max-members");
-				updatedSettings.push("max members");
-			}
 			if (interaction.options.getString("color")) {
 				club.color = interaction.options.getString("color");
 				updatedSettings.push("color");
+			}
+			if (interaction.options.getInteger("max-members")) {
+				club.seats = interaction.options.getInteger("max-members");
+				updatedSettings.push("max members");
+				setClubReminderTimeout(club, interaction.guild.channels);
 			}
 			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);

@@ -2,7 +2,7 @@ const { Client } = require('discord.js');
 const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
 const { getCommand } = require('./Data/Commands/_commandDictionary.js');
 const { getSelect } = require('./Data/Selects/_selectDictionary.js');
-const { guildID, listMessages, updateList, addTopic, getClubs, setClubReminderTimeout, pinTopicsList, pinClubsList, getPetitions,
+const { guildId, listMessages, updateList, addTopic, getClubs, setClubReminderTimeout, pinTopicsList, pinClubsList, getPetitions,
 	setPetitions, checkPetition, getTopicIDs, removeTopic, removeClub } = require('./helpers.js');
 
 const client = new Client({
@@ -16,13 +16,13 @@ const client = new Client({
 	intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES']
 });
 
-client.login(require('./Config/auth.json').token)
+client.login(require('./Config/_env.json').token)
 	.catch(console.error);
 
 client.on('ready', () => {
 	console.log(`Connected as ${client.user.tag}\n`);
 
-	client.guilds.fetch(guildID).then(guild => {
+	client.guilds.fetch(guildId).then(guild => {
 		// Update pinned lists
 		let channelManager = guild.channels;
 		if (listMessages.topics) {

@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { MessageEmbed } = require('discord.js');
+const { embedTemplateBuilder } = require('../../helpers.js');
 
 let options = [];
 module.exports = new Command("commands", "List HorizonsBot command(s)", options);
@@ -11,14 +11,12 @@ module.exports.execute = (interaction) => {
 	let titleString = "HorizonsBot Commands";
 	let descriptionString = "Here are HorizonsBots commands. Check a command's details to see what the usage requirements are!";
 	let footerString = `Use "@HorizonsBot support" to learn how to support the server!`;
-	let totalCharacterCount = `Imaginary Horizons Productions`.length + titleString.length + descriptionString.length + footerString.length;
-	var embed = new MessageEmbed().setColor('6b81eb')
-		.setAuthor(`Imaginary Horizons Productions`, `https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png `)
+	let totalCharacterCount = "Imaginary Horizons Productions".length + titleString.length + descriptionString.length + footerString.length;
+	let embed = embedTemplateBuilder()
 		.setTitle(titleString)
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
 		.setDescription(descriptionString)
-		.setFooter(footerString, interaction.client.user.displayAvatarURL())
-		.setTimestamp();
+		.setFooter({ text: footerString, iconURL: interaction.client.user.displayAvatarURL() });
 	for (commandSet of commandSets) {
 		let commandSetText = commandSet.description + "\n";
 		commandSet.fileNames.forEach(filename => {

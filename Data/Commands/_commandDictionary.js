@@ -4,15 +4,15 @@ const CommandSet = require('../../Classes/CommandSet.js');
 // Total commands (new CommandSet when exceeding 25): 15
 exports.commandSets = [
 	new CommandSet("HorizonsBot Commands", "Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!",
-		['about.js', 'commands.js', 'support.js', 'datapolicy.js', "list.js", "join.js", "leave.js", "petition.js", "kick.js", "delete.js", "pinlist.js", "roll.js", "timestamp.js"]),
+		['about.js', 'commands.js', 'support.js', 'data-policy.js', "list.js", "join.js", "leave.js", "petition.js", "roll.js", "timestamp.js", "at-channel.js"]),
 	new CommandSet("Custom Message Embeds", "To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select \"Copy ID\".",
-		['embedcreate.js', 'embedabandon.js', 'embedsetauthor.js', 'embedsettitle.js', 'embedseturl.js', 'embedsetcolor.js', 'embedsetdescription.js', 'embedsetthumbnail.js', 'embedaddfield.js', 'embedsplicefields.js', 'embedsetimage.js', "embedsetmessage.js"]),
+		['embed-create.js', 'embed-abandon.js', 'embed-set-author.js', 'embed-set-title.js', 'embed-set-url.js', 'embed-set-color.js', 'embed-set-description.js', 'embed-set-thumbnail.js', 'embed-add-field.js', 'embed-splice-fields.js', 'embed-set-image.js', "embed-set-message.js"]),
 	new CommandSet("Topic Commands", "Commands for managing opt-in topic text channels.",
-		["topicinvite.js", "topicadd.js", "topicveto.js"]),
+		["topic-invite.js", "topic-add.js", "topic-veto.js"]),
 	new CommandSet("Club Commands", "Commands for managing club text and voice channels.",
-		["clubinvite.js", "clubadd.js", "clubconfig.js", "clubnextmeeting.js", "clubsetrepeat.js", "clubsetimage.js", "clubdetails.js", "clubpromoteleader.js"]),
-	new CommandSet("Moderation Commands", "Commands for managing HorizonsBot's list of moderators.",
-		['modpromote.js', 'moddemote.js'])
+		["club-instructions.js", "club-invite.js", "club-add.js", "club-config.js", "club-next-meeting.js", "club-set-repeat.js", "club-set-image.js", "club-details.js", "club-promote-leader.js"]),
+	new CommandSet("Moderation Commands", "Commands for moderators.",
+		['mod-promote.js', 'mod-demote.js', "pin-list.js", "kick.js", "delete.js", "no-ats.js"])
 ];
 
 var commandFileNames = [];

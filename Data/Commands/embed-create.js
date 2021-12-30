@@ -9,7 +9,7 @@ module.exports.execute = (interaction) => {
 	// Create a new MessageEmbed
 	if (interaction.guild) {
 		if (isModerator(interaction.user.id)) {
-			let embed = new MessageEmbed().setFooter("Custom Embed").setTimestamp();
+			let embed = new MessageEmbed().setFooter({ text: "Custom Embed" }).setTimestamp();
 			interaction.channel.send({ embeds: [embed] }).then(message => {
 				customEmbeds[message.id] = message.channelId;
 				saveObject(customEmbeds, "embedsList.json");

@@ -1,4 +1,5 @@
 var buttonWhitelist = [
+	"confirmnextmeeting.js",
 	"delete.js",
 	"join.js"
 ];
