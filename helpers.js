@@ -519,12 +519,12 @@ exports.clubInviteBuilder = function (club, includeJoinButton) {
 	if (includeJoinButton) {
 		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
 	}
-	let buttonRow = null;
+	let uiComponents = [];
 	if (buttons.length > 0) {
-		buttonRow = new MessageActionRow().addComponents(...buttons);
+		uiComponents.push(new MessageActionRow().addComponents(...buttons));
 	}
 
-	return { embed, buttonRow };
+	return { embed, uiComponents };
 }
 
 exports.clubInvite = function (interaction, clubId, recipient) {
@@ -535,8 +535,8 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 		}
 		if (!recipient.bot) {
 			if (recipient.id !== club.hostID && !club.userIDs.includes(recipient.id)) {
-				let { embed, buttonRow } = exports.clubInviteBuilder(club, true);
-				recipient.send({ embeds: [embed], components: [buttonRow] }).then(() => {
+				let { embed, uiComponents } = exports.clubInviteBuilder(club, true);
+				recipient.send({ embeds: [embed], components: uiComponents }).then(() => {
 					interaction.reply({ content: "Club details have been sent.", ephemeral: true });
 				}).catch(console.error);
 			} else {
@@ -552,8 +552,8 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 
 exports.updateClubDetails = (club, channel) => {
 	channel.messages.fetch(club.detailSummaryId).then(message => {
-		let { embed, buttonRow } = exports.clubInviteBuilder(club, false);
-		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: [buttonRow], fetchReply: true }).then(detailSummaryMessage => {
+		let { embed, uiComponents } = exports.clubInviteBuilder(club, false);
+		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 			detailSummaryMessage.pin();
 			club.detailSummaryId = detailSummaryMessage.id;
 			exports.updateClub(club, channel.guild.channels);
@@ -561,8 +561,8 @@ exports.updateClubDetails = (club, channel) => {
 	}).catch(error => {
 		if (error.message === "Unknown Message") {
 			// message not found
-			let { embed, buttonRow } = exports.clubInviteBuilder(club, false);
-			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: [buttonRow], fetchReply: true }).then(detailSummaryMessage => {
+			let { embed, uiComponents } = exports.clubInviteBuilder(club, false);
+			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 				detailSummaryMessage.pin();
 				club.detailSummaryId = detailSummaryMessage.id;
 				exports.updateClub(club, channel.guild.channels);
@@ -579,18 +579,40 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 		delete exports.reminderTimeouts[club.channelID];
 	}
 
-	if (club.timeslot.nextMeeting && club.timeslot.periodCount) {
-		let msTimestamp = Date.now();
-		let msToDayBeforeNextMeeting = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - msTimestamp;
-		let timeout = setTimeout(timeoutClub => {
-			channelManager.fetch(timeoutClub.channelID).then(textChannel => {
-				textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
-			});
-			timeoutClub.timeslot.nextMeeting += exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
-			exports.setClubReminderTimeout(timeoutClub, channelManager);
-		}, msToDayBeforeNextMeeting, club);
-		exports.reminderTimeouts[club.channelID] = timeout;
-		exports.updateClub(club, channelManager);
+	if (club.timeslot.eventId) {
+		channelManager.guild.scheduledEvents.delete(club.timeslot.eventId);
+	}
+
+	if (club.timeslot.nextMeeting) {
+		if (club.timeslot.periodCount) {
+			let msTimestamp = Date.now();
+			let msToDayBeforeNextMeeting = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - msTimestamp;
+			let timeout = setTimeout(timeoutClub => {
+				channelManager.fetch(timeoutClub.channelID).then(textChannel => {
+					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
+				});
+				timeoutClub.timeslot.nextMeeting += exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
+				exports.setClubReminderTimeout(timeoutClub, channelManager);
+			}, msToDayBeforeNextMeeting, club);
+			exports.reminderTimeouts[club.channelID] = timeout;
+		}
+		if (club.userIDs.length < club.seats) {
+			channelManager.fetch(club.voiceChannelID).then(voiceChannel => {
+				return voiceChannel.guild.scheduledEvents.create({
+					name: club.title,
+					scheduledStartTime: club.timeslot.nextMeeting * 1000,
+					privacyLevel: 2,
+					entityType: "VOICE",
+					description: club.description,
+					channel: voiceChannel
+				});
+			}).then(event => {
+				club.timeslot.eventId = event.id;
+				exports.updateClub(club, channelManager);
+			})
+		} else {
+			exports.updateClub(club, channelManager);
+		}
 	}
 }
 

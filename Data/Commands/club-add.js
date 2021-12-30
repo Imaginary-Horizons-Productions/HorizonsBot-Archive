@@ -72,8 +72,8 @@ module.exports.execute = (interaction) => {
 				club.channelID = textChannel.id;
 				club.voiceChannelID = voiceChannel.id;
 				textChannel.send({ content: clubInstructionsText(host) });
-				let { embed, buttonRow } = clubInviteBuilder(club, false);
-				textChannel.send({ content: "When invites are sent with \`/club-invite\`, the invitee will be shown the following embed:", embeds: [embed], components: [buttonRow], fetchReply: true }).then(detailSummaryMessage => {
+				let { embed, uiComponents } = clubInviteBuilder(club, false);
+				textChannel.send({ content: "When invites are sent with \`/club-invite\`, the invitee will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 					detailSummaryMessage.pin();
 					club.detailSummaryId = detailSummaryMessage.id;
 					updateClub(club, interaction.guild.channels);
