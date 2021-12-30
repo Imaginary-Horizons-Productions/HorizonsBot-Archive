@@ -1,11 +1,11 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub, updateClubDetails, COLORS } = require("../../helpers.js");
+const { isModerator, getClubs, updateClub, updateClubDetails, COLORS, setClubReminderTimeout } = require("../../helpers.js");
 
 let options = [
 	{ type: "String", name: "name", description: "The new name for the club", required: false, choices: {} },
 	{ type: "String", name: "description", description: "The club description is shown in the channel topic", required: false, choices: {} },
 	{ type: "String", name: "game", description: "The text to set as the club game", required: false, choices: {} },
-	{ type: "String", name: "max-members", description: "The maximum number of members for the club", required: false, choices: {} },
+	{ type: "Integer", name: "max-members", description: "The maximum number of members for the club", required: false, choices: {} },
 	{
 		type: "String", name: "color", description: "The color of the details embed", required: false, choices: COLORS.reduce((object, color) => {
 			object[color.toLowerCase().replace(/_/g, " ")] = color;
@@ -36,13 +36,14 @@ module.exports.execute = (interaction) => {
 				club.system = interaction.options.getString("game");
 				updatedSettings.push("game");
 			}
-			if (interaction.options.getInteger("max-members")) {
-				club.seats = interaction.options.getInteger("max-members");
-				updatedSettings.push("max members");
-			}
 			if (interaction.options.getString("color")) {
 				club.color = interaction.options.getString("color");
 				updatedSettings.push("color");
+			}
+			if (interaction.options.getInteger("max-members")) {
+				club.seats = interaction.options.getInteger("max-members");
+				updatedSettings.push("max members");
+				setClubReminderTimeout(club, interaction.guild.channels);
 			}
 			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);

@@ -12,7 +12,8 @@ module.exports = class Club {
 			nextMeeting: null,
 			message: "",
 			periodCount: 1, // Number of units between repeating meetings (eg 1 week)
-			periodUnits: "w"
+			periodUnits: "w",
+			eventId: ""
 		};
 		this.imageURL = ""; // URL for club image
 		this.detailSummaryId = "";
