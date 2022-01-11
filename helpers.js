@@ -592,7 +592,7 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 				channelManager.fetch(timeoutClub.channelID).then(textChannel => {
 					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
 				});
-				timeoutClub.timeslot.nextMeeting += exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
+				timeoutClub.timeslot.nextMeeting = Number(timeoutClub.timeslot.nextMeeting) + Number(exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s"));
 				exports.setClubReminderTimeout(timeoutClub, channelManager);
 			}, msToDayBeforeNextMeeting, club);
 			exports.reminderTimeouts[club.channelID] = timeout;
