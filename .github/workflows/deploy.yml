@@ -23,7 +23,7 @@ jobs:
           branch: main
           folder: '.'
 
-      - name: npm ci
+      - name: Setup npm
         run: npm ci
 
       - name: Update Commands
