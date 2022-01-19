@@ -23,7 +23,7 @@ jobs:
           folder: '.'
 
       - name: Update Commands
-        run: node updateCommands.js
+        run: node .github/workflows/updateCommands.js
 
       - name: upload to wiki
         uses: OrlovM/Wiki-Action@v1
