@@ -1,4 +1,3 @@
-const fs = require('fs');
 const CommandSet = require('../../Classes/CommandSet.js');
 
 // Total commands (new CommandSet when exceeding 25): 15
@@ -15,12 +14,8 @@ exports.commandSets = [
 		['mod-promote.js', 'mod-demote.js', "pin-list.js", "kick.js", "delete.js", "no-ats.js"])
 ];
 
-var commandFileNames = [];
-exports.commandSets.forEach(commandSet => {
-	commandFileNames = commandFileNames.concat(commandSet.fileNames);
-})
-const commandFiles = fs.readdirSync('./Data/Commands').filter(file => file.endsWith('.js') && commandFileNames.includes(file));
-var commandDictionary = {};
+const commandFiles = exports.commandSets.reduce((allFiles, set) => allFiles.concat(set.fileNames), []);
+let commandDictionary = {};
 
 for (const file of commandFiles) {
 	const command = require(`./${file}`);
