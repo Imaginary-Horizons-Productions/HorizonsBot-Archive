@@ -2,7 +2,7 @@ const Command = require('../../Classes/Command.js');
 const { getRollString } = require('../../Helper Modules/RollEngine.js');
 
 let options = [
-	{ type: "String", name: "dice", description: "The number and type of dice, user #d# format", required: true, choices: {} },
+	{ type: "String", name: "dice", description: "The number and type of dice using #d# format", required: true, choices: {} },
 	{
 		type: "String", name: "display", description: "Choose output display options", required: false, choices: {
 			"Result only": "simple",

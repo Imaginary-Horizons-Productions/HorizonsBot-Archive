@@ -1,0 +1,20 @@
+name: Update Wiki
+
+on:
+  push:
+    paths:
+      - 'wiki/**'
+    branches:
+      - master
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    name: Update wiki
+    steps:
+    - name: update
+      run: node updateCommands.js
+    - name: upload to wiki
+      uses: OrlovM/Wiki-Action@v1
+      with:
+        path: 'Wiki'
+        token: ${{ secrets.SPONSORS_NTSENG }}
