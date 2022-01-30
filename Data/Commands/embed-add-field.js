@@ -1,5 +1,4 @@
 const Command = require('../../Classes/Command.js');
-const { customEmbeds, isModerator } = require('../../helpers.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
@@ -8,6 +7,11 @@ let options = [
 	{ type: "Boolean", name: "inline", description: "Whether to show the field in-line with previous embed fields", required: false, choices: {} }
 ];
 module.exports = new Command("embed-add-field", "(moderator) Add a custom embed field", options);
+
+let customEmbeds, isModerator;
+module.exports.initialize = function (helpers) {
+	({ customEmbeds, isModerator } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Add a field to the given embed

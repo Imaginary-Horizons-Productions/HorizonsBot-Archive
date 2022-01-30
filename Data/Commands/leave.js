@@ -1,9 +1,13 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
-const { getManagedChannels, getClubs, updateClub } = require('../../helpers.js');
 
 let options = [];
 module.exports = new Command("leave", "Leave an opt-in channel or club", options);
+
+let getManagedChannels, getClubs, updateClub;
+module.exports.initialize = function (helpers) {
+	({ getManagedChannels, getClubs, updateClub } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	let userID = interaction.user.id;

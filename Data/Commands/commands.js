@@ -1,8 +1,12 @@
 const Command = require('../../Classes/Command.js');
-const { embedTemplateBuilder } = require('../../helpers.js');
 
 let options = [];
 module.exports = new Command("commands", "List HorizonsBot command(s)", options);
+
+let embedTemplateBuilder;
+module.exports.initialize = function (helpers) {
+	({ embedTemplateBuilder } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	//TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set

@@ -1,5 +1,4 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, pinTopicsList, pinClubsList } = require('../../helpers.js');
 
 let options = [
 	{
@@ -10,6 +9,11 @@ let options = [
 	}
 ];
 module.exports = new Command("pin-list", "(moderator) Pin the list message for topics or clubs in this channel", options);
+
+let isModerator, pinTopicsList, pinClubsList;
+module.exports.initialize = function (helpers) {
+	({ isModerator, pinTopicsList, pinClubsList } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Pin the list message for topics or clubs to the receiving channel

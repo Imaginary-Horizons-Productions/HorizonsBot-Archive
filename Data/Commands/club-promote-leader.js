@@ -1,8 +1,12 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub, updateClubDetails } = require("../../helpers.js");
 
 let options = [{ type: "User", name: "user", description: "The user to promote to club leader", required: true, choices: {} }];
 module.exports = new Command("club-promote-leader", "(club leader or moderator) Promote another user to club leader", options);
+
+let isModerator, getClubs, updateClub, updateClubDetails;
+module.exports.initialize = function (helpers) {
+	({ isModerator, getClubs, updateClub, updateClubDetails } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel

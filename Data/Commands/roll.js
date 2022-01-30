@@ -15,6 +15,11 @@ let options = [
 ];
 module.exports = new Command("roll", "Roll dice", options);
 
+// internal imports here
+module.exports.initialize = function (helpers) {
+	({} = helpers);
+}
+
 module.exports.execute = (interaction) => {
 	// Roll the specified dice
 	var rollInput = interaction.options.getString('dice');
