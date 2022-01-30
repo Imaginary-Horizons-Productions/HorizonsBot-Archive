@@ -4,7 +4,7 @@ const { getCommand, initializeCommands } = require('./Data/Commands/_commandDict
 const { getSelect } = require('./Data/Selects/_selectDictionary.js');
 const helpers = require('./helpers.js');
 const { guildId, listMessages, updateList, addTopic, getClubs, setClubReminderTimeout, pinTopicsList, pinClubsList, getPetitions,
-	setPetitions, checkPetition, getTopicIDs, removeTopic, removeClub } = helpers; //TODO inline these imports
+	setPetitions, checkPetition, getTopicIDs, removeTopic, removeClub } = helpers; //TODO #191 inline these imports
 
 const client = new Client({
 	retryLimit: 5,

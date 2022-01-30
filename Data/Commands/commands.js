@@ -9,7 +9,7 @@ module.exports.initialize = function (helpers) {
 }
 
 module.exports.execute = (interaction) => {
-	//TODO if placed with other dependencies, commandDictionary will be fetched before it's done being set
+	//TODO #192 read command data from wiki page instead of commandDictionary
 	const { commandSets } = require(`./_commandDictionary.js`);
 
 	let titleString = "HorizonsBot Commands";
