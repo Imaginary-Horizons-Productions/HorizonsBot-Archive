@@ -1,10 +1,14 @@
 const Command = require('../../Classes/Command.js');
 const Club = require('../../Classes/Club.js');
-const { isModerator, modRoleId, updateClub, clubInviteBuilder } = require("../../helpers.js");
 const { clubInstructionsText } = require('./club-instructions.js');
 
 let options = [{ type: "User", name: "club-leader", description: "The user to set as club leader", required: true, choices: {} }]
 module.exports = new Command("club-add", "(moderator) Set up a text and voice channels for a club", options);
+
+let isModerator, modRoleId, updateClub, clubInviteBuilder;
+module.exports.initialize = function (helpers) {
+	({ isModerator, modRoleId, updateClub, clubInviteBuilder } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Create a new club including a text and voice channel in the receiving channel's category and set the mentioned user as host

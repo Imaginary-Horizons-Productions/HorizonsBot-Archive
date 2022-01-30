@@ -1,10 +1,14 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, noAts, saveModData } = require('../../helpers.js');
 
 let options = [
 	{ type: "User", name: "user", description: "The user to prevent/allow the use of /at-channel", required: true, choices: {} }
 ];
 module.exports = new Command("no-ats", "Toggles whether the user can use /at-channel", options);
+
+let isModerator, noAts, saveModData;
+module.exports.initialize = function (helpers) {
+	({ isModerator, noAts, saveModData } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Toggle whether the provided user can use /at-channel

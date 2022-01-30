@@ -1,5 +1,7 @@
 const fs = require('fs');
-const { commandSets } = require('../../Data/Commands/_commandDictionary.js');
+const { initializeCommands, commandSets } = require('../../Data/Commands/_commandDictionary.js');
+
+initializeCommands(false);
 
 let text = "";
 

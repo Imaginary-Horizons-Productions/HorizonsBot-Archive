@@ -1,10 +1,14 @@
 const Command = require('../../Classes/Command.js');
-const { modRoleId, isModerator, addModerator } = require('../../helpers.js');
 
 let options = [
 	{ type: "User", name: "promotee", description: "The user to promote to moderator", required: true, choices: {} },
 ];
 module.exports = new Command("mod-promote", "(moderator) Add a Moderator to HorizonsBot's list and give them the role", options);
+
+let modRoleId, isModerator, addModerator;
+module.exports.initialize = function (helpers) {
+	({ modRoleId, isModerator, addModerator } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Add a Moderator: add to list, give role and channel permissions

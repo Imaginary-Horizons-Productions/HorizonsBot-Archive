@@ -1,8 +1,12 @@
 const Command = require('../../Classes/Command.js');
-const { embedTemplateBuilder } = require('../../helpers.js');
 
 let options = [];
 module.exports = new Command("support", "Show ways to support the community", options);
+
+let embedTemplateBuilder;
+module.exports.initialize = function (helpers) {
+	({ embedTemplateBuilder } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Lists ways users can support development

@@ -14,12 +14,18 @@ exports.commandSets = [
 		['mod-promote.js', 'mod-demote.js', "pin-list.js", "kick.js", "delete.js", "no-ats.js"])
 ];
 
-const commandFiles = exports.commandSets.reduce((allFiles, set) => allFiles.concat(set.fileNames), []);
 let commandDictionary = {};
 
-for (const file of commandFiles) {
-	const command = require(`./${file}`);
-	commandDictionary[command.name] = command;
+exports.initializeCommands = function (isProduction, helpers) {
+	const commandFiles = exports.commandSets.reduce((allFiles, set) => allFiles.concat(set.fileNames), []);
+
+	for (const file of commandFiles) {
+		const command = require(`./${file}`);
+		if (isProduction) {
+			command.initialize(helpers);
+		}
+		commandDictionary[command.name] = command;
+	}
 }
 
 exports.getCommand = function (commandName) {

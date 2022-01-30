@@ -1,10 +1,14 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, removeModerator, modRoleId } = require('../../helpers.js');
 
 let options = [
 	{ type: "User", name: "demotee", description: "The user to demote from moderator", required: true, choices: {} }
 ];
 module.exports = new Command("mod-demote", "(moderator) Remove a Moderator from HorizonsBot's list and remove the role", options);
+
+let isModerator, removeModerator, modRoleId;
+module.exports.initialize = function (helpers) {
+	({ isModerator, removeModerator, modRoleId } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Remove a Moderator: remove from list, remove role and channel permissions

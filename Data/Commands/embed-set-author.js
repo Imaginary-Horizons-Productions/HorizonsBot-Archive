@@ -1,5 +1,4 @@
 const Command = require('../../Classes/Command.js');
-const { customEmbeds, isModerator } = require('../../helpers.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
@@ -8,6 +7,11 @@ let options = [
 	{ type: "String", name: "url", description: "The url to open when the author field is clicked", required: false, choices: {} }
 ];
 module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author", options);
+
+let customEmbeds, isModerator;
+module.exports.initialize = function(helpers) {
+	({ customEmbeds, isModerator } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Set the author for the given embed

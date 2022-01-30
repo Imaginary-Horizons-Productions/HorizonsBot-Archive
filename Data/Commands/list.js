@@ -1,5 +1,4 @@
 const Command = require('../../Classes/Command.js');
-const { topicListBuilder, clubListBuilder } = require('../../helpers.js');
 
 let options = [
 	{
@@ -10,6 +9,11 @@ let options = [
 	},
 ];
 module.exports = new Command("list", "Get a list of topic or club channels", options);
+
+let topicListBuilder, clubListBuilder;
+module.exports.initialize = function (helpers) {
+	({ topicListBuilder, clubListBuilder } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions

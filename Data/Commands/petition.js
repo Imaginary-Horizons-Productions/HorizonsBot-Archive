@@ -1,10 +1,14 @@
 const Command = require('../../Classes/Command.js');
-const { joinChannel, getTopicNames, findTopicID, checkPetition } = require('../../helpers.js');
 
 let options = [
 	{ type: "String", name: "topic-name", description: "The topic channel to petition for", required: true, choices: {} }
 ];
 module.exports = new Command("petition", "Petition for a topic", options);
+
+let joinChannel, getTopicNames, findTopicID, checkPetition;
+module.exports.initialize = function (helpers) {
+	({ joinChannel, getTopicNames, findTopicID, checkPetition } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions

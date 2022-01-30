@@ -1,8 +1,12 @@
 const Command = require('../../Classes/Command.js');
-const { embedTemplateBuilder } = require('../../helpers.js');
 
 let options = [];
 module.exports = new Command("about", "Provides details about HorizonsBot and its contributors", options);
+
+let embedTemplateBuilder;
+module.exports.initialize = function (helpers) {
+	({ embedTemplateBuilder } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Private message author with description of the bot and contributors

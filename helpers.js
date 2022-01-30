@@ -2,8 +2,6 @@ const fs = require('fs');
 const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
 exports.guildId = require('./Config/_env.json').guildId;
 
-exports.COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
-
 exports.timeConversion = function (value, startingUnit, resultUnit) {
 	let unknownUnits = [];
 	let msPerStartUnit = 1;

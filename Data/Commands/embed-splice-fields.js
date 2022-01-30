@@ -1,5 +1,4 @@
 const Command = require('../../Classes/Command.js');
-const { customEmbeds, isModerator } = require('../../helpers.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
@@ -7,6 +6,11 @@ let options = [
 	{ type: "String", name: "count", description: "The number of fields to remove", required: true, choices: {} }
 ];
 module.exports = new Command("embed-splice-fields", "(moderator) Remove fields from a custom embed (replace unsupported)", options);
+
+let customEmbeds, isModerator;
+module.exports.initialize = function (helpers) {
+	({ customEmbeds, isModerator } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Splice fields from the given embed

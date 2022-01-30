@@ -1,11 +1,15 @@
 const Command = require('../../Classes/Command.js');
-const { customEmbeds, isModerator } = require('../../helpers.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
 	{ type: "String", name: "url", description: "The url to go to when clicking the title field", required: true, choices: {} }
 ];
 module.exports = new Command("embed-set-url", "(moderator) Assign a custom embed's title url", options);
+
+let customEmbeds, isModerator;
+module.exports.initialize = function (helpers) {
+	({ customEmbeds, isModerator } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Set the title url for the given embed

@@ -1,8 +1,12 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getManagedChannels } = require('../../helpers.js');
 
 let options = [{ type: "Integer", name: "delay", description: "Number of hours to delay deleting the channel", required: true, choices: {} }];
 module.exports = new Command("delete", "(moderator) Delete a topic or club channel on a delay", options);
+
+let isModerator, getManagedChannels;
+module.exports.initialize = function (helpers) {
+	({ isModerator, getManagedChannels } = helpers);
+}
 
 module.exports.execute = (interaction) => {
 	// Delete a topic or club channel, or set it to be deleted on a delay
