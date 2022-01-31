@@ -571,7 +571,7 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-exports.setClubReminderTimeout = function (club, channelManager) {
+exports.setClubReminderTimeout = async function (club, channelManager) {
 	if (exports.reminderTimeouts[club.channelID]) {
 		clearTimeout(exports.reminderTimeouts[club.channelID]);
 		delete exports.reminderTimeouts[club.channelID];
@@ -584,34 +584,31 @@ exports.setClubReminderTimeout = function (club, channelManager) {
 
 	if (club.timeslot.nextMeeting) {
 		if (club.timeslot.periodCount) {
-			let msTimestamp = Date.now();
-			let msToDayBeforeNextMeeting = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - msTimestamp;
-			let timeout = setTimeout(timeoutClub => {
-				channelManager.fetch(timeoutClub.channelID).then(textChannel => {
-					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`);
-				});
-				timeoutClub.timeslot.nextMeeting = Number(timeoutClub.timeslot.nextMeeting) + Number(exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s"));
-				exports.setClubReminderTimeout(timeoutClub, channelManager);
-			}, msToDayBeforeNextMeeting, club);
-			exports.reminderTimeouts[club.channelID] = timeout;
-		}
-		if (club.userIDs.length < club.seats) {
-			channelManager.fetch(club.voiceChannelID).then(voiceChannel => {
-				return voiceChannel.guild.scheduledEvents.create({
+			let event;
+			if (club.userIDs.length < club.seats) {
+				let voiceChannel = await channelManager.fetch(club.voiceChannelID);
+				event = await channelManager.guild.scheduledEvents.create({
 					name: club.title,
 					scheduledStartTime: club.timeslot.nextMeeting * 1000,
 					privacyLevel: 2,
 					entityType: "VOICE",
 					description: club.description,
 					channel: voiceChannel
-				});
-			}).then(event => {
+				})
 				club.timeslot.eventId = event.id;
-				exports.updateClub(club, channelManager);
-			})
-		} else {
-			exports.updateClub(club, channelManager);
+			}
+			let msTimestamp = Date.now();
+			let msToDayBeforeNextMeeting = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - msTimestamp;
+			let timeout = setTimeout((timeoutClub, eventURL) => {
+				channelManager.fetch(timeoutClub.channelID).then(textChannel => { // Interested button not available for events in private channels
+					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}${eventURL ? ` ${eventURL}` : ""}`);
+				});
+				timeoutClub.timeslot.nextMeeting = Number(timeoutClub.timeslot.nextMeeting) + Number(exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s"));
+				exports.setClubReminderTimeout(timeoutClub, channelManager);
+			}, msToDayBeforeNextMeeting, club, await event?.createInviteURL());
+			exports.reminderTimeouts[club.channelID] = timeout;
 		}
+		exports.updateClub(club, channelManager);
 	}
 }
 
