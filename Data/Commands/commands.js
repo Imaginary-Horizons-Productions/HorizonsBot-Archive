@@ -1,3 +1,4 @@
+const fs = require("fs");
 const Command = require('../../Classes/Command.js');
 
 let options = [];
@@ -8,38 +9,52 @@ module.exports.initialize = function (helpers) {
 	({ embedTemplateBuilder } = helpers);
 }
 
-module.exports.execute = (interaction) => {
-	//TODO #192 read command data from wiki page instead of commandDictionary
-	const { commandSets } = require(`./_commandDictionary.js`);
+let wikiPage;
+fs.readFile("Wiki/Commands.md", { encoding: "utf-8" }, (error, data) => {
+	if (error) {
+		console.error(error);
+	} else {
+		wikiPage = data;
+	}
+})
 
-	let titleString = "HorizonsBot Commands";
-	let descriptionString = "Here are HorizonsBots commands. Check a command's details to see what the usage requirements are!";
-	let footerString = `Use "@HorizonsBot support" to learn how to support the server!`;
-	let totalCharacterCount = "Imaginary Horizons Productions".length + titleString.length + descriptionString.length + footerString.length;
+module.exports.execute = (interaction) => {
 	let embed = embedTemplateBuilder()
-		.setTitle(titleString)
+		.setTitle("HorizonsBot Commands")
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
-		.setDescription(descriptionString)
-		.setFooter({ text: footerString, iconURL: interaction.client.user.displayAvatarURL() });
-	for (commandSet of commandSets) {
-		let commandSetText = commandSet.description + "\n";
-		commandSet.fileNames.forEach(filename => {
-			const command = require(`./${filename}`)
-			commandSetText += `\n__${command.name}__ ${command.description}`;
-		})
-		totalCharacterCount += commandSetText.length;
-		if (commandSetText.length > 1024 || totalCharacterCount > 6000) {
-			embed = {
-				files: [{
-					attachment: "README.md",
-					name: "commands.txt"
-				}]
-			}
+		.setDescription("Here are HorizonsBots commands. Check a command's details to see what the usage requirements are!")
+		.setFooter({ text: "Use \"@HorizonsBot support\" to learn how to support the server!", iconURL: interaction.client.user.displayAvatarURL() });
+	let totalCharacterCount = embed.author.name.length + embed.title.length + embed.description.length + embed.footer.text.length;
+
+	let files;
+	for (const commandSet of wikiPage.split("\n## ")) {
+		let commands = commandSet.split("\n### ");
+		let [commandSetName, commandSetText] = commands[0].split(/\r*\n/);
+		if (commandSetName.startsWith("## ")) {
+			commandSetName = commandSetName.slice(2);
+		}
+
+		for (const command of commands.slice(1)) {
+			let [commandName, description, ...args] = command.split(/\r*\n/)
+			commandSetText += `\n__${commandName}__ ${description}`;
+		}
+
+		totalCharacterCount += commandSetName.length + commandSetText.length;
+		if (commandSetText.length > 1 || totalCharacterCount > 6000) {
+			files = [{
+				attachment: "Wiki/Commands.md",
+				name: "commands.txt"
+			}];
 			break;
 		} else {
-			embed.addField(commandSet.name, commandSetText);
+			embed.addField(commandSetName, commandSetText);
 		}
 	}
-	interaction.reply({ embeds: [embed], ephemeral: true })
-		.catch(console.error);
+	if (files) {
+		interaction.reply({ files, ephemeral: true })
+			.catch(console.error);
+	} else {
+		interaction.reply({ embeds: [embed], ephemeral: true })
+			.catch(console.error);
+	}
 }
