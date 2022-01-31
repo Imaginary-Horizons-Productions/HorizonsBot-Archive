@@ -3,8 +3,6 @@ const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
 const { getCommand, initializeCommands } = require('./Data/Commands/_commandDictionary.js');
 const { getSelect } = require('./Data/Selects/_selectDictionary.js');
 const helpers = require('./helpers.js');
-const { guildId, listMessages, updateList, addTopic, getClubs, setClubReminderTimeout, pinTopicsList, pinClubsList, getPetitions,
-	setPetitions, checkPetition, getTopicIDs, removeTopic, removeClub } = helpers; //TODO inline these imports
 
 const client = new Client({
 	retryLimit: 5,
@@ -24,27 +22,27 @@ client.on('ready', () => {
 	console.log(`Connected as ${client.user.tag}\n`);
 
 	initializeCommands(true, helpers);
-	client.guilds.fetch(guildId).then(guild => {
+	client.guilds.fetch(helpers.guildId).then(guild => {
 		// Update pinned lists
 		let channelManager = guild.channels;
-		if (listMessages.topics) {
-			updateList(channelManager, "topics");
+		if (helpers.listMessages.topics) {
+			helpers.updateList(channelManager, "topics");
 		}
 
-		if (listMessages.clubs) {
-			updateList(channelManager, "clubs");
+		if (helpers.listMessages.clubs) {
+			helpers.updateList(channelManager, "clubs");
 		}
 
 		// Generate topic collection
 		require('./Config/topicList.json').forEach(id => {
 			channelManager.fetch(id).then(channel => {
-				addTopic(id, channel.name);
+				helpers.addTopic(id, channel.name);
 			})
 		})
 
 		// Begin checking for club reminders
-		for (let club of Object.values(getClubs())) {
-			setClubReminderTimeout(club, channelManager);
+		for (let club of Object.values(helpers.getClubs())) {
+			helpers.setClubReminderTimeout(club, channelManager);
 		}
 	})
 })
@@ -54,23 +52,23 @@ let clubBuriedness = 0;
 
 client.on('messageCreate', receivedMessage => {
 	// Count messages for pin bumping
-	if (listMessages.topics && receivedMessage.channelId === listMessages.topics.channelID) {
+	if (helpers.listMessages.topics && receivedMessage.channelId === helpers.listMessages.topics.channelID) {
 		topicBuriedness += 1;
 		if (topicBuriedness > 9) {
-			receivedMessage.channel.messages.fetch(listMessages.topics.messageID).then(oldMessage => {
+			receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
 				oldMessage.delete();
 			})
-			pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
+			helpers.pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
 			topicBuriedness = 0;
 		}
 	}
-	if (listMessages.clubs && receivedMessage.channelId == listMessages.clubs.channelID) {
+	if (helpers.listMessages.clubs && receivedMessage.channelId == helpers.listMessages.clubs.channelID) {
 		clubBuriedness += 1;
 		if (clubBuriedness > 9) {
-			receivedMessage.channel.messages.fetch(listMessages.clubs.messageID).then(oldMessage => {
+			receivedMessage.channel.messages.fetch(helpers.listMessages.clubs.messageID).then(oldMessage => {
 				oldMessage.delete();
 			})
-			pinClubsList(receivedMessage.guild.channels, receivedMessage.channel);
+			helpers.pinClubsList(receivedMessage.guild.channels, receivedMessage.channel);
 			clubBuriedness = 0;
 		}
 	}
@@ -92,30 +90,30 @@ client.on('guildMemberRemove', member => {
 	let guild = member.guild;
 
 	// Remove member's clubs
-	for (let club of Object.values(getClubs())) {
+	for (let club of Object.values(helpers.getClubs())) {
 		if (memberId == club.hostID) {
 			guild.channels.resolve(club.channelID).delete("Club host left server");
 		} else if (club.userIDs.includes(memberId)) {
 			club.userIDs = club.userIDs.filter(id => id != memberId);
-			updateList(guild.channels, "clubs");
+			helpers.updateList(guild.channels, "clubs");
 		}
 	}
 
 	// Remove member from petitions and check if member leaving completes any petitions
-	let petitions = getPetitions();
+	let petitions = helpers.getPetitions();
 	for (let topicName in petitions) {
 		petitions[topicName] = petitions[topicName].filter(id => id != memberId);
-		setPetitions(petitions, guild.channels);
-		checkPetition(guild, topicName);
+		helpers.setPetitions(petitions, guild.channels);
+		helpers.checkPetition(guild, topicName);
 	}
 })
 
 client.on('channelDelete', channel => {
 	let channelID = channel.id;
-	let topics = getTopicIDs();
-	let clubs = getClubs();
+	let topics = helpers.getTopicIDs();
+	let clubs = helpers.getClubs();
 	if (topics && topics.includes(channelID)) {
-		removeTopic(channel);
+		helpers.removeTopic(channel);
 	} else if (clubs) {
 		if (Object.values(clubs).map(club => club.voiceChannelID).includes(channelID)) {
 			for (var club of Object.values(clubs)) {
@@ -123,7 +121,7 @@ client.on('channelDelete', channel => {
 					let textChannel = channel.guild.channels.resolve(club.channelID);
 					if (textChannel) {
 						textChannel.delete();
-						removeClub(club.channelID);
+						helpers.removeClub(club.channelID);
 					}
 					break;
 				}
@@ -132,11 +130,11 @@ client.on('channelDelete', channel => {
 			let voiceChannel = channel.guild.channels.resolve(clubs[channelID].voiceChannelID);
 			if (voiceChannel) {
 				voiceChannel.delete();
-				removeClub(channelID);
+				helpers.removeClub(channelID);
 			}
 		} else {
 			return;
 		}
-		updateList(channel.guild.channels, "clubs");
+		helpers.updateList(channel.guild.channels, "clubs");
 	}
 })

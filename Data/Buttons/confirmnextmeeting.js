@@ -11,7 +11,8 @@ module.exports.execute = (interaction, [timestamp]) => {
 		setClubReminderTimeout(club, interaction.guild.channels);
 		updateClubDetails(club, interaction.channel);
 		updateClub(club, interaction.guild.channels);
-		interaction.reply(`This club's next meeting has been set as <t:${timestamp}>.`);
+		interaction.update({ components: [] });
+		interaction.channel.send(`This club's next meeting has been set as <t:${timestamp}>.`);
 	} else {
 		interaction.reply("Please set club meeting times from the club channel.");
 	}

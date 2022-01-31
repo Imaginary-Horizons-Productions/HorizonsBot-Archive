@@ -9,7 +9,7 @@ commandSets.forEach(commandSet => {
 	text += `## ${commandSet.name}\n${commandSet.description}\n`;
 	commandSet.fileNames.forEach(filename => {
 		const command = require(`./../../Data/Commands/${filename}`);
-		text += `### ${command.name}\n${command.description}\n`;
+		text += `### /${command.name}\n${command.description}\n`;
 		for (var i = 0; i < command.data.options.length; i++) {
 			text += `#### ${command.data.options[i].name}\n${command.data.options[i].description}\n`;
 		}
