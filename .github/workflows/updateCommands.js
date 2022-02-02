@@ -16,7 +16,7 @@ commandSets.forEach(commandSet => {
 	})
 })
 
-fs.writeFile('./../../Wiki/Commands.md', text, (error) => {
+fs.writeFile('Wiki/Commands.md', text, (error) => {
 	if (error) {
 		console.log(error);
 	}
