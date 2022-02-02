@@ -18,10 +18,6 @@ Join one or many opt-in channels or club
 The name (or id) of the topic or club to join
 ### /leave
 Leave an opt-in channel or club
-### /petition
-Petition for a topic
-#### topic-name
-The topic channel to petition for
 ### /roll
 Roll dice
 #### dice
@@ -126,6 +122,10 @@ The id of the embed's message
 The text to put in the message (above the embed)
 ## Topic Commands
 Commands for managing opt-in topic text channels.
+### /petition
+Petition for a topic
+#### topic-name
+The topic channel to petition for
 ### /topic-invite
 Invite users to this topic
 #### invitee
@@ -136,7 +136,11 @@ The topic channel to invite to
 (moderator) Set up a topic
 #### topic-name
 The new topic
-### /topic-veto
+### /petition-check
+(moderator) Check if a petition has passed in case of desync
+#### topic
+The petition to check
+### /petition-veto
 (moderator) Veto a petition
 #### topic
 The petition to close
