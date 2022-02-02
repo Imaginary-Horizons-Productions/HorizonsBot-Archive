@@ -23,36 +23,19 @@ jobs:
           branch: main
           folder: '.'
 
-name: Deploy Wiki
+      - name: Setup npm
+        run: npm ci
 
-on:
-  push:
-    paths:
-      # Trigger only when wiki directory changes
-      - 'Wiki/**'
-    branches:
-      # And only on main branch
-      - main
+      - name: Update Commands
+        run: node .github/workflows/updateCommands.js
 
-jobs:
-  deploy-wiki:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Setup npm
-      run: npm ci
-
-    - name: Update Commands
-      run: node .github/workflows/updateCommands.js
-
-    - name: Push Wiki Changes
-      uses: Andrew-Chen-Wang/github-wiki-action@v2
-      env:
-        # Make sure you have that / at the end. We use rsync
-        # WIKI_DIR's default is wiki/
-        WIKI_DIR: Wiki/
-        GH_TOKEN: ${{ secrets.WIKI }}
-        GH_MAIL: ${{ secrets.WIKI_EMAIL }}
-        GH_NAME: ${{ github.repository_owner }}
-        EXCLUDED_FILES: "a/ b.md"
+      - name: Push Wiki Changes
+        uses: Andrew-Chen-Wang/github-wiki-action@v2
+        env:
+          # Make sure you have that / at the end. We use rsync
+          # WIKI_DIR's default is wiki/
+          WIKI_DIR: Wiki/
+          GH_TOKEN: ${{ secrets.WIKI }}
+          GH_MAIL: ${{ secrets.WIKI_EMAIL }}
+          GH_NAME: ${{ github.repository_owner }}
+          EXCLUDED_FILES: "a/ b.md"
