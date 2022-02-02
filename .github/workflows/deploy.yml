@@ -29,6 +29,11 @@ jobs:
       - name: Update Commands
         run: node .github/workflows/updateCommands.js
 
+      - name: Push Changes to Repo
+        run: git add .
+        run: git commit -m "updated commands page on wiki"
+        run: git push origin main
+
       - name: Push Wiki Changes
         uses: Andrew-Chen-Wang/github-wiki-action@v2
         env:
