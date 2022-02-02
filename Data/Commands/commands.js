@@ -12,7 +12,7 @@ module.exports.initialize = function (helpers) {
 let wikiPage;
 fs.readFile("Wiki/Commands.md", { encoding: "utf-8" }, (error, data) => {
 	if (error) {
-		console.error(error);
+		// console.error(error);
 	} else {
 		wikiPage = data;
 	}
