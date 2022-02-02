@@ -26,25 +26,25 @@ The topic channel to petition for
 Roll dice
 #### dice
 The number and type of dice using #d# format
-#### display
+#### display (optional)
 Choose output display options
-#### label
+#### label (optional)
 Text label for the roll
 ### /timestamp
 Calculate the unix timestamp for a moment in time, which Discord displays with timezones applied
-#### start
+#### start (optional)
 The timestamp to start from (default: now)
-#### days-from-start
+#### days-from-start (optional)
 How many days from the start for the timestamp
-#### hours-from-start
+#### hours-from-start (optional)
 How many hours from the start for the timestamp
-#### minutes-from-start
+#### minutes-from-start (optional)
 How many minutes from the start for the timestamp
 ### /at-channel
 Send a ping to the current channel
 #### message
 The text to go with the notification
-#### type
+#### type (optional)
 Who to notify with the message
 ## Custom Message Embeds
 To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select "Copy ID".
@@ -60,9 +60,9 @@ The id of the embed's message
 The id of the embed's message
 #### text
 The text to put in the author field
-#### icon-url
+#### icon-url (optional)
 The url to the image in the author field
-#### url
+#### url (optional)
 The url to open when the author field is clicked
 ### /embed-set-title
 (moderator) Assign a custom embed's title
@@ -102,7 +102,7 @@ The id of the embed's message
 The header for the new field
 #### text
 The text of the new field
-#### inline
+#### inline (optional)
 Whether to show the field in-line with previous embed fields
 ### /embed-splice-fields
 (moderator) Remove fields from a custom embed (replace unsupported)
@@ -146,9 +146,9 @@ Commands for managing club text and voice channels.
 Get the up-to-date club setup instructions
 ### /club-invite
 Send the user (default: self) an invite to the club by channel mention, or by sending from club
-#### club-id
+#### club-id (optional)
 The club to provide details on
-#### invitee
+#### invitee (optional)
 The user to invite to the club
 ### /club-add
 (moderator) Set up a text and voice channels for a club
@@ -156,23 +156,23 @@ The user to invite to the club
 The user to set as club leader
 ### /club-config
 (club leader or moderator) Configure a club's information
-#### name
+#### name (optional)
 The new name for the club
-#### description
+#### description (optional)
 The club description is shown in the channel topic
-#### game
+#### game (optional)
 The text to set as the club game
-#### max-members
+#### max-members (optional)
 The maximum number of members for the club
-#### color
+#### color (optional)
 The color of the details embed
 ### /club-next-meeting
 Set the club's next meeting
-#### days-from-now
+#### days-from-now (optional)
 How many days from now for the next meeting
-#### hours-from-now
+#### hours-from-now (optional)
 How many hours from now for the next meeting
-#### minutes-from-now
+#### minutes-from-now (optional)
 How many minutes from now for the next meeting
 ### /club-set-repeat
 Set how frequently club meetings repeat, this will set the next meetings automatically
@@ -182,7 +182,7 @@ The number of units between meetings
 The amount of time each unit represents
 ### /club-set-image
 (club leader or moderator) Set or clear a club's image url
-#### url
+#### url (optional)
 The url to the image to set for the club
 ### /club-details
 (club leader or morderator) Posts and pins the club's details embed
@@ -208,7 +208,7 @@ Pin the list message for topics or clubs in this channel
 (moderator) Remove mentioned users from a topic or club channel
 #### target
 The user to remove from the topic or club
-#### ban
+#### ban (optional)
 Prevent the user from rejoining?
 ### /delete
 (moderator) Delete a topic or club channel on a delay
