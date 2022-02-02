@@ -22,15 +22,3 @@ jobs:
         with:
           branch: main
           folder: '.'
-
-      - name: Setup npm
-        run: npm ci
-
-      - name: Update Commands
-        run: node .github/workflows/updateCommands.js
-
-      - name: upload to wiki
-        uses: OrlovM/Wiki-Action@v1
-        with:
-          path: 'Wiki'
-          token: ${{ secrets.WIKI }}
