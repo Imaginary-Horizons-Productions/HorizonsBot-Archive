@@ -10,8 +10,8 @@ commandSets.forEach(commandSet => {
 	commandSet.fileNames.forEach(filename => {
 		const command = require(`./../../Data/Commands/${filename}`);
 		text += `### /${command.name}\n${command.description}\n`;
-		for (var i = 0; i < command.data.options.length; i++) {
-			text += `#### ${command.data.options[i].name}\n${command.data.options[i].description}\n`;
+		for (const optionData of command.data.options) {
+			text += `#### ${optionData.name}${optionData.required ? "" : " (optional)"}\n${optionData.description}\n`;
 		}
 	})
 })
