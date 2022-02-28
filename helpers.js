@@ -571,17 +571,20 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-exports.setClubReminderTimeout = async function (club, channelManager) {
+exports.clearClubReminder = async function (club, guild) {
 	if (exports.reminderTimeouts[club.channelID]) {
 		clearTimeout(exports.reminderTimeouts[club.channelID]);
 		delete exports.reminderTimeouts[club.channelID];
 	}
 
 	if (club.timeslot.eventId) {
-		channelManager.guild.scheduledEvents.delete(club.timeslot.eventId);
+		guild.scheduledEvents.delete(club.timeslot.eventId);
 		club.timeslot.eventId = "";
 	}
+}
 
+exports.setClubReminderTimeout = async function (club, channelManager) {
+	await exports.clearClubReminder(club, channelManager.guild);
 	if (club.timeslot.nextMeeting) {
 		if (club.timeslot.periodCount) {
 			let event;
@@ -635,5 +638,40 @@ exports.saveObject = function (object, fileName) {
 		if (error) {
 			console.log(error);
 		}
+	})
+}
+
+exports.versionEmbedBuilder = function (avatarURL) {
+	return fs.promises.readFile('./ChangeLog.md', { encoding: 'utf8' }).then(data => {
+		const dividerRegEx = /####/g;
+		const changesStartRegEx = /\.\d+:/g;
+		const knownIssuesStartRegEx = /### Known Issues/g;
+		let titleStart = dividerRegEx.exec(data).index;
+		changesStartRegEx.exec(data);
+		let knownIssuesStart;
+		let knownIssueStartResult = knownIssuesStartRegEx.exec(data);
+		if (knownIssueStartResult) {
+			knownIssuesStart = knownIssueStartResult.index;
+		}
+		let knownIssuesEnd = dividerRegEx.exec(data).index;
+
+		let embed = new MessageEmbed().setColor('6b81eb')
+			// .setAuthor({ name: tip.prefix + tip.text, iconURL: avatarURL, url: tip.url })
+			.setTitle(data.slice(titleStart + 5, changesStartRegEx.lastIndex))
+			.setURL('https://discord.gg/bcE3Syu')
+			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png')
+			.setFooter({ text: "Imaginary Horizons Productions", iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png" })
+			.setTimestamp();
+
+		if (knownIssuesStart && knownIssuesStart < knownIssuesEnd) {
+			// Known Issues section found
+			embed.setDescription(data.slice(changesStartRegEx.lastIndex, knownIssuesStart))
+				.addField(`Known Issues`, data.slice(knownIssuesStart + 16, knownIssuesEnd))
+		} else {
+			// Known Issues section not found
+			embed.setDescription(data.slice(changesStartRegEx.lastIndex, knownIssuesEnd));
+		}
+
+		return embed.addField(`Become a Sponsor`, `Chip in for server costs or commission your own bot by sponsoring [HorizonsBot on GitHub](https://github.com/Imaginary-Horizons-Productions/HorizonsBot)`);
 	})
 }

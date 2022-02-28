@@ -12,9 +12,9 @@ let options = [
 ];
 module.exports = new Command("club-set-repeat", "Set how frequently to send reminders about club meetings", options);
 
-let getClubs, updateClub, updateClubDetails;
+let getClubs, updateClub, updateClubDetails, clearClubReminder;
 module.exports.initialize = function (helpers) {
-	({ getClubs, updateClub, updateClubDetails } = helpers);
+	({ getClubs, updateClub, updateClubDetails, clearClubReminder } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -39,15 +39,7 @@ module.exports.execute = (interaction) => {
 			if (count > 0) {
 				interaction.channel.send(`This club has been set to repeat meetings every ${count} ${units === "w" ? "week" : "day"}(s).`);
 			} else {
-				if (exports.reminderTimeouts[club.channelID]) {
-					clearTimeout(exports.reminderTimeouts[club.channelID]);
-					delete exports.reminderTimeouts[club.channelID];
-				}
-
-				if (club.timeslot.eventId) {
-					interaction.guild.scheduledEvents.delete(club.timeslot.eventId);
-					club.timeslot.eventId = "";
-				}
+				clearClubReminder(club, interaction.guild);
 				interaction.channel.send("Repeating meetings have been canceled for this club.");
 			}
 		} else {
