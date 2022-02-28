@@ -1,7 +1,7 @@
 const { Client } = require('discord.js');
-const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
-const { getCommand, initializeCommands } = require('./Data/Commands/_commandDictionary.js');
-const { getSelect } = require('./Data/Selects/_selectDictionary.js');
+const { getButton } = require('./Source/Buttons/_buttonDictionary.js');
+const { getCommand, initializeCommands } = require('./Source/Commands/_commandDictionary.js');
+const { getSelect } = require('./Source/Selects/_selectDictionary.js');
 const helpers = require('./helpers.js');
 
 const client = new Client({

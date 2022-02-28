@@ -4,10 +4,10 @@ const { token, botId, guildId} = require('./Config/_env.json');
 const fs = require('fs');
 
 const commands = [];
-const commandFiles = fs.readdirSync('./Data/Commands').filter(name => name !== "_commandDictionary.js");
+const commandFiles = fs.readdirSync('./Source/Commands').filter(name => name !== "_commandDictionary.js");
 
 for (const file of commandFiles) {
-	const command = require(`./Data/Commands/${file}`);
+	const command = require(`./Source/Commands/${file}`);
 	if (command.data) {
 		commands.push(command.data.toJSON());
 	}
