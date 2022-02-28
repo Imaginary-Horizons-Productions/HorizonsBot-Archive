@@ -39,7 +39,15 @@ module.exports.execute = (interaction) => {
 			if (count > 0) {
 				interaction.channel.send(`This club has been set to repeat meetings every ${count} ${units === "w" ? "week" : "day"}(s).`);
 			} else {
-				//TODO #204 cancel scheduled meeting
+				if (exports.reminderTimeouts[club.channelID]) {
+					clearTimeout(exports.reminderTimeouts[club.channelID]);
+					delete exports.reminderTimeouts[club.channelID];
+				}
+
+				if (club.timeslot.eventId) {
+					interaction.guild.scheduledEvents.delete(club.timeslot.eventId);
+					club.timeslot.eventId = "";
+				}
 				interaction.channel.send("Repeating meetings have been canceled for this club.");
 			}
 		} else {
