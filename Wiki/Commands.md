@@ -42,6 +42,10 @@ Send a ping to the current channel
 The text of the notification
 #### type (optional)
 Who to notify
+### /version
+Get HorizonsBot's version notes
+#### full-notes
+Get the file with the full version notes?
 ## Custom Message Embeds
 To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select "Copy ID".
 ### /embed-create
