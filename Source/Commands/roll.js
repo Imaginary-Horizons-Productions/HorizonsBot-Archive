@@ -2,16 +2,16 @@ const Command = require('../../Classes/Command.js');
 const { getRollString } = require('../../Helper Modules/RollEngine.js');
 
 let options = [
-	{ type: "String", name: "dice", description: "The number and type of dice using #d# format", required: true, choices: {} },
+	{ type: "String", name: "dice", description: "The dice to roll in #d# format", required: true, choices: {} },
 	{
-		type: "String", name: "display", description: "Choose output display options", required: false, choices: {
+		type: "String", name: "display", description: "Choose output display option", required: false, choices: {
 			"Result only": "simple",
 			"Compare to max total roll": "max",
 			"Result for each die": "individual",
 			"Compare each die to max roll": "verbose"
 		}
 	},
-	{ type: "String", name: "label", description: "Text label for the roll", required: false, choices: {} },
+	{ type: "String", name: "label", description: "Text after the roll", required: false, choices: {} },
 ];
 module.exports = new Command("roll", "Roll dice", options);
 

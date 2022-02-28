@@ -2,9 +2,9 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{ type: "String", name: "start", description: "The timestamp to start from (default: now)", required: false, choices: {} },
-	{ type: "Number", name: "days-from-start", description: "How many days from the start for the timestamp", required: false, choices: {} },
-	{ type: "Number", name: "hours-from-start", description: "How many hours from the start for the timestamp", required: false, choices: {} },
-	{ type: "Number", name: "minutes-from-start", description: "How many minutes from the start for the timestamp", required: false, choices: {} }
+	{ type: "Number", name: "days-from-start", description: "86400 seconds", required: false, choices: {} },
+	{ type: "Number", name: "hours-from-start", description: "3600 seconds", required: false, choices: {} },
+	{ type: "Number", name: "minutes-from-start", description: "60 seconds", required: false, choices: {} }
 ];
 module.exports = new Command("timestamp", "Calculate the unix timestamp for a moment in time, which Discord displays with timezones applied", options);
 

@@ -2,13 +2,13 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{
-		type: "String", name: "list-type", description: "Pin the list message for topics or clubs in this channel", required: true, choices: {
+		type: "String", name: "list-type", description: "The list to pin", required: true, choices: {
 			"Pin the topic list": "topic",
 			"Pin the club list": "club"
 		}
 	}
 ];
-module.exports = new Command("pin-list", "(moderator) Pin the list message for topics or clubs in this channel", options);
+module.exports = new Command("pin-list", "(moderator) Pin the topics or clubs list message in this channel", options);
 
 let isModerator, pinTopicsList, pinClubsList;
 module.exports.initialize = function (helpers) {

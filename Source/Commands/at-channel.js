@@ -1,8 +1,8 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [
-	{ type: "String", name: "message", description: "The text to go with the notification", required: true, choices: {} },
-	{ type: "String", name: "type", description: "Who to notify with the message", required: false, choices: { "Only notifiy online users in this channel": "@here", "Also notify offline users in this channel": "@everyone" } }
+	{ type: "String", name: "message", description: "The text of the notification", required: true, choices: {} },
+	{ type: "String", name: "type", description: "Who to notify", required: false, choices: { "Only online users in this channel": "@here", "All users in this channel": "@everyone" } }
 ];
 module.exports = new Command("at-channel", "Send a ping to the current channel", options);
 

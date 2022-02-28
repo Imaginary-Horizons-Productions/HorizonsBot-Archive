@@ -3,8 +3,8 @@ const Command = require('../../Classes/Command.js');
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
 	{ type: "String", name: "text", description: "The text to put in the author field", required: true, choices: {} },
-	{ type: "String", name: "icon-url", description: "The url to the image in the author field", required: false, choices: {} },
-	{ type: "String", name: "url", description: "The url to open when the author field is clicked", required: false, choices: {} }
+	{ type: "String", name: "icon-url", description: "The image url for the author icon", required: false, choices: {} },
+	{ type: "String", name: "url", description: "Where clicking the author takes the user", required: false, choices: {} }
 ];
 module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author", options);
 

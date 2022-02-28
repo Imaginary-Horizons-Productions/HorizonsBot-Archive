@@ -2,9 +2,9 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
-	{ type: "String", name: "url", description: "The url to a picture for the thumbnail field", required: true, choices: {} },
+	{ type: "String", name: "url", description: "The picture url for the thumbnail", required: true, choices: {} },
 ];
-module.exports = new Command("embed-set-thumbnail", "(moderator) Assign a custom embed's thumbnail", options);
+module.exports = new Command("embed-set-thumbnail", "(moderator) Set a custom embed's thumbnail", options);
 
 let customEmbeds, isModerator;
 module.exports.initialize = function (helpers) {

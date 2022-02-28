@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [];
-module.exports = new Command("club-instructions", "Get the up-to-date club setup instructions", options);
+module.exports = new Command("club-instructions", "Get up-to-date club setup instructions", options);
 
 // internal imports go here
 module.exports.initialize = function (helpers) {

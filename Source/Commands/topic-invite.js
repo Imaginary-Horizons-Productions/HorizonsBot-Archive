@@ -3,9 +3,9 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 
 let options = [
 	{ type: "User", name: "invitee", description: "The user to invite (copy-paste from another channel)", required: true, choices: {} },
-	{ type: "Channel", name: "channel", description: "The topic channel to invite to", required: true, choices: {} }
+	{ type: "Channel", name: "channel", description: "The topic channel", required: true, choices: {} }
 ];
-module.exports = new Command("topic-invite", "Invite users to this topic", options);
+module.exports = new Command("topic-invite", "Invite a user to a topic", options);
 
 let getTopicIDs, embedTemplateBuilder;
 module.exports.initialize = function (helpers) {

@@ -1,6 +1,6 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [{ type: "User", name: "user", description: "The user to promote to club leader", required: true, choices: {} }];
+let options = [{ type: "User", name: "user", description: "The user's mention", required: true, choices: {} }];
 module.exports = new Command("club-promote-leader", "(club leader or moderator) Promote another user to club leader", options);
 
 let isModerator, getClubs, updateClub, updateClubDetails;

@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [
-	{ type: "String", name: "topic-name", description: "The topic channel to petition for", required: true, choices: {} }
+	{ type: "String", name: "topic-name", description: "Make sure the topic doesn't already exist", required: true, choices: {} }
 ];
 module.exports = new Command("petition", "Petition for a topic", options);
 

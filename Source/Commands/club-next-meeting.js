@@ -2,9 +2,9 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
 
 let options = [
-	{ type: "Number", name: "days-from-now", description: "How many days from now for the next meeting", required: false, choices: {} },
-	{ type: "Number", name: "hours-from-now", description: "How many hours from now for the next meeting", required: false, choices: {} },
-	{ type: "Number", name: "minutes-from-now", description: "How many minutes from now for the next meeting", required: false, choices: {} }
+	{ type: "Number", name: "days-from-now", description: "86400 seconds", required: false, choices: {} },
+	{ type: "Number", name: "hours-from-now", description: "3600 seconds", required: false, choices: {} },
+	{ type: "Number", name: "minutes-from-now", description: "60 seconds", required: false, choices: {} }
 ];
 module.exports = new Command("club-next-meeting", "Set the club's next meeting", options);
 

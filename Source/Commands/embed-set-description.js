@@ -2,7 +2,7 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
-	{ type: "String", name: "text", description: "The text to put in the description field", required: true, choices: {} }
+	{ type: "String", name: "text", description: "The description text", required: true, choices: {} }
 ];
 module.exports = new Command("embed-set-description", "(moderator) Assign a custom embed's description", options);
 
