@@ -1,47 +1,47 @@
 ## HorizonsBot Commands
-Here are all of HorizonsBot's commands. Check their details to see what the usage requirements are!
+The general use commands. Required permissions are listed in (parenthesis) at the beginning of the description.
 ### /about
-Provides details about HorizonsBot and its contributors
+Get the HorizonsBot credits
 ### /commands
-List HorizonsBot command(s)
+List HorizonsBot's commands
 ### /support
-Show ways to support the community
+Show ways to support Imaginary Horizons
 ### /data-policy
-Shows types of user data HorizonsBot collects and how it's used
+Show what user data HorizonsBot collects and how it's used
 ### /list
-Get a list of topic or club channels
+Get the topic or club list
 #### list-type
-Get a list of topic or club channels
+The list to get
 ### /join
-Join one or many opt-in channels or club
+Join a topic or club
 #### channel
 The name (or id) of the topic or club to join
 ### /leave
-Leave an opt-in channel or club
+Leave a topic or club
 ### /roll
 Roll dice
 #### dice
-The number and type of dice using #d# format
+The dice to roll in #d# format
 #### display (optional)
-Choose output display options
+Choose output display option
 #### label (optional)
-Text label for the roll
+Text after the roll
 ### /timestamp
 Calculate the unix timestamp for a moment in time, which Discord displays with timezones applied
 #### start (optional)
 The timestamp to start from (default: now)
 #### days-from-start (optional)
-How many days from the start for the timestamp
+86400 seconds
 #### hours-from-start (optional)
-How many hours from the start for the timestamp
+3600 seconds
 #### minutes-from-start (optional)
-How many minutes from the start for the timestamp
+60 seconds
 ### /at-channel
 Send a ping to the current channel
 #### message
-The text to go with the notification
+The text of the notification
 #### type (optional)
-Who to notify with the message
+Who to notify
 ## Custom Message Embeds
 To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select "Copy ID".
 ### /embed-create
@@ -57,47 +57,47 @@ The id of the embed's message
 #### text
 The text to put in the author field
 #### icon-url (optional)
-The url to the image in the author field
+The image url for the author icon
 #### url (optional)
-The url to open when the author field is clicked
+Where clicking the author takes the user
 ### /embed-set-title
-(moderator) Assign a custom embed's title
+(moderator) Set a custom embed's title
 #### message-id
 The id of the embed's message
 #### title
-The text to set in the title field
+The title text
 ### /embed-set-url
-(moderator) Assign a custom embed's title url
+(moderator) Set a custom embed's title url
 #### message-id
 The id of the embed's message
 #### url
-The url to go to when clicking the title field
+Where clicking the title takes the user
 ### /embed-set-color
 (moderator) Assign a custom embed's color
 #### message-id
 The id of the embed's message
 #### color
-The hexcode of the color
+Use hexcode format
 ### /embed-set-description
 (moderator) Assign a custom embed's description
 #### message-id
 The id of the embed's message
 #### text
-The text to put in the description field
+The description text
 ### /embed-set-thumbnail
-(moderator) Assign a custom embed's thumbnail
+(moderator) Set a custom embed's thumbnail
 #### message-id
 The id of the embed's message
 #### url
-The url to a picture for the thumbnail field
+The picture url for the thumbnail
 ### /embed-add-field
 (moderator) Add a custom embed field
 #### message-id
 The id of the embed's message
 #### header
-The header for the new field
+The header text
 #### text
-The text of the new field
+The body text
 #### inline (optional)
 Whether to show the field in-line with previous embed fields
 ### /embed-splice-fields
@@ -105,33 +105,33 @@ Whether to show the field in-line with previous embed fields
 #### message-id
 The id of the embed's message
 #### index
-The field number to start removing fields from (count starts from 0)
+The field number to start removing from (count starts from 0)
 #### count
 The number of fields to remove
 ### /embed-set-image
-(moderator) Assign an custom embed's image
+(moderator) Set an custom embed's image
 #### message-id
 The id of the embed's message
 #### url
-The url to a picture for the image field
+The picture url for the image field
 ### /embed-set-message
-(moderator) Assign a custom embed's message content
+(moderator) Set a custom embed's message content
 #### message-id
 The id of the embed's message
 #### text
 The text to put in the message (above the embed)
 ## Topic Commands
-Commands for managing opt-in topic text channels.
+Commands for managing topics.
 ### /petition
 Petition for a topic
 #### topic-name
-The topic channel to petition for
+Make sure the topic doesn't already exist
 ### /topic-invite
-Invite users to this topic
+Invite a user to a topic
 #### invitee
 The user to invite (copy-paste from another channel)
 #### channel
-The topic channel to invite to
+The topic channel
 ### /topic-add
 (moderator) Set up a topic
 #### topic-name
@@ -145,25 +145,25 @@ The petition to check
 #### topic
 The petition to close
 ## Club Commands
-Commands for managing club text and voice channels.
+Commands for managing clubs.
 ### /club-instructions
-Get the up-to-date club setup instructions
+Get up-to-date club setup instructions
 ### /club-invite
-Send the user (default: self) an invite to the club by channel mention, or by sending from club
+Send a user (default: self) an invite to a club
 #### club-id (optional)
-The club to provide details on
+The club text channel's id
 #### invitee (optional)
-The user to invite to the club
+The user's mention
 ### /club-add
-(moderator) Set up a text and voice channels for a club
+(moderator) Set up a club (a text and voice channel)
 #### club-leader
-The user to set as club leader
+The user's mention
 ### /club-config
 (club leader or moderator) Configure a club's information
 #### name (optional)
-The new name for the club
+What to call the club
 #### description (optional)
-The club description is shown in the channel topic
+Text shown in the channel topic
 #### game (optional)
 The text to set as the club game
 #### max-members (optional)
@@ -173,52 +173,54 @@ The color of the details embed
 ### /club-next-meeting
 Set the club's next meeting
 #### days-from-now (optional)
-How many days from now for the next meeting
+86400 seconds
 #### hours-from-now (optional)
-How many hours from now for the next meeting
+3600 seconds
 #### minutes-from-now (optional)
-How many minutes from now for the next meeting
+60 seconds
 ### /club-set-repeat
-Set how frequently club meetings repeat, this will set the next meetings automatically
+Set how frequently to send reminders about club meetings
 #### count
-The number of units between meetings
+The units of time between meetings
 #### time-unit
-The amount of time each unit represents
+The unit of time
+#### reminder-text (optional)
+The reminder's text
 ### /club-set-image
 (club leader or moderator) Set or clear a club's image url
 #### url (optional)
-The url to the image to set for the club
+The image's url 
 ### /club-details
-(club leader or morderator) Posts and pins the club's details embed
+(club leader or morderator) Post and pin the club's details embed
 ### /club-promote-leader
 (club leader or moderator) Promote another user to club leader
 #### user
-The user to promote to club leader
+The user's mention
 ## Moderation Commands
 Commands for moderators.
 ### /mod-promote
 (moderator) Add a Moderator to HorizonsBot's list and give them the role
 #### promotee
-The user to promote to moderator
+The user's mention
 ### /mod-demote
 (moderator) Remove a Moderator from HorizonsBot's list and remove the role
 #### demotee
-The user to demote from moderator
+The user's mention
 ### /pin-list
-(moderator) Pin the list message for topics or clubs in this channel
+(moderator) Pin the topics or clubs list message in this channel
 #### list-type
-Pin the list message for topics or clubs in this channel
+The list to pin
 ### /kick
-(moderator) Remove mentioned users from a topic or club channel
+(moderator) Remove a user from a topic or club
 #### target
-The user to remove from the topic or club
+The user's mention
 #### ban (optional)
 Prevent the user from rejoining?
 ### /delete
-(moderator) Delete a topic or club channel on a delay
+(moderator) Delete a topic or club on a delay
 #### delay
 Number of hours to delay deleting the channel
 ### /no-ats
-Toggles whether the user can use /at-channel
+Toggles whether a user can use /at-channel
 #### user
-The user to prevent/allow the use of /at-channel
+The user's mention

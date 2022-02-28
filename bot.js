@@ -1,8 +1,10 @@
 const { Client } = require('discord.js');
-const { getButton } = require('./Data/Buttons/_buttonDictionary.js');
-const { getCommand, initializeCommands } = require('./Data/Commands/_commandDictionary.js');
-const { getSelect } = require('./Data/Selects/_selectDictionary.js');
+const { getButton } = require('./Source/Buttons/_buttonDictionary.js');
+const { getCommand, initializeCommands } = require('./Source/Commands/_commandDictionary.js');
+const { getSelect } = require('./Source/Selects/_selectDictionary.js');
 const helpers = require('./helpers.js');
+const fsa = require("fs").promises;
+const versionData = require('./Config/_versionData.json');
 
 const client = new Client({
 	retryLimit: 5,
@@ -23,6 +25,22 @@ client.on('ready', () => {
 
 	initializeCommands(true, helpers);
 	client.guilds.fetch(helpers.guildId).then(guild => {
+		// Post version notes
+		if (versionData.patchNotesChannelId) {
+			fsa.readFile('./ChangeLog.md', { encoding: 'utf8' }).then(data => {
+				let version = data.match(/(\d+.\d+.\d+)/)[0];
+				if (versionData.lastPostedVersion < version) {
+					helpers.versionEmbedBuilder(client.user.displayAvatarURL()).then(embed => {
+						guild.channels.fetch(versionData.patchNotesChannelId).then(patchChannel => {
+							patchChannel.send({ embeds: [embed] });
+							versionData.lastPostedVersion = version;
+							fsa.writeFile('./Config/_versionData.json', JSON.stringify(versionData), "utf-8");
+						})
+					}).catch(console.error);
+				}
+			});
+		}
+
 		// Update pinned lists
 		let channelManager = guild.channels;
 		if (helpers.listMessages.topics) {
