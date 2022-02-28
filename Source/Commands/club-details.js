@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [];
-module.exports = new Command("club-details", "(club leader or morderator) Posts and pins the club's details embed", options);
+module.exports = new Command("club-details", "(club leader or morderator) Post and pin the club's details embed", options);
 
 let getClubs, isModerator, updateClubDetails, updateClub;
 module.exports.initialize = function (helpers) {

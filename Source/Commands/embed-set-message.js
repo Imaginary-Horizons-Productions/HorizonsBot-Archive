@@ -4,7 +4,7 @@ let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
 	{ type: "String", name: "text", description: "The text to put in the message (above the embed)", required: true, choices: {} }
 ];
-module.exports = new Command("embed-set-message", "(moderator) Assign a custom embed's message content", options);
+module.exports = new Command("embed-set-message", "(moderator) Set a custom embed's message content", options);
 
 let customEmbeds, isModerator;
 module.exports.initialize = function (helpers) {

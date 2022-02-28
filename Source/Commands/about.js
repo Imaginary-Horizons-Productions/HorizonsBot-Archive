@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [];
-module.exports = new Command("about", "Provides details about HorizonsBot and its contributors", options);
+module.exports = new Command("about", "Get the HorizonsBot credits", options);
 
 let embedTemplateBuilder;
 module.exports.initialize = function (helpers) {

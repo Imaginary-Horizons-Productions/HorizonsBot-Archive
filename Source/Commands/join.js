@@ -4,7 +4,7 @@ const Command = require('../../Classes/Command.js');
 let options = [
 	{ type: "String", name: "channel", description: "The name (or id) of the topic or club to join", required: true, choices: {} },
 ];
-module.exports = new Command("join", "Join one or many opt-in channels or club", options);
+module.exports = new Command("join", "Join a topic or club", options);
 
 let joinChannel, findTopicID;
 module.exports.initialize = function (helpers) {

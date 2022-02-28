@@ -2,7 +2,7 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
-	{ type: "String", name: "color", description: "The hexcode of the color", required: true, choices: {} }
+	{ type: "String", name: "color", description: "Use hexcode format", required: true, choices: {} }
 ];
 module.exports = new Command("embed-set-color", "(moderator) Assign a custom embed's color", options);
 

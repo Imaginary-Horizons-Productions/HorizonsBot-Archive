@@ -2,13 +2,13 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{
-		type: "String", name: "list-type", description: "Get a list of topic or club channels", required: true, choices: {
+		type: "String", name: "list-type", description: "The list to get", required: true, choices: {
 			"Get the topic list": "topic",
 			"Get the club list": "club"
 		}
 	},
 ];
-module.exports = new Command("list", "Get a list of topic or club channels", options);
+module.exports = new Command("list", "Get the topic or club list", options);
 
 let topicListBuilder, clubListBuilder;
 module.exports.initialize = function (helpers) {

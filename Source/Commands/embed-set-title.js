@@ -2,9 +2,9 @@ const Command = require('../../Classes/Command.js');
 
 let options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
-	{ type: "String", name: "title", description: "The text to set in the title field", required: true, choices: {} }
+	{ type: "String", name: "title", description: "The title text", required: true, choices: {} }
 ];
-module.exports = new Command("embed-set-title", "(moderator) Assign a custom embed's title", options);
+module.exports = new Command("embed-set-title", "(moderator) Set a custom embed's title", options);
 
 let customEmbeds, isModerator;
 module.exports.initialize = function (helpers) {

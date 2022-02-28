@@ -8,7 +8,7 @@ let options = [
 			days: "d"
 		}
 	},
-	{ type: "String", name: "reminder-text", description: "The text of the reminder", required: false, choices: {} }
+	{ type: "String", name: "reminder-text", description: "The reminder's text", required: false, choices: {} }
 ];
 module.exports = new Command("club-set-repeat", "Set how frequently to send reminders about club meetings", options);
 

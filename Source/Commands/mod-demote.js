@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [
-	{ type: "User", name: "demotee", description: "The user to demote from moderator", required: true, choices: {} }
+	{ type: "User", name: "demotee", description: "The user's mention", required: true, choices: {} }
 ];
 module.exports = new Command("mod-demote", "(moderator) Remove a Moderator from HorizonsBot's list and remove the role", options);
 

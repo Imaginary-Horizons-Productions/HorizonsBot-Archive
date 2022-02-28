@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [];
-module.exports = new Command("support", "Show ways to support the community", options);
+module.exports = new Command("support", "Show ways to support Imaginary Horizons", options);
 
 let embedTemplateBuilder;
 module.exports.initialize = function (helpers) {

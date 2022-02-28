@@ -1,9 +1,9 @@
 const Command = require('../../Classes/Command.js');
 
 let options = [
-	{ type: "User", name: "user", description: "The user to prevent/allow the use of /at-channel", required: true, choices: {} }
+	{ type: "User", name: "user", description: "The user's mention", required: true, choices: {} }
 ];
-module.exports = new Command("no-ats", "Toggles whether the user can use /at-channel", options);
+module.exports = new Command("no-ats", "Toggles whether a user can use /at-channel", options);
 
 let isModerator, noAts, saveModData;
 module.exports.initialize = function (helpers) {

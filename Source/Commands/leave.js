@@ -2,7 +2,7 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
 
 let options = [];
-module.exports = new Command("leave", "Leave an opt-in channel or club", options);
+module.exports = new Command("leave", "Leave a topic or club", options);
 
 let getManagedChannels, getClubs, updateClub;
 module.exports.initialize = function (helpers) {
