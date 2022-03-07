@@ -23,7 +23,7 @@ module.exports.execute = (interaction) => {
 		.setTitle("HorizonsBot Commands")
 		.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/765059662268727326/info.png')
 		.setDescription("Here are HorizonsBots commands.")
-		.setFooter({ text: "Use \"@HorizonsBot support\" to learn how to support the server!", iconURL: interaction.client.user.displayAvatarURL() });
+		.setFooter({ text: "Use /support to learn how to support the server!", iconURL: interaction.client.user.displayAvatarURL() });
 	let totalCharacterCount = embed.author.name.length + embed.title.length + embed.description.length + embed.footer.text.length;
 
 	let files;
