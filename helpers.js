@@ -144,9 +144,9 @@ exports.reminderTimeouts = {};
 exports.embedTemplateBuilder = function (color = "#6b81eb") {
 	return new MessageEmbed().setColor(color)
 		.setAuthor({
-			name: "Click here to visit the Imaginary Horizons GitHub",
+			name: "Click here to visit HorizonsBot's GitHub",
 			iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
-			url: "https://github.com/Imaginary-Horizons-Productions"
+			url: "https://github.com/Imaginary-Horizons-Productions/HorizonsBot"
 		})
 		.setTimestamp();
 }
@@ -655,13 +655,10 @@ exports.versionEmbedBuilder = function (avatarURL) {
 		}
 		let knownIssuesEnd = dividerRegEx.exec(data).index;
 
-		let embed = new MessageEmbed().setColor('6b81eb')
-			// .setAuthor({ name: tip.prefix + tip.text, iconURL: avatarURL, url: tip.url }) //TODO #211 version embed author
+		let embed = exports.embedTemplateBuilder()
 			.setTitle(data.slice(titleStart + 5, changesStartRegEx.lastIndex))
 			.setURL('https://discord.gg/bcE3Syu')
-			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png')
-			.setFooter({ text: "Imaginary Horizons Productions", iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png" })
-			.setTimestamp();
+			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png');
 
 		if (knownIssuesStart && knownIssuesStart < knownIssuesEnd) {
 			// Known Issues section found
