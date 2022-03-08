@@ -4,19 +4,18 @@ const Command = require('../../Classes/Command.js');
 let options = [];
 module.exports = new Command("commands", "List HorizonsBot's commands", options);
 
-let embedTemplateBuilder;
+let embedTemplateBuilder, wikiPage;
 module.exports.initialize = function (helpers) {
 	({ embedTemplateBuilder } = helpers);
-}
 
-let wikiPage;
-fs.readFile("Wiki/Commands.md", { encoding: "utf-8" }, (error, data) => {
-	if (error) {
-		// console.error(error); //TODO #209 error handling for failing to read commands during development
-	} else {
-		wikiPage = data;
-	}
-})
+	fs.readFile("Wiki/Commands.md", { encoding: "utf-8" }, (error, data) => {
+		if (error) {
+			console.error(error);
+		} else {
+			wikiPage = data;
+		}
+	})
+}
 
 module.exports.execute = (interaction) => {
 	let embed = embedTemplateBuilder()
