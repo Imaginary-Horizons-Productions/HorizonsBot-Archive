@@ -606,9 +606,7 @@ exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
 	if (eventId) {
 		eventManager.delete(eventId);
 	}
-	console.log(exports.eventTimeouts);
 	if (exports.eventTimeouts[voiceChannelId]) {
-		console.log("event timeout cleared"); //TODONOW test
 		clearTimeout(exports.eventTimeouts[voiceChannelId]);
 		delete exports.eventTimeouts[voiceChannelId];
 	}
