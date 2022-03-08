@@ -67,7 +67,9 @@ client.on('ready', () => {
 		})
 
 		// Begin checking for club reminders
+		console.log("reached reminders"); //TODONOW remove console logs
 		for (let club of Object.values(helpers.getClubs())) {
+			console.log("reminder");
 			if (club.timeslot.nextMeeting * 1000 > Date.now()) {
 				helpers.setClubReminder(club, channelManager);
 				helpers.scheduleClubEvent(club, guild);

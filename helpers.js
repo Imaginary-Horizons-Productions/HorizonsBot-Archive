@@ -574,29 +574,33 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-exports.scheduleClubEvent = async function (club, guild) {
+exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = getClubs()[clubId];
 			if (club?.userIDs.length < club.seats) {
-				let voiceChannel = await timeoutGuild.channels.fetch(club.voiceChannelID);
-				let event = await timeoutGuild.scheduledEvents.create({
-					name: club.title,
-					scheduledStartTime: club.timeslot.nextMeeting * 1000,
-					privacyLevel: 2,
-					entityType: "VOICE",
-					description: club.description,
-					channel: voiceChannel
-				})
-				club.timeslot.eventId = event.id;
+				timeoutGuild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+					return timeoutGuild.scheduledEvents.create({
+						name: club.title,
+						scheduledStartTime: club.timeslot.nextMeeting * 1000,
+						privacyLevel: 2,
+						entityType: "VOICE",
+						description: club.description,
+						channel: voiceChannel
+					})
+				}).then(event => {
+					club.timeslot.eventId = event.id;
+				});
 			}
 		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.id, guild)
 		exports.eventTimeouts[club.voiceChannelID] = timeout;
+		console.log("event timeout set for:", club.timeslot.nextMeeting);
 	}
 }
 
 exports.cancelClubEvent = function (voiceChannelId) {
 	if (exports.eventTimeouts[voiceChannelId]) {
+		console.log("event timeout cleared");
 		clearTimeout(exports.eventTimeouts[voiceChannelId]);
 		delete exports.eventTimeouts[voiceChannelId];
 	}
@@ -636,12 +640,14 @@ exports.setClubReminder = async function (club, channelManager) {
 			}
 		}, msToReminder, club, eventURL, channelManager);
 		exports.reminderTimeouts[club.channelID] = timeout;
+		console.log("reminder timeout set for:", club.timeslot.nextMeeting - exports.timeConversion(1, "d", "s"));
 		exports.updateClub(club, channelManager);
 	}
 }
 
 exports.clearClubReminder = async function (channelId) {
 	if (exports.reminderTimeouts[channelId]) {
+		console.log("reminder timeout cleared");
 		clearTimeout(exports.reminderTimeouts[channelId]);
 		delete exports.reminderTimeouts[channelId];
 	}
