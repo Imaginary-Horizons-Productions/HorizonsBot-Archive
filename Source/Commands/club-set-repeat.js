@@ -43,7 +43,7 @@ module.exports.execute = (interaction) => {
 				interaction.guild.scheduledEvents.delete(club.timeslot.eventId);
 				club.timeslot.eventId = "";
 				clearClubReminder(club.id);
-				cancelClubEvent(club.voiceChannelID);
+				cancelClubEvent(club.voiceChannelID, club.eventId, interaction.guild.scheduledEvents);
 				interaction.channel.send("Repeating meetings have been canceled for this club.");
 			}
 		} else {

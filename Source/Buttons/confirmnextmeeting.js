@@ -1,5 +1,5 @@
 const Button = require('../../Classes/Button.js');
-const { getClubs, setClubReminder, updateClubDetails, updateClub, cancelClubEvent, scheduleClubEvent, clearClubReminder } = require('../../helpers.js');
+const { getClubs, setClubReminder, updateClubDetails, updateClub, cancelClubEvent, scheduleClubEvent, clearClubReminder, createClubEvent } = require('../../helpers.js');
 
 module.exports = new Button("confirmnextmeeting");
 
@@ -9,9 +9,12 @@ module.exports.execute = (interaction, [timestamp]) => {
 	if (club) {
 		club.timeslot.nextMeeting = Number(timestamp);
 		clearClubReminder(club.id);
-		cancelClubEvent(club.voiceChannelID);
+		cancelClubEvent(club.voiceChannelID, club.timeslot.eventId, interaction.guild.scheduledEvents);
 		setClubReminder(club, interaction.guild.channels);
-		scheduleClubEvent(club, interaction.guild);
+		createClubEvent(club, interaction.guild);
+		if (club.timeslot.periodCount && club.userIDs.length < club.seats) {
+			scheduleClubEvent(club, interaction.guild);
+		}
 		updateClubDetails(club, interaction.channel);
 		updateClub(club, interaction.guild.channels);
 		interaction.update({ components: [] });

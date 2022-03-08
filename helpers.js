@@ -281,7 +281,7 @@ exports.topicListBuilder = function (channelManager) {
 
 			fs.writeFile("data/TopicChannels.txt", fileText, "utf8", error => {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				}
 			});
 			resolve(messageOptions);
@@ -320,7 +320,7 @@ exports.pinTopicsList = function (channelManager, channel) {
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
 			message.pin();
 		})
-	}).catch(console.log);
+	}).catch(console.error);
 }
 
 exports.clubListBuilder = function () {
@@ -347,7 +347,7 @@ exports.clubListBuilder = function () {
 			let fileText = description;
 			fs.writeFile("data/ClubChannels.txt", fileText, "utf8", error => {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				}
 			});
 			resolve(messageOptions);
@@ -382,7 +382,7 @@ exports.pinClubsList = function (channelManager, channel) {
 			message.pin();
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
 		})
-	}).catch(console.log);
+	}).catch(console.error);
 }
 
 exports.checkPetition = function (guild, topicName, author = null) {
@@ -453,7 +453,7 @@ exports.addTopicChannel = function (guild, topicName) {
 			exports.setPetitions(petitions, guild.channels);
 		})
 		return channel;
-	}).catch(console.log);
+	}).catch(console.error);
 }
 
 exports.joinChannel = function (channel, user) {
@@ -466,7 +466,7 @@ exports.joinChannel = function (channel, user) {
 					"VIEW_CHANNEL": true
 				}).then(() => {
 					channel.send(`Welcome to ${channel.name}, ${user}!`);
-				}).catch(console.log);
+				}).catch(console.error);
 			} else if (Object.keys(exports.getClubs()).includes(channelID)) {
 				let club = exports.getClubs()[channelID];
 				if (club.seats === -1 || club.userIDs.length < club.seats) {
@@ -574,33 +574,41 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
+exports.createClubEvent = function (club, guild) {
+	guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+		return guild.scheduledEvents.create({
+			name: club.title,
+			scheduledStartTime: club.timeslot.nextMeeting * 1000,
+			privacyLevel: 2,
+			entityType: "VOICE",
+			description: club.description,
+			channel: voiceChannel
+		})
+	}).then(event => {
+		club.timeslot.eventId = event.id;
+		exports.updateClub(club, guild.channels);
+	});
+}
+
 exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = getClubs()[clubId];
 			if (club?.userIDs.length < club.seats) {
-				timeoutGuild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
-					return timeoutGuild.scheduledEvents.create({
-						name: club.title,
-						scheduledStartTime: club.timeslot.nextMeeting * 1000,
-						privacyLevel: 2,
-						entityType: "VOICE",
-						description: club.description,
-						channel: voiceChannel
-					})
-				}).then(event => {
-					club.timeslot.eventId = event.id;
-				});
+				exports.createClubEvent(club, timeoutGuild);
 			}
 		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.id, guild)
 		exports.eventTimeouts[club.voiceChannelID] = timeout;
-		console.log("event timeout set for:", club.timeslot.nextMeeting);
 	}
 }
 
-exports.cancelClubEvent = function (voiceChannelId) {
+exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
+	if (eventId) {
+		eventManager.delete(eventId);
+	}
+	console.log(exports.eventTimeouts);
 	if (exports.eventTimeouts[voiceChannelId]) {
-		console.log("event timeout cleared");
+		console.log("event timeout cleared"); //TODONOW test
 		clearTimeout(exports.eventTimeouts[voiceChannelId]);
 		delete exports.eventTimeouts[voiceChannelId];
 	}
@@ -640,14 +648,12 @@ exports.setClubReminder = async function (club, channelManager) {
 			}
 		}, msToReminder, club, eventURL, channelManager);
 		exports.reminderTimeouts[club.channelID] = timeout;
-		console.log("reminder timeout set for:", club.timeslot.nextMeeting - exports.timeConversion(1, "d", "s"));
 		exports.updateClub(club, channelManager);
 	}
 }
 
 exports.clearClubReminder = async function (channelId) {
 	if (exports.reminderTimeouts[channelId]) {
-		console.log("reminder timeout cleared");
 		clearTimeout(exports.reminderTimeouts[channelId]);
 		delete exports.reminderTimeouts[channelId];
 	}
@@ -674,7 +680,7 @@ exports.saveObject = function (object, fileName) {
 
 	fs.writeFile(filePath, textToSave, 'utf8', (error) => {
 		if (error) {
-			console.log(error);
+			console.error(error);
 		}
 	})
 }
