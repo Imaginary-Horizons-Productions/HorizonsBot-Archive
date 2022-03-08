@@ -15,7 +15,7 @@ The list to get
 ### /join
 Join a topic or club
 #### channel
-The name (or id) of the topic or club to join
+The name/id of the topic or club to join
 ### /leave
 Leave a topic or club
 ### /roll
