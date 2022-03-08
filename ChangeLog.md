@@ -1,4 +1,8 @@
 # HorizonsBot Change Log
+#### HorizonsBot Version 1.16.1:
+- Many fixes for club reminders
+- Other stuff
+
 #### HorizonsBot Version 1.16.0:
 - Reenabled custom club reminder messages (use the `reminder-text` option in `/club-set-repeat`)
 - Turning off club meeting repeats now cancels the upcoming event and reminder

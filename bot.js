@@ -28,16 +28,24 @@ client.on('ready', () => {
 		// Post version notes
 		if (versionData.patchNotesChannelId) {
 			fsa.readFile('./ChangeLog.md', { encoding: 'utf8' }).then(data => {
-				let version = data.match(/(\d+.\d+.\d+)/)[0];
-				if (versionData.lastPostedVersion < version) {
-					helpers.versionEmbedBuilder(client.user.displayAvatarURL()).then(embed => {
-						guild.channels.fetch(versionData.patchNotesChannelId).then(patchChannel => {
-							patchChannel.send({ embeds: [embed] });
-							versionData.lastPostedVersion = version;
-							fsa.writeFile('./Config/_versionData.json', JSON.stringify(versionData), "utf-8");
-						})
-					}).catch(console.error);
+				let [currentFull, currentMajor, currentMinor, currentPatch] = data.match(/(\d+)\.(\d+)\.(\d+)/);
+				let [_lastFull, lastMajor, lastMinor, lastPatch] = versionData.lastPostedVersion.match(/(\d+)\.(\d+)\.(\d+)/);
+
+				if (currentMajor <= lastMajor) {
+					if (currentMinor <= lastMinor) {
+						if (currentPatch <= lastPatch) {
+							return;
+						}
+					}
 				}
+
+				helpers.versionEmbedBuilder(client.user.displayAvatarURL()).then(embed => {
+					guild.channels.fetch(versionData.patchNotesChannelId).then(patchChannel => {
+						patchChannel.send({ embeds: [embed] });
+						versionData.lastPostedVersion = currentFull;
+						fsa.writeFile('./Config/_versionData.json', JSON.stringify(versionData), "utf-8");
+					})
+				}).catch(console.error);
 			});
 		}
 
@@ -60,7 +68,14 @@ client.on('ready', () => {
 
 		// Begin checking for club reminders
 		for (let club of Object.values(helpers.getClubs())) {
-			helpers.setClubReminderTimeout(club, channelManager);
+			if (club.timeslot.nextMeeting * 1000 > Date.now()) {
+				helpers.setClubReminder(club, channelManager);
+				helpers.scheduleClubEvent(club, guild);
+			} else {
+				club.timeslot.nextMeeting = null;
+				club.timeslot.eventId = "";
+				helpers.updateClub(club, channelManager);
+			}
 		}
 	})
 })

@@ -140,13 +140,16 @@ exports.removeClub = function (id) {
 // {textChannelId: timeout}
 exports.reminderTimeouts = {};
 
+// {voiceChannelId: timeout}
+exports.eventTimeouts = {};
+
 // Functions
 exports.embedTemplateBuilder = function (color = "#6b81eb") {
 	return new MessageEmbed().setColor(color)
 		.setAuthor({
-			name: "Click here to visit the Imaginary Horizons GitHub",
+			name: "Click here to visit HorizonsBot's GitHub",
 			iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png",
-			url: "https://github.com/Imaginary-Horizons-Productions"
+			url: "https://github.com/Imaginary-Horizons-Productions/HorizonsBot"
 		})
 		.setTimestamp();
 }
@@ -278,7 +281,7 @@ exports.topicListBuilder = function (channelManager) {
 
 			fs.writeFile("data/TopicChannels.txt", fileText, "utf8", error => {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				}
 			});
 			resolve(messageOptions);
@@ -317,7 +320,7 @@ exports.pinTopicsList = function (channelManager, channel) {
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
 			message.pin();
 		})
-	}).catch(console.log);
+	}).catch(console.error);
 }
 
 exports.clubListBuilder = function () {
@@ -344,7 +347,7 @@ exports.clubListBuilder = function () {
 			let fileText = description;
 			fs.writeFile("data/ClubChannels.txt", fileText, "utf8", error => {
 				if (error) {
-					console.log(error);
+					console.error(error);
 				}
 			});
 			resolve(messageOptions);
@@ -379,7 +382,7 @@ exports.pinClubsList = function (channelManager, channel) {
 			message.pin();
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
 		})
-	}).catch(console.log);
+	}).catch(console.error);
 }
 
 exports.checkPetition = function (guild, topicName, author = null) {
@@ -450,7 +453,7 @@ exports.addTopicChannel = function (guild, topicName) {
 			exports.setPetitions(petitions, guild.channels);
 		})
 		return channel;
-	}).catch(console.log);
+	}).catch(console.error);
 }
 
 exports.joinChannel = function (channel, user) {
@@ -463,7 +466,7 @@ exports.joinChannel = function (channel, user) {
 					"VIEW_CHANNEL": true
 				}).then(() => {
 					channel.send(`Welcome to ${channel.name}, ${user}!`);
-				}).catch(console.log);
+				}).catch(console.error);
 			} else if (Object.keys(exports.getClubs()).includes(channelID)) {
 				let club = exports.getClubs()[channelID];
 				if (club.seats === -1 || club.userIDs.length < club.seats) {
@@ -571,47 +574,86 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-exports.clearClubReminder = async function (club, guild) {
-	if (exports.reminderTimeouts[club.channelID]) {
-		clearTimeout(exports.reminderTimeouts[club.channelID]);
-		delete exports.reminderTimeouts[club.channelID];
-	}
+exports.createClubEvent = function (club, guild) {
+	guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+		return guild.scheduledEvents.create({
+			name: club.title,
+			scheduledStartTime: club.timeslot.nextMeeting * 1000,
+			privacyLevel: 2,
+			entityType: "VOICE",
+			description: club.description,
+			channel: voiceChannel
+		})
+	}).then(event => {
+		club.timeslot.eventId = event.id;
+		exports.updateClub(club, guild.channels);
+	});
+}
 
-	if (club.timeslot.eventId) {
-		guild.scheduledEvents.delete(club.timeslot.eventId);
-		club.timeslot.eventId = "";
+exports.scheduleClubEvent = function (club, guild) {
+	if (club.userIDs.length < club.seats) {
+		let timeout = setTimeout((clubId, timeoutGuild) => {
+			const club = getClubs()[clubId];
+			if (club?.userIDs.length < club.seats) {
+				exports.createClubEvent(club, timeoutGuild);
+			}
+		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.id, guild)
+		exports.eventTimeouts[club.voiceChannelID] = timeout;
 	}
 }
 
-exports.setClubReminderTimeout = async function (club, channelManager) {
-	await exports.clearClubReminder(club, channelManager.guild);
+exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
+	if (eventId) {
+		eventManager.delete(eventId);
+	}
+	if (exports.eventTimeouts[voiceChannelId]) {
+		clearTimeout(exports.eventTimeouts[voiceChannelId]);
+		delete exports.eventTimeouts[voiceChannelId];
+	}
+}
+
+exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
-		if (club.timeslot.periodCount) {
-			let event;
-			if (club.userIDs.length < club.seats) {
-				let voiceChannel = await channelManager.fetch(club.voiceChannelID);
-				event = await channelManager.guild.scheduledEvents.create({
-					name: club.title,
-					scheduledStartTime: club.timeslot.nextMeeting * 1000,
-					privacyLevel: 2,
-					entityType: "VOICE",
-					description: club.description,
-					channel: voiceChannel
-				})
-				club.timeslot.eventId = event.id;
-			}
-			let msTimestamp = Date.now();
-			let msToDayBeforeNextMeeting = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - msTimestamp;
-			let timeout = setTimeout((timeoutClub, eventURL) => {
-				channelManager.fetch(timeoutClub.channelID).then(textChannel => { // Interested button not available for events in private channels
-					textChannel.send(`@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}${eventURL ? ` ${eventURL}` : ""}`);
-				});
-				timeoutClub.timeslot.nextMeeting = Number(timeoutClub.timeslot.nextMeeting) + Number(exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s"));
-				exports.setClubReminderTimeout(timeoutClub, channelManager);
-			}, msToDayBeforeNextMeeting, club, await event?.createInviteURL());
-			exports.reminderTimeouts[club.channelID] = timeout;
+		let eventURL;
+		if (club.timeslot.eventId) {
+			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).createInviteURL();
 		}
+		let msToReminder = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - Date.now();
+		let timeout = setTimeout((timeoutClub, timeoutEventURL, timeoutChannelManager) => {
+			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => { // Interested button not available for events in private channels
+				let components = [];
+				if (timeoutEventURL) {
+					components.push(new MessageActionRow().addComponents(
+						new MessageButton()
+							.setLabel("Join Voice")
+							.setStyle("LINK")
+							.setURL(timeoutEventURL)
+					))
+				}
+				textChannel.send({
+					content: `@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`,
+					components
+				});
+			});
+			if (timeoutClub.timeslot.periodCount) {
+				let timeGap = exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
+				timeoutClub.timeslot.nextMeeting = timeoutClub.timeslot.nextMeeting + timeGap;
+				exports.scheduleClubEvent(timeoutClub, timeoutChannelManager.guild);
+				exports.setClubReminder(timeoutClub, timeoutChannelManager);
+			} else {
+				timeoutClub.timeslot.eventId = "";
+				exports.updateClub(club, timeoutChannelManager);
+			}
+		}, msToReminder, club, eventURL, channelManager);
+		exports.reminderTimeouts[club.channelID] = timeout;
 		exports.updateClub(club, channelManager);
+	}
+}
+
+exports.clearClubReminder = async function (channelId) {
+	if (exports.reminderTimeouts[channelId]) {
+		clearTimeout(exports.reminderTimeouts[channelId]);
+		delete exports.reminderTimeouts[channelId];
 	}
 }
 
@@ -636,7 +678,7 @@ exports.saveObject = function (object, fileName) {
 
 	fs.writeFile(filePath, textToSave, 'utf8', (error) => {
 		if (error) {
-			console.log(error);
+			console.error(error);
 		}
 	})
 }
@@ -655,13 +697,10 @@ exports.versionEmbedBuilder = function (avatarURL) {
 		}
 		let knownIssuesEnd = dividerRegEx.exec(data).index;
 
-		let embed = new MessageEmbed().setColor('6b81eb')
-			// .setAuthor({ name: tip.prefix + tip.text, iconURL: avatarURL, url: tip.url })
+		let embed = exports.embedTemplateBuilder()
 			.setTitle(data.slice(titleStart + 5, changesStartRegEx.lastIndex))
 			.setURL('https://discord.gg/bcE3Syu')
-			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png')
-			.setFooter({ text: "Imaginary Horizons Productions", iconURL: "https://cdn.discordapp.com/icons/353575133157392385/c78041f52e8d6af98fb16b8eb55b849a.png" })
-			.setTimestamp();
+			.setThumbnail('https://cdn.discordapp.com/attachments/545684759276421120/734099622846398565/newspaper.png');
 
 		if (knownIssuesStart && knownIssuesStart < knownIssuesEnd) {
 			// Known Issues section found

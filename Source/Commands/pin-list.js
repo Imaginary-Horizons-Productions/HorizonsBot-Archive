@@ -29,10 +29,10 @@ module.exports.execute = (interaction) => {
 				.catch(console.error);
 		} else {
 			interaction.reply({ content: `Please specify either \`topic\` or \`club\` for the type of list to pin.`, ephemeral: true })
-				.catch(console.log);
+				.catch(console.error);
 		}
 	} else {
 		interaction.reply({ content: `Pinning topic or club lists is restricted to Moderators.`, ephemeral: true })
-			.catch(console.log);
+			.catch(console.error);
 	}
 }

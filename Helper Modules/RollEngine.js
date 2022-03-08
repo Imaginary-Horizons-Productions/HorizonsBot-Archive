@@ -429,7 +429,6 @@ class DieSelectResultSet extends ResultSet {
 					var lowIndex = -1;
 					var lowValue = Number.POSITIVE_INFINITY;
 					for (var i = 0; i < dieMap.length; i++) {
-						console.log(`high index: ${highIndex}\nhigh value: ${highValue}`);
 						if (!skipIndices.includes(i) && dieMap[i].roll.getResult() < lowValue) {
 							lowValue = dieMap[i].roll.getResult();
 							lowIndex = i;
