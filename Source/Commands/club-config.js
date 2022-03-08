@@ -16,9 +16,9 @@ let options = [
 ];
 module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information", options);
 
-let isModerator, getClubs, updateClub, updateClubDetails, setClubReminderTimeout;
+let isModerator, getClubs, updateClub, updateClubDetails;
 module.exports.initialize = function (helpers) {
-	({ isModerator, getClubs, updateClub, updateClubDetails, setClubReminderTimeout } = helpers);
+	({ isModerator, getClubs, updateClub, updateClubDetails } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -49,7 +49,6 @@ module.exports.execute = (interaction) => {
 			if (interaction.options.getInteger("max-members")) {
 				club.seats = interaction.options.getInteger("max-members");
 				updatedSettings.push("max members");
-				setClubReminderTimeout(club, interaction.guild.channels);
 			}
 			updateClubDetails(club, interaction.channel);
 			updateClub(club, interaction.guild.channels);

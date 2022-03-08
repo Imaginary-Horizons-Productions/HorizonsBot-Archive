@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { cancelClubEvent } = require('../../helpers.js');
 
 let options = [
 	{ type: "Integer", name: "count", description: "The units of time between meetings", required: true, choices: {} },
@@ -39,7 +40,10 @@ module.exports.execute = (interaction) => {
 			if (count > 0) {
 				interaction.channel.send(`This club has been set to repeat meetings every ${count} ${units === "w" ? "week" : "day"}(s).`);
 			} else {
-				clearClubReminder(club, interaction.guild);
+				interaction.guild.scheduledEvents.delete(club.timeslot.eventId);
+				club.timeslot.eventId = "";
+				clearClubReminder(club.id);
+				cancelClubEvent(club.voiceChannelID);
 				interaction.channel.send("Repeating meetings have been canceled for this club.");
 			}
 		} else {
