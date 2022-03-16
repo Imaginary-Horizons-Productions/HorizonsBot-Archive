@@ -1,4 +1,7 @@
 # HorizonsBot Change Log
+#### HorizonsBot Version 1.16.2:
+- Fixed crash in scheduling club events
+
 #### HorizonsBot Version 1.16.1:
 - Many fixes for club reminders
 - Other stuff

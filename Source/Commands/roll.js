@@ -13,7 +13,7 @@ let options = [
 	},
 	{ type: "String", name: "label", description: "Text after the roll", required: false, choices: {} },
 ];
-module.exports = new Command("roll", "Roll dice", options);
+module.exports = new Command("roll", "Roll any number of dice with any number of sides", options);
 
 // internal imports here
 module.exports.initialize = function (helpers) {

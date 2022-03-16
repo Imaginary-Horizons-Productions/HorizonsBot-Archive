@@ -593,7 +593,7 @@ exports.createClubEvent = function (club, guild) {
 exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
-			const club = getClubs()[clubId];
+			const club = exports.getClubs()[clubId];
 			if (club?.userIDs.length < club.seats) {
 				exports.createClubEvent(club, timeoutGuild);
 			}
