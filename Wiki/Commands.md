@@ -19,7 +19,7 @@ The name/id of the topic or club to join
 ### /leave
 Leave a topic or club
 ### /roll
-Roll dice
+Roll any number of dice with any number of sides
 #### dice
 The dice to roll in #d# format
 #### display (optional)
