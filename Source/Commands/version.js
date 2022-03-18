@@ -22,7 +22,7 @@ module.exports.execute = (interaction) => {
 			ephemeral: true
 		});
 	} else {
-		versionEmbedBuilder(interaction.client.user.displayAvatarURL()).then(embed => {
+		versionEmbedBuilder().then(embed => {
 			interaction.reply({ embeds: [embed], ephemeral: true });
 		}).catch(console.error);
 	}
