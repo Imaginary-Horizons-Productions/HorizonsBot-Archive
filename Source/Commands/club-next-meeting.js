@@ -8,9 +8,9 @@ let options = [
 ];
 module.exports = new Command("club-next-meeting", "(club leader or morderator) Set the club's next meeting", options);
 
-let getClubs, timeConversion;
+let getClubs, isModerator, timeConversion;
 module.exports.initialize = function (helpers) {
-	({ getClubs, timeConversion } = helpers);
+	({ getClubs, isModerator, timeConversion } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -34,7 +34,7 @@ module.exports.execute = (interaction) => {
 						.setLabel("Confirm")
 						.setStyle("PRIMARY")
 				)]
-				interaction.reply({ content: `${days} days, ${hours} hours, and ${minutes} minutes from now is:\n<t:${timestamp}>\n\nIs this the correct time?`, components: confirmUI, ephemeral: true });
+				interaction.reply({ content: `${days} days, ${hours} hours, and ${minutes} minutes from now is:\n<t:${timestamp}:F>\n\nIs this the correct time?`, components: confirmUI, ephemeral: true });
 			} else {
 				interaction.reply({ content: "The provided time is in the past.", ephemeral: true });
 			}

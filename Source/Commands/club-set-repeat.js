@@ -12,9 +12,9 @@ let options = [
 ];
 module.exports = new Command("club-set-repeat", "(club leader or morderator) Set how frequently to send club meeting reminders", options);
 
-let getClubs, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent;
+let getClubs, isModerator, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent;
 module.exports.initialize = function (helpers) {
-	({ getClubs, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent } = helpers);
+	({ getClubs, isModerator, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent } = helpers);
 }
 
 module.exports.execute = (interaction) => {
