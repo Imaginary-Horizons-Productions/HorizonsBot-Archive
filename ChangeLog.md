@@ -1,4 +1,7 @@
 # HorizonsBot Change Log
+#### HorizonsBot Version 1.16.3:
+- Set `/club-next-meeting` and `/club-set-repeat` to require club leader or moderator
+
 #### HorizonsBot Version 1.16.2:
 - Fixed crash in scheduling club events
 
