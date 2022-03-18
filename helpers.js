@@ -683,7 +683,7 @@ exports.saveObject = function (object, fileName) {
 	})
 }
 
-exports.versionEmbedBuilder = function (avatarURL) {
+exports.versionEmbedBuilder = function () {
 	return fs.promises.readFile('./ChangeLog.md', { encoding: 'utf8' }).then(data => {
 		const dividerRegEx = /####/g;
 		const changesStartRegEx = /\.\d+:/g;
@@ -711,6 +711,6 @@ exports.versionEmbedBuilder = function (avatarURL) {
 			embed.setDescription(data.slice(changesStartRegEx.lastIndex, knownIssuesEnd));
 		}
 
-		return embed.addField(`Become a Sponsor`, `Chip in for server costs or commission your own bot by sponsoring [HorizonsBot on GitHub](https://github.com/Imaginary-Horizons-Productions/HorizonsBot)`);
+		return embed.addField("Other Discord Bots", "Check out other Imaginary Horizons Productions bots or commission your own on the [IHP GitHub](https://github.com/Imaginary-Horizons-Productions)");
 	})
 }

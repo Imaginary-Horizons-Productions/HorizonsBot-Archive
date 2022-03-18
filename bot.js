@@ -39,7 +39,7 @@ client.on('ready', () => {
 					}
 				}
 
-				helpers.versionEmbedBuilder(client.user.displayAvatarURL()).then(embed => {
+				helpers.versionEmbedBuilder().then(embed => {
 					guild.channels.fetch(versionData.patchNotesChannelId).then(patchChannel => {
 						patchChannel.send({ embeds: [embed] });
 						versionData.lastPostedVersion = currentFull;
