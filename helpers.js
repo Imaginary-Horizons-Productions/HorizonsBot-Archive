@@ -509,7 +509,7 @@ exports.clubInviteBuilder = function (club, includeJoinButton) {
 		embed.addField("Game", club.system);
 	}
 	if (club.timeslot.nextMeeting) {
-		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}>${club.timeslot.periodCount === 0 ? "" : ` repeats every ${club.timeslot.periodCount} ${club.timeslot.periodUnits === "w" ? "week(s)" : "day(s)"}`}`);
+		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}:F>${club.timeslot.periodCount === 0 ? "" : ` repeats every ${club.timeslot.periodCount} ${club.timeslot.periodUnits === "w" ? "week(s)" : "day(s)"}`}`);
 	}
 	if (club.color) {
 		embed.setColor(club.color);
@@ -616,11 +616,11 @@ exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
 		let eventURL;
 		if (club.timeslot.eventId) {
-			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).createInviteURL();
+			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite({ maxAge: exports.timeConversion(club.timeslot.periodCount, club.timeslot.periodUnits, "s") });
 		}
 		let msToReminder = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - Date.now();
 		let timeout = setTimeout((timeoutClub, timeoutEventURL, timeoutChannelManager) => {
-			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => { // Interested button not available for events in private channels
+			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => {
 				let components = [];
 				if (timeoutEventURL) {
 					components.push(new MessageActionRow().addComponents(
