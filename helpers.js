@@ -616,7 +616,7 @@ exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
 		let eventURL;
 		if (club.timeslot.eventId) {
-			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite({ maxAge: exports.timeConversion(club.timeslot.periodCount, club.timeslot.periodUnits, "s") });
+			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite();
 		}
 		let msToReminder = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - Date.now();
 		let timeout = setTimeout((timeoutClub, timeoutEventURL, timeoutChannelManager) => {
@@ -638,7 +638,7 @@ exports.setClubReminder = async function (club, channelManager) {
 			if (timeoutClub.timeslot.periodCount) {
 				let timeGap = exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
 				timeoutClub.timeslot.nextMeeting = timeoutClub.timeslot.nextMeeting + timeGap;
-				exports.scheduleClubEvent(timeoutClub, timeoutChannelManager.guild);
+				exports.scheduleClubEvent(timeoutClub, timeoutChannelManager.guild); //TODO #228 recreating events might be failing here
 				exports.setClubReminder(timeoutClub, timeoutChannelManager);
 			} else {
 				timeoutClub.timeslot.eventId = "";
