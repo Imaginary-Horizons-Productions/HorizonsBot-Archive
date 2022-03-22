@@ -597,7 +597,7 @@ exports.scheduleClubEvent = function (club, guild) {
 			if (club && club.userIDs.length < club.seats) {
 				exports.createClubEvent(club, timeoutGuild);
 			}
-		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.channelId, guild)
+		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.channelID, guild);
 		exports.eventTimeouts[club.voiceChannelID] = timeout;
 	}
 }
