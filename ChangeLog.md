@@ -4,6 +4,7 @@
 - Fixed a crash on generating club reminders
 - Club timestamps now include day of the week
 - Set `/club-next-meeting` and `/club-set-repeat` to require a club leader or moderator
+- Other stuff
 
 #### HorizonsBot Version 1.16.2:
 - Fixed crash in scheduling club events
