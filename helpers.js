@@ -509,7 +509,7 @@ exports.clubInviteBuilder = function (club, includeJoinButton) {
 		embed.addField("Game", club.system);
 	}
 	if (club.timeslot.nextMeeting) {
-		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}>${club.timeslot.periodCount === 0 ? "" : ` repeats every ${club.timeslot.periodCount} ${club.timeslot.periodUnits === "w" ? "week(s)" : "day(s)"}`}`);
+		embed.addField("Next Meeting", `<t:${club.timeslot.nextMeeting}:F>${club.timeslot.periodCount === 0 ? "" : ` repeats every ${club.timeslot.periodCount} ${club.timeslot.periodUnits === "w" ? "week(s)" : "day(s)"}`}`);
 	}
 	if (club.color) {
 		embed.setColor(club.color);
@@ -594,10 +594,10 @@ exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = exports.getClubs()[clubId];
-			if (club?.userIDs.length < club.seats) {
+			if (club && club.userIDs.length < club.seats) {
 				exports.createClubEvent(club, timeoutGuild);
 			}
-		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.id, guild)
+		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.channelID, guild);
 		exports.eventTimeouts[club.voiceChannelID] = timeout;
 	}
 }
@@ -614,20 +614,20 @@ exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
 
 exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
-		let eventURL;
+		let invite;
 		if (club.timeslot.eventId) {
-			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).createInviteURL();
+			invite = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite();
 		}
 		let msToReminder = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - Date.now();
-		let timeout = setTimeout((timeoutClub, timeoutEventURL, timeoutChannelManager) => {
-			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => { // Interested button not available for events in private channels
+		let timeout = setTimeout((timeoutClub, timeoutInviteURL, timeoutChannelManager) => {
+			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => {
 				let components = [];
-				if (timeoutEventURL) {
+				if (timeoutInviteURL) {
 					components.push(new MessageActionRow().addComponents(
 						new MessageButton()
 							.setLabel("Join Voice")
 							.setStyle("LINK")
-							.setURL(timeoutEventURL)
+							.setURL(timeoutInviteURL)
 					))
 				}
 				textChannel.send({
@@ -638,13 +638,13 @@ exports.setClubReminder = async function (club, channelManager) {
 			if (timeoutClub.timeslot.periodCount) {
 				let timeGap = exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
 				timeoutClub.timeslot.nextMeeting = timeoutClub.timeslot.nextMeeting + timeGap;
-				exports.scheduleClubEvent(timeoutClub, timeoutChannelManager.guild);
+				exports.scheduleClubEvent(timeoutClub, timeoutChannelManager.guild); //TODO #228 recreating events might be failing here
 				exports.setClubReminder(timeoutClub, timeoutChannelManager);
 			} else {
 				timeoutClub.timeslot.eventId = "";
 				exports.updateClub(club, timeoutChannelManager);
 			}
-		}, msToReminder, club, eventURL, channelManager);
+		}, msToReminder, club, invite?.url, channelManager);
 		exports.reminderTimeouts[club.channelID] = timeout;
 		exports.updateClub(club, channelManager);
 	}
@@ -683,7 +683,7 @@ exports.saveObject = function (object, fileName) {
 	})
 }
 
-exports.versionEmbedBuilder = function (avatarURL) {
+exports.versionEmbedBuilder = function () {
 	return fs.promises.readFile('./ChangeLog.md', { encoding: 'utf8' }).then(data => {
 		const dividerRegEx = /####/g;
 		const changesStartRegEx = /\.\d+:/g;
@@ -711,6 +711,6 @@ exports.versionEmbedBuilder = function (avatarURL) {
 			embed.setDescription(data.slice(changesStartRegEx.lastIndex, knownIssuesEnd));
 		}
 
-		return embed.addField(`Become a Sponsor`, `Chip in for server costs or commission your own bot by sponsoring [HorizonsBot on GitHub](https://github.com/Imaginary-Horizons-Productions/HorizonsBot)`);
+		return embed.addField("Other Discord Bots", "Check out other Imaginary Horizons Productions bots or commission your own on the [IHP GitHub](https://github.com/Imaginary-Horizons-Productions)");
 	})
 }

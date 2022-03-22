@@ -18,7 +18,7 @@ module.exports.execute = (interaction, [timestamp]) => {
 		updateClubDetails(club, interaction.channel);
 		updateClub(club, interaction.guild.channels);
 		interaction.update({ components: [] });
-		interaction.channel.send(`This club's next meeting has been set as <t:${timestamp}>.`);
+		interaction.channel.send(`This club's next meeting has been set as <t:${timestamp}:F>.`);
 	} else {
 		interaction.reply({ content: "Please set club meeting times from the club channel.", ephemeral: true });
 	}
