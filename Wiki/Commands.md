@@ -51,7 +51,7 @@ To get a message's id, enable developer mode (User Settings > Appearance > Devel
 ### /embed-create
 (moderator) Make a new MessageEmbed, configurable with other commands
 ### /embed-abandon
-(moderator) Stop managing the given embed(s)
+(moderator) Stop managing the given embed
 #### message-id
 The id of the embed's message
 ### /embed-set-author
@@ -175,7 +175,7 @@ The maximum number of members for the club
 #### color (optional)
 The color of the details embed
 ### /club-next-meeting
-Set the club's next meeting
+(club leader or morderator) Set the club's next meeting
 #### days-from-now (optional)
 86400 seconds
 #### hours-from-now (optional)
@@ -183,7 +183,7 @@ Set the club's next meeting
 #### minutes-from-now (optional)
 60 seconds
 ### /club-set-repeat
-Set how frequently to send reminders about club meetings
+(club leader or morderator) Set how frequently to send club meeting reminders
 #### count
 The units of time between meetings
 #### time-unit
