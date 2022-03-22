@@ -594,10 +594,10 @@ exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = exports.getClubs()[clubId];
-			if (club?.userIDs.length < club.seats) {
+			if (club && club.userIDs.length < club.seats) {
 				exports.createClubEvent(club, timeoutGuild);
 			}
-		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.id, guild)
+		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.channelId, guild)
 		exports.eventTimeouts[club.voiceChannelID] = timeout;
 	}
 }
@@ -614,20 +614,20 @@ exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
 
 exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
-		let eventURL;
+		let invite;
 		if (club.timeslot.eventId) {
-			eventURL = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite();
+			invite = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite();
 		}
 		let msToReminder = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - Date.now();
-		let timeout = setTimeout((timeoutClub, timeoutEventURL, timeoutChannelManager) => {
+		let timeout = setTimeout((timeoutClub, timeoutInviteURL, timeoutChannelManager) => {
 			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => {
 				let components = [];
-				if (timeoutEventURL) {
+				if (timeoutInviteURL) {
 					components.push(new MessageActionRow().addComponents(
 						new MessageButton()
 							.setLabel("Join Voice")
 							.setStyle("LINK")
-							.setURL(timeoutEventURL)
+							.setURL(timeoutInviteURL)
 					))
 				}
 				textChannel.send({
@@ -644,7 +644,7 @@ exports.setClubReminder = async function (club, channelManager) {
 				timeoutClub.timeslot.eventId = "";
 				exports.updateClub(club, timeoutChannelManager);
 			}
-		}, msToReminder, club, eventURL, channelManager);
+		}, msToReminder, club, invite?.url, channelManager);
 		exports.reminderTimeouts[club.channelID] = timeout;
 		exports.updateClub(club, channelManager);
 	}
