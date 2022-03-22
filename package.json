@@ -9,7 +9,7 @@
     "discord.js": "^13.6.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node upload_commands.js && node bot.js"
   },
   "repository": {
     "type": "git",
