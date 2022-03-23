@@ -203,11 +203,11 @@ The user's mention
 ## Moderation Commands
 Commands for moderators.
 ### /mod-promote
-(moderator) Add a Moderator to HorizonsBot's list and give them the role
+(moderator) Add a user to the moderator list
 #### promotee
 The user's mention
 ### /mod-demote
-(moderator) Remove a Moderator from HorizonsBot's list and remove the role
+(moderator) Remove a user from the moderator list
 #### demotee
 The user's mention
 ### /pin-list
