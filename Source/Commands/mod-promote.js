@@ -3,7 +3,7 @@ const Command = require('../../Classes/Command.js');
 let options = [
 	{ type: "User", name: "promotee", description: "The user's mention", required: true, choices: {} },
 ];
-module.exports = new Command("mod-promote", "(moderator) Add a Moderator to HorizonsBot's list and give them the role", options);
+module.exports = new Command("mod-promote", "(moderator) Add a user to the moderator list", options);
 
 let modRoleId, isModerator, addModerator;
 module.exports.initialize = function (helpers) {
