@@ -1,9 +1,10 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "User", name: "user", description: "The user's mention", required: true, choices: {} }
 ];
-module.exports = new Command("no-ats", "Toggles whether a user can use /at-channel", options);
+const subcomands = [];
+module.exports = new Command("no-ats", "Toggles whether a user can use /at-channel", options, subcomands);
 
 let isModerator, noAts, saveModData;
 module.exports.initialize = function (helpers) {

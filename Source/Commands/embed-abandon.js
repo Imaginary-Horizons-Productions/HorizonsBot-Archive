@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} }];
-module.exports = new Command("embed-abandon", "(moderator) Stop managing the given embed", options);
+const options = [{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} }];
+const subcomands = [];
+module.exports = new Command("embed-abandon", "(moderator) Stop managing the given embed", options, subcomands);
 
 let customEmbeds, isModerator, saveObject;
 module.exports.initialize = function (helpers) {

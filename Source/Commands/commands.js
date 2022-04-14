@@ -1,8 +1,9 @@
 const fs = require("fs");
 const Command = require('../../Classes/Command.js');
 
-let options = [];
-module.exports = new Command("commands", "List HorizonsBot's commands", options);
+const options = [];
+const subcommands = [];
+module.exports = new Command("commands", "List HorizonsBot's commands", options, subcommands);
 
 let embedTemplateBuilder, wikiPage;
 module.exports.initialize = function (helpers) {

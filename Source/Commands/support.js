@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [];
-module.exports = new Command("support", "Show ways to support Imaginary Horizons", options);
+const options = [];
+const subcomands = [];
+module.exports = new Command("support", "Show ways to support Imaginary Horizons", options, subcomands);
 
 let embedTemplateBuilder;
 module.exports.initialize = function (helpers) {

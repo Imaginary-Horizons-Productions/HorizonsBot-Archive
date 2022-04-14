@@ -2,8 +2,9 @@ const Command = require('../../Classes/Command.js');
 const Club = require('../../Classes/Club.js');
 const { clubInstructionsText } = require('./club-instructions.js');
 
-let options = [{ type: "User", name: "club-leader", description: "The user's mention", required: true, choices: {} }]
-module.exports = new Command("club-add", "(moderator) Set up a club (a text and voice channel)", options);
+const options = [{ type: "User", name: "club-leader", description: "The user's mention", required: true, choices: {} }]
+const subcommands = [];
+module.exports = new Command("club-add", "(moderator) Set up a club (a text and voice channel)", options, subcommands);
 
 let isModerator, modRoleId, updateClub, clubInviteBuilder;
 module.exports.initialize = function (helpers) {

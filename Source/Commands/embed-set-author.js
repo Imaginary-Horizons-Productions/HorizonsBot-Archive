@@ -1,12 +1,13 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
 	{ type: "String", name: "text", description: "The text to put in the author field", required: true, choices: {} },
 	{ type: "String", name: "icon-url", description: "The image url for the author icon", required: false, choices: {} },
 	{ type: "String", name: "url", description: "Where clicking the author takes the user", required: false, choices: {} }
 ];
-module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author", options);
+const subcomands = [];
+module.exports = new Command("embed-set-author", "(moderator) Assign a custom embed's author", options, subcomands);
 
 let customEmbeds, isModerator;
 module.exports.initialize = function(helpers) {

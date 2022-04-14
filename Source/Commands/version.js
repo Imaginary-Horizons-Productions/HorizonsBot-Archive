@@ -1,9 +1,10 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "Boolean", name: "full-notes", description: "Get the file with the full version notes?", required: true, choices: {} }
 ];
-module.exports = new Command("version", "Get HorizonsBot's version notes", options);
+const subcomands = [];
+module.exports = new Command("version", "Get HorizonsBot's version notes", options, subcomands);
 
 let versionEmbedBuilder;
 module.exports.initialize = function (helpers) {

@@ -1,9 +1,10 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "topic-name", description: "The new topic", required: true, choices: {} },
 ];
-module.exports = new Command("topic-add", "(moderator) Set up a topic", options);
+const subcomands = [];
+module.exports = new Command("topic-add", "(moderator) Set up a topic", options, subcomands);
 
 let isModerator, addTopicChannel;
 module.exports.initialize = function (helpers) {
