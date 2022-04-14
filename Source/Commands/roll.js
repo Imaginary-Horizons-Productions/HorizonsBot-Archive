@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const { getRollString } = require('../../Helper Modules/RollEngine.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "dice", description: "The dice to roll in #d# format", required: true, choices: {} },
 	{
 		type: "String", name: "display", description: "Choose output display option", required: false, choices: {
@@ -13,7 +13,8 @@ let options = [
 	},
 	{ type: "String", name: "label", description: "Text after the roll", required: false, choices: {} },
 ];
-module.exports = new Command("roll", "Roll any number of dice with any number of sides", options);
+const subcomands = [];
+module.exports = new Command("roll", "Roll any number of dice with any number of sides", options, subcomands);
 
 // internal imports here
 module.exports.initialize = function (helpers) {

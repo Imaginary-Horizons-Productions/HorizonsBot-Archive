@@ -1,4 +1,7 @@
 # HorizonsBot Change Log
+#### HorizonsBot Version 1.17.0:
+- Combined several commands via subcommands
+
 #### HorizonsBot Version 1.16.3:
 - Fixed "Join Voice" button in club reminders
 - Fixed a crash on generating club reminders

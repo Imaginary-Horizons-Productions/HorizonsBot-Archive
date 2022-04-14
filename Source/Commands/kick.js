@@ -1,10 +1,11 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "User", name: "target", description: "The user's mention", required: true, choices: {} },
 	{ type: "Boolean", name: "ban", description: "Prevent the user from rejoining?", required: false, choices: {} }
 ];
-module.exports = new Command("kick", "(moderator) Remove a user from a topic or club", options);
+const subcomands = [];
+module.exports = new Command("kick", "(moderator) Remove a user from a topic or club", options, subcomands);
 
 let isModerator, getManagedChannels, getClubs, updateClub;
 module.exports.initialize = function (helpers) {

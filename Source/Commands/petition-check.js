@@ -1,9 +1,10 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "topic", description: "The petition to check", required: true, choices: {} },
 ];
-module.exports = new Command("petition-check", "(moderator) Check if a petition has passed in case of desync", options);
+const subcomands = [];
+module.exports = new Command("petition-check", "(moderator) Check if a petition has passed in case of desync", options, subcomands);
 
 let isModerator, checkPetition;
 module.exports.initialize = function (helpers) {

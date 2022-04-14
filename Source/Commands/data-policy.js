@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [];
-module.exports = new Command("data-policy", "Show what user data HorizonsBot collects and how it's used", options);
+const options = [];
+const subcomands = [];
+module.exports = new Command("data-policy", "Show what user data HorizonsBot collects and how it's used", options, subcomands);
 
 let embedTemplateBuilder;
 module.exports.initialize = function (helpers) {

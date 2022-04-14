@@ -1,12 +1,13 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "Number", name: "days-from-now", description: "86400 seconds", required: false, choices: {} },
 	{ type: "Number", name: "hours-from-now", description: "3600 seconds", required: false, choices: {} },
 	{ type: "Number", name: "minutes-from-now", description: "60 seconds", required: false, choices: {} }
 ];
-module.exports = new Command("club-next-meeting", "(club leader or morderator) Set the club's next meeting", options);
+const subcommands = [];
+module.exports = new Command("club-next-meeting", "(club leader or morderator) Set the club's next meeting", options, subcommands);
 
 let getClubs, isModerator, timeConversion;
 module.exports.initialize = function (helpers) {

@@ -1,10 +1,11 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
 	{ type: "String", name: "color", description: "Use hexcode format", required: true, choices: {} }
 ];
-module.exports = new Command("embed-set-color", "(moderator) Assign a custom embed's color", options);
+const subcomands = [];
+module.exports = new Command("embed-set-color", "(moderator) Assign a custom embed's color", options, subcomands);
 
 let customEmbeds, isModerator;
 module.exports.initialize = function (helpers) {

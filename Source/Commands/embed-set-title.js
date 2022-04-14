@@ -1,10 +1,11 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: {} },
 	{ type: "String", name: "title", description: "The title text", required: true, choices: {} }
 ];
-module.exports = new Command("embed-set-title", "(moderator) Set a custom embed's title", options);
+const subcomands = [];
+module.exports = new Command("embed-set-title", "(moderator) Set a custom embed's title", options, subcomands);
 
 let customEmbeds, isModerator;
 module.exports.initialize = function (helpers) {

@@ -1,8 +1,9 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
 
-let options = [];
-module.exports = new Command("leave", "Leave a topic or club", options);
+const options = [];
+const subcomands = [];
+module.exports = new Command("leave", "Leave a topic or club", options, subcomands);
 
 let getManagedChannels, getClubs, updateClub;
 module.exports.initialize = function (helpers) {

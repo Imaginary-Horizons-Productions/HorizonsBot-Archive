@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [{ type: "String", name: "url", description: "The image's url ", required: false, choices: {} }];
-module.exports = new Command("club-set-image", "(club leader or moderator) Set or clear a club's image url", options);
+const options = [{ type: "String", name: "url", description: "The image's url ", required: false, choices: {} }];
+const subcommands = [];
+module.exports = new Command("club-set-image", "(club leader or moderator) Set or clear a club's image url", options, subcommands);
 
 let isModerator, getClubs, updateClub, updateClubDetails;
 module.exports.initialize = function (helpers) {

@@ -1,9 +1,10 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [
+const options = [
 	{ type: "String", name: "topic-name", description: "Make sure the topic doesn't already exist", required: true, choices: {} }
 ];
-module.exports = new Command("petition", "Petition for a topic", options);
+const subcomands = [];
+module.exports = new Command("petition", "Petition for a topic", options, subcomands);
 
 let joinChannel, getTopicNames, findTopicID, checkPetition;
 module.exports.initialize = function (helpers) {

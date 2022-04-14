@@ -1,7 +1,8 @@
 const Command = require('../../Classes/Command.js');
 
-let options = [];
-module.exports = new Command("", "", options); // (name, description)
+const options = [];
+const subcommands = [];
+module.exports = new Command("name", "description", options, subcommands);
 
 // internal imports go here
 module.exports.initialize = function (helpers) {
