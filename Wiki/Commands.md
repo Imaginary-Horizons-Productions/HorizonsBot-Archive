@@ -202,14 +202,12 @@ The image's url
 The user's mention
 ## Moderation Commands
 Commands for moderators.
-### /mod-promote
-(moderator) Add a user to the moderator list
-#### promotee
-The user's mention
-### /mod-demote
-(moderator) Remove a user from the moderator list
-#### demotee
-The user's mention
+### /manage-mods
+(moderator) Promote/demote a user to moderator
+#### promote (optional)
+Add a user to the moderator list
+#### demote (optional)
+Remove a user from the moderator list
 ### /pin-list
 (moderator) Pin the topics or clubs list message in this channel
 #### list-type
