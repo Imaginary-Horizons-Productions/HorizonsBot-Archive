@@ -4,14 +4,14 @@ const options = [];
 const subcomands = [
 	{
 		name: "promote",
-		description: "Add a user to the moderator list",
+		description: "(moderator) Add a user to the moderator list",
 		optionsInput: [
 			{ type: "User", name: "promotee", description: "The user's mention", required: true, choices: {} },
 		]
 	},
 	{
 		name: "demote",
-		description: "Remove a user from the moderator list",
+		description: "(moderator) Remove a user from the moderator list",
 		optionsInput: [
 			{ type: "User", name: "demotee", description: "The user's mention", required: true, choices: {} }
 		]

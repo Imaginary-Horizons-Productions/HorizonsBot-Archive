@@ -5,7 +5,7 @@ exports.commandSets = [
 	new CommandSet("HorizonsBot Commands", "The general use commands. Required permissions are listed in (parenthesis) at the beginning of the description.",
 		['about.js', 'commands.js', 'support.js', 'data-policy.js', "list.js", "join.js", "leave.js", "roll.js", "timestamp.js", "at-channel.js", "version.js"]),
 	new CommandSet("Custom Message Embeds", "To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select \"Copy ID\".",
-		['embed-create.js', 'embed-abandon.js', 'embed-set-author.js', 'embed-set-title.js', 'embed-set-url.js', 'embed-set-color.js', 'embed-set-description.js', 'embed-set-thumbnail.js', 'embed-add-field.js', 'embed-splice-fields.js', 'embed-set-image.js', "embed-set-message.js"]),
+		['embed-create.js', 'embed-abandon.js', 'embed-edit.js']),
 	new CommandSet("Topic Commands", "Commands for managing topics.",
 		["petition.js", "topic-invite.js", "topic-add.js", "petition-check.js", "petition-veto.js"]),
 	new CommandSet("Club Commands", "Commands for managing clubs.",
