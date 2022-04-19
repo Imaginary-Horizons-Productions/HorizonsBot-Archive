@@ -1,7 +1,13 @@
 const fs = require('fs');
-const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton } = require('discord.js');
+const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, TextChannel } = require('discord.js');
 exports.guildId = require('./Config/_env.json').guildId;
 
+/** Convert an amount of time from a starting unit to a different one
+ * @param {number} value
+ * @param {string} startingUnit enumeration: "w", "d", "h", "m", "s", "ms"
+ * @param {string} resultUnit enumeration: "w", "d", "h", "m", "s", "ms"
+ * @returns {number} result
+ */
 exports.timeConversion = function (value, startingUnit, resultUnit) {
 	let unknownUnits = [];
 	let msPerStartUnit = 1;
@@ -51,22 +57,34 @@ exports.timeConversion = function (value, startingUnit, resultUnit) {
 //#region moderation
 let moderatorIds = require('./Config/modData.json').modIds; // [userId]
 
+/** Save the modData object to file
+ */
 exports.saveModData = function () {
 	let noAts = exports.noAts;
 	exports.saveObject({ modIds: moderatorIds, noAts }, "modData.json");
 }
 
+/** Determines if the id belongs to a moderator
+ * @param {string} id
+ * @returns {boolean}
+ */
 exports.isModerator = function (id) {
 	return moderatorIds.includes(id);
 }
 
+/** Add a user's id to the list of moderator ids
+ * @param {string} id
+ */
 exports.addModerator = function (id) {
 	moderatorIds.push(id);
 	exports.saveModData();
 }
 
-exports.removeModerator = function (removedID) {
-	moderatorIds = moderatorIds.filter(id => id != removedID);
+/** Remove a user's id from the list of moderator ids
+ * @param {string} removedId
+ */
+exports.removeModerator = function (removedId) {
+	moderatorIds = moderatorIds.filter(id => id != removedId);
 	exports.saveModData();
 }
 
@@ -86,52 +104,84 @@ exports.listMessages = require('./Config/listMessageIDs.json');
 // Collection <channelID, channelName>
 let topics = new Collection();
 
+/** Get the array of topic channel ids
+ * @returns {string[]}
+ */
 exports.getTopicIDs = function () {
 	return Array.from(topics.keys());
 }
 
+/** Get the array of topic channel names
+ * @returns {string[]}
+ */
 exports.getTopicNames = function () {
 	return Array.from(topics.values());
 }
 
+/** Get the id of a topic channel with the given name
+ * @param {string} channelName
+ * @returns {string}
+ */
 exports.findTopicID = function (channelName) {
 	return topics.findKey(checkedName => checkedName === channelName);
 }
 
+/** Add a new entry to the topic map
+ * @param {string} id
+ * @param {string} channelName
+ */
 exports.addTopic = function (id, channelName) {
 	topics.set(id, channelName);
 }
 
+/** Clean up internal state to keep in sync with removing a topic channel
+ * @param {TextChannel} channel
+ */
 exports.removeTopic = function (channel) {
 	topics.delete(channel.id);
 	exports.saveObject(exports.getTopicIDs(), 'topicList.json');
 	exports.updateList(channel.guild.channels, "topics");
 }
 
-// {name: [petitioner IDs]}
 let petitions = require('./Config/petitionList.json');
+/** Get the dictionary relating topic petitions to their arrays of petitioner ids
+ * @returns {object} {name: [petitioner IDs]}
+ */
 exports.getPetitions = function () {
 	return petitions;
 }
 
+/** Add a petition to the petition list and update the topic list embed
+ * @param {string} petitionListInput
+ * @param {GuildChannelManager} channelManager
+ */
 exports.setPetitions = function (petitionListInput, channelManager) {
 	petitions = petitionListInput;
 	exports.saveObject(petitions, 'petitionList.json');
 	exports.updateList(channelManager, "topics");
 }
 
-// {textChannelID: Club}
 let clubs = require('./Config/clubList.json');
+/** Get the dictionary relating club text channel id to club class instances
+ * @returns {object} { textChannelID: Club }
+ */
 exports.getClubs = function () {
 	return clubs;
 }
 
+/** Update a club's details in the internal dictionary and in the club list embed
+ * @param {Club} club
+ * @param {guildChannelManager} channelManager
+ */
 exports.updateClub = function (club, channelManager) {
 	clubs[club.channelID] = club;
 	exports.updateList(channelManager, "clubs");
 	exports.saveObject(clubs, 'clubList.json');
 }
 
+/** Clean up club information after deletion
+ * @param {string} id
+ */
 exports.removeClub = function (id) {
 	delete clubs[id];
 	exports.saveObject(clubs, 'clubList.json');
@@ -144,6 +194,10 @@ exports.reminderTimeouts = {};
 exports.eventTimeouts = {};
 
 // Functions
+/** Create a Message Embed with common settings (author, timestamp, color)
+ * @param {string} color
+ * @returns {MessageEmbed}
+ */
 exports.embedTemplateBuilder = function (color = "#6b81eb") {
 	return new MessageEmbed().setColor(color)
 		.setAuthor({
@@ -154,10 +208,18 @@ exports.embedTemplateBuilder = function (color = "#6b81eb") {
 		.setTimestamp();
 }
 
+/** Get the array of all club and topic text channel ids
+ * @returns {string[]}
+ */
 exports.getManagedChannels = function () {
 	return exports.getTopicIDs().concat(Object.keys(exports.getClubs()));
 }
 
+/** Update the club or topics list message
+ * @param {GuildChannelManager} channelManager
+ * @param {string} listType enumeration: "topics", "clubs"
+ * @returns {Promise<Message>}
+ */
 exports.updateList = function (channelManager, listType) {
 	let messageData = exports.listMessages[listType];
 	if (messageData) {
@@ -176,6 +238,10 @@ exports.updateList = function (channelManager, listType) {
 	}
 }
 
+/** Create the MessageActionRow containing the selects for joining clubs/topics and adding to petitions
+ * @param {string} listType enumeration: "topics" or "clubs"
+ * @returns {MessageActionRow}
+ */
 function listSelectBuilder(listType) {
 	var selectCutomId = "";
 	var placeholderText = "";
@@ -246,6 +312,10 @@ function listSelectBuilder(listType) {
 	);
 }
 
+/** Create the MessageOptions for the topic list message
+ * @param {GuildChannelManager} channelManager
+ * @returns {Promise<MessageOptions>}
+ */
 exports.topicListBuilder = function (channelManager) {
 	var messageOptions = {};
 
@@ -310,6 +380,10 @@ exports.topicListBuilder = function (channelManager) {
 	}
 }
 
+/** Pin the topics list message
+ * @param {GuildChannelManager} channelManager
+ * @param {TextChannel} channel
+ */
 exports.pinTopicsList = function (channelManager, channel) {
 	exports.topicListBuilder(channelManager).then(messageOptions => {
 		channel.send(messageOptions).then(message => {
@@ -323,6 +397,9 @@ exports.pinTopicsList = function (channelManager, channel) {
 	}).catch(console.error);
 }
 
+/** Create the MessageOptions for the club list message
+ * @returns {Promise<MessageOptions>}
+ */
 exports.clubListBuilder = function () {
 	var messageOptions = {};
 
@@ -372,6 +449,10 @@ exports.clubListBuilder = function () {
 	}
 }
 
+/** Pin the club list message
+ * @param {GuildChannelManager} channelManager
+ * @param {TextChannel} channel
+ */
 exports.pinClubsList = function (channelManager, channel) {
 	exports.clubListBuilder(channelManager).then(messageOptions => {
 		channel.send(messageOptions).then(message => {
@@ -385,6 +466,12 @@ exports.pinClubsList = function (channelManager, channel) {
 	}).catch(console.error);
 }
 
+/** Create a topic channel for a petition if it has enough ids
+ * @param {Guild} guild
+ * @param {string} topicName
+ * @param {User} author
+ * @returns {void}
+ */
 exports.checkPetition = function (guild, topicName, author = null) {
 	let petitions = exports.getPetitions();
 	if (!petitions[topicName]) {
@@ -407,6 +494,11 @@ exports.checkPetition = function (guild, topicName, author = null) {
 	exports.updateList(guild.channels, "topics");
 }
 
+/** Create a topic channel
+ * @param {Guild} guild
+ * @param {string} topicName
+ * @returns {Promise<TextChannel>}
+ */
 exports.addTopicChannel = function (guild, topicName) {
 	return guild.channels.create(topicName, {
 		parent: "581886288102424592",
@@ -456,6 +548,10 @@ exports.addTopicChannel = function (guild, topicName) {
 	}).catch(console.error);
 }
 
+/** Add the user to the topic/club channel (syncing internal tracking and permissions)
+ * @param {TextChannel} channel
+ * @param {User} user
+ */
 exports.joinChannel = function (channel, user) {
 	if (!user.bot) {
 		let channelID = channel.id;
@@ -498,6 +594,11 @@ exports.joinChannel = function (channel, user) {
 	}
 }
 
+/** Generate the invite MessageEmbed
+ * @param {Club} club
+ * @param {boolean} includeJoinButton
+ * @returns {MessageEmbed}
+ */
 exports.clubInviteBuilder = function (club, includeJoinButton) {
 	// Generate Embed
 	let embed = exports.embedTemplateBuilder()
@@ -528,6 +629,11 @@ exports.clubInviteBuilder = function (club, includeJoinButton) {
 	return { embed, uiComponents };
 }
 
+/** Send the recipient an invitation to the club
+ * @param {Interaction} interaction
+ * @param {string} clubId
+ * @param {User} recipient
+ */
 exports.clubInvite = function (interaction, clubId, recipient) {
 	let club = exports.getClubs()[clubId];
 	if (club) {
@@ -551,6 +657,10 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 	}
 }
 
+/** Update a club's details embed in the club text channel
+ * @param {Club} club
+ * @param {TextChannel} channel
+ */
 exports.updateClubDetails = (club, channel) => {
 	channel.messages.fetch(club.detailSummaryId).then(message => {
 		let { embed, uiComponents } = exports.clubInviteBuilder(club, false);
@@ -574,7 +684,11 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-exports.createClubEvent = function (club, guild) {
+/** Create a scheduled event for a club's next meeting if the club is recruiting
+ * @param {Club} club
+ * @param {Guild} guild
+ */
+ exports.createClubEvent = function (club, guild) {
 	guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
 		return guild.scheduledEvents.create({
 			name: club.title,
@@ -590,7 +704,11 @@ exports.createClubEvent = function (club, guild) {
 	});
 }
 
-exports.scheduleClubEvent = function (club, guild) {
+/** Create a timeout to create a scheduled event for a club after the current event passes
+ * @param {Club} club
+ * @param {Guild} guild
+ */
+ exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = exports.getClubs()[clubId];
@@ -602,6 +720,11 @@ exports.scheduleClubEvent = function (club, guild) {
 	}
 }
 
+/** Delete the scheduled event associated with a club's next meeting
+ * @param {string} voiceChannelId
+ * @param {string} eventId
+ * @param {GuildScheduledEventManager} eventManager
+ */
 exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
 	if (eventId) {
 		eventManager.delete(eventId);
@@ -612,6 +735,10 @@ exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
 	}
 }
 
+/** Set a timeout to send a reminder message to the given club a day before its next meeting
+ * @param {Club} club
+ * @param {ChannelManager} channelManager
+ */
 exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
 		let invite;
@@ -650,6 +777,9 @@ exports.setClubReminder = async function (club, channelManager) {
 	}
 }
 
+/** Clears the timeout for an upcoming club meeting reminder message
+ * @param {string} channelId
+ */
 exports.clearClubReminder = async function (channelId) {
 	if (exports.reminderTimeouts[channelId]) {
 		clearTimeout(exports.reminderTimeouts[channelId]);
@@ -657,23 +787,27 @@ exports.clearClubReminder = async function (channelId) {
 	}
 }
 
-exports.saveObject = function (object, fileName) {
+/** Stringify an entity to JSON then save it at `.\Config\${fileName}`
+ * @param {*} entity
+ * @param {string} fileName
+ */
+exports.saveObject = function (entity, fileName) {
 	var filePath = `./`;
 	filePath += 'Config/' + fileName;
 	if (!fs.existsSync('./Config')) {
 		fs.mkdirSync('./Config');
 	}
 	let textToSave = '';
-	if (object instanceof Collection) {
+	if (entity instanceof Collection) {
 		textToSave = [];
-		Array.from(object.values).forEach(value => {
-			textToSave.push([object.findKey(checkedValue => checkedValue === value), value]);
+		Array.from(entity.values).forEach(value => {
+			textToSave.push([entity.findKey(checkedValue => checkedValue === value), value]);
 		})
 		textToSave = JSON.stringify(textToSave);
-	} else if (typeof object == 'object' || typeof object == 'number') {
-		textToSave = JSON.stringify(object);
+	} else if (typeof entity == 'object' || typeof entity == 'number') {
+		textToSave = JSON.stringify(entity);
 	} else {
-		textToSave = object;
+		textToSave = entity;
 	}
 
 	fs.writeFile(filePath, textToSave, 'utf8', (error) => {
@@ -683,6 +817,9 @@ exports.saveObject = function (object, fileName) {
 	})
 }
 
+/** The version embed should contain the last version's changes, known issues, and project links
+ * @returns {MessageEmbed}
+ */
 exports.versionEmbedBuilder = function () {
 	return fs.promises.readFile('./ChangeLog.md', { encoding: 'utf8' }).then(data => {
 		const dividerRegEx = /####/g;
