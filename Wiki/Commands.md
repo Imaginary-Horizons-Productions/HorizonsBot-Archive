@@ -54,76 +54,28 @@ To get a message's id, enable developer mode (User Settings > Appearance > Devel
 (moderator) Stop managing the given embed
 #### message-id
 The id of the embed's message
-### /embed-set-author
+### /embed-edit
+(moderator) Edit an existing embed
+#### add-field (optional)
+(moderator) Add a field to the embed
+#### author (optional)
 (moderator) Assign a custom embed's author
-#### message-id
-The id of the embed's message
-#### text
-The text to put in the author field
-#### icon-url (optional)
-The image url for the author icon
-#### url (optional)
-Where clicking the author takes the user
-### /embed-set-title
-(moderator) Set a custom embed's title
-#### message-id
-The id of the embed's message
-#### title
-The title text
-### /embed-set-url
-(moderator) Set a custom embed's title url
-#### message-id
-The id of the embed's message
-#### url
-Where clicking the title takes the user
-### /embed-set-color
+#### color (optional)
 (moderator) Assign a custom embed's color
-#### message-id
-The id of the embed's message
-#### color
-Use hexcode format
-### /embed-set-description
+#### description (optional)
 (moderator) Assign a custom embed's description
-#### message-id
-The id of the embed's message
-#### text
-The description text
-### /embed-set-thumbnail
-(moderator) Set a custom embed's thumbnail
-#### message-id
-The id of the embed's message
-#### url
-The picture url for the thumbnail
-### /embed-add-field
-(moderator) Add a custom embed field
-#### message-id
-The id of the embed's message
-#### header
-The header text
-#### text
-The body text
-#### inline (optional)
-Whether to show the field in-line with previous embed fields
-### /embed-splice-fields
-(moderator) Remove fields from a custom embed (replace unsupported)
-#### message-id
-The id of the embed's message
-#### index
-The field number to start removing from (count starts from 0)
-#### count
-The number of fields to remove
-### /embed-set-image
+#### image (optional)
 (moderator) Set an custom embed's image
-#### message-id
-The id of the embed's message
-#### url
-The picture url for the image field
-### /embed-set-message
+#### message (optional)
 (moderator) Set a custom embed's message content
-#### message-id
-The id of the embed's message
-#### text
-The text to put in the message (above the embed)
+#### thumbnail (optional)
+(moderator) Set a custom embed's thumbnail
+#### title (optional)
+(moderator) Set a custom embed's title
+#### url (optional)
+(moderator) Set a custom embed's title url
+#### splice-fields (optional)
+(moderator) Remove fields from a custom embed (replace unsupported)
 ## Topic Commands
 Commands for managing topics.
 ### /petition
@@ -205,9 +157,9 @@ Commands for moderators.
 ### /manage-mods
 (moderator) Promote/demote a user to moderator
 #### promote (optional)
-Add a user to the moderator list
+(moderator) Add a user to the moderator list
 #### demote (optional)
-Remove a user from the moderator list
+(moderator) Remove a user from the moderator list
 ### /pin-list
 (moderator) Pin the topics or clubs list message in this channel
 #### list-type
