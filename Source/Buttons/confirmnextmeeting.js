@@ -8,7 +8,7 @@ module.exports.execute = (interaction, [timestamp]) => {
 	let club = getClubs()[interaction.channelId];
 	if (club) {
 		club.timeslot.nextMeeting = Number(timestamp);
-		clearClubReminder(club.id);
+		clearClubReminder(club.channelID);
 		cancelClubEvent(club.voiceChannelID, club.timeslot.eventId, interaction.guild.scheduledEvents);
 		setClubReminder(club, interaction.guild.channels);
 		createClubEvent(club, interaction.guild);

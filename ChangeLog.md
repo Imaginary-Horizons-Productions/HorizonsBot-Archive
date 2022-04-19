@@ -1,6 +1,7 @@
 # HorizonsBot Change Log
 #### HorizonsBot Version 1.17.0:
-- Combined several commands via subcommands
+- Reorganized several manager commands via subcommands
+- Fixed an issue where club reminders weren't getting cleared if meeting times changed
 
 #### HorizonsBot Version 1.16.3:
 - Fixed "Join Voice" button in club reminders
