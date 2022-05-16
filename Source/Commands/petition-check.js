@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "String", name: "topic", description: "The petition to check", required: true, choices: {} },
+	{ type: "String", name: "topic", description: "The petition to check", required: true, choices: [] },
 ];
 const subcomands = [];
 module.exports = new Command("petition-check", "(moderator) Check if a petition has passed in case of desync", options, subcomands);

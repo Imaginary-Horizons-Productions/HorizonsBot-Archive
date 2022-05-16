@@ -2,7 +2,7 @@ const Command = require('../../Classes/Command.js');
 
 const options = [
 	// can't use channel mention because users can't mention channels that are invisible to them (even by constructing the mention manually)
-	{ type: "String", name: "channel", description: "The name/id of the topic or club to join", required: true, choices: {} },
+	{ type: "String", name: "channel", description: "The name/id of the topic or club to join", required: true, choices: [] },
 ];
 const subcomands = [];
 module.exports = new Command("join", "Join a topic or club", options, subcomands);

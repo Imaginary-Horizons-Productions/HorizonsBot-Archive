@@ -2,13 +2,13 @@ const Command = require('../../Classes/Command.js');
 const Club = require('../../Classes/Club.js');
 const { clubInstructionsText } = require('./club-instructions.js');
 
-const options = [{ type: "User", name: "club-leader", description: "The user's mention", required: true, choices: {} }]
+const options = [{ type: "User", name: "club-leader", description: "The user's mention", required: true, choices: [] }]
 const subcommands = [];
 module.exports = new Command("club-add", "(moderator) Set up a club (a text and voice channel)", options, subcommands);
 
-let isModerator, modRoleId, updateClub, clubInviteBuilder;
+let isModerator, modRoleId, updateList, updateClub, clubInviteBuilder;
 module.exports.initialize = function (helpers) {
-	({ isModerator, modRoleId, updateClub, clubInviteBuilder } = helpers);
+	({ isModerator, modRoleId, updateList, updateClub, clubInviteBuilder } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -81,7 +81,8 @@ module.exports.execute = (interaction) => {
 				textChannel.send({ content: "When invites are sent with \`/club-invite\`, the invitee will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 					detailSummaryMessage.pin();
 					club.detailSummaryId = detailSummaryMessage.id;
-					updateClub(club, interaction.guild.channels);
+					updateList(interaction.guild.channels, "clubs");
+					updateClub(club);
 				})
 				interaction.reply({ content: "The new club has been created.", ephemeral: true });
 			}).catch(console.error);

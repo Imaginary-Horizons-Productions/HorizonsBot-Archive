@@ -1,12 +1,12 @@
 const Command = require('../../Classes/Command.js');
 
-const options = [{ type: "String", name: "url", description: "The image's url ", required: false, choices: {} }];
+const options = [{ type: "String", name: "url", description: "The image's url ", required: false, choices: [] }];
 const subcommands = [];
 module.exports = new Command("club-set-image", "(club leader or moderator) Set or clear a club's image url", options, subcommands);
 
-let isModerator, getClubs, updateClub, updateClubDetails;
+let isModerator, getClubs, updateList, updateClub, updateClubDetails;
 module.exports.initialize = function (helpers) {
-	({ isModerator, getClubs, updateClub, updateClubDetails } = helpers);
+	({ isModerator, getClubs, updateList, updateClub, updateClubDetails } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -31,7 +31,8 @@ module.exports.execute = (interaction) => {
 					.catch(console.error);
 			}
 			updateClubDetails(club, interaction.channel);
-			updateClub(club, interaction.guild.channels);
+			updateList(interaction.guild.channels, "clubs");
+			updateClub(club);
 		} else {
 			interaction.reply({ content: `Setting a club image is restricted to the host of that club or Moderators from that club channel.`, ephemeral: true })
 				.catch(console.error);

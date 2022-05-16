@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "User", name: "user", description: "The user's mention", required: true, choices: {} }
+	{ type: "User", name: "user", description: "The user's mention", required: true, choices: [] }
 ];
 const subcomands = [];
 module.exports = new Command("no-ats", "Toggles whether a user can use /at-channel", options, subcomands);

@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "String", name: "topic-name", description: "The new topic", required: true, choices: {} },
+	{ type: "String", name: "topic-name", description: "The new topic", required: true, choices: [] },
 ];
 const subcomands = [];
 module.exports = new Command("topic-add", "(moderator) Set up a topic", options, subcomands);

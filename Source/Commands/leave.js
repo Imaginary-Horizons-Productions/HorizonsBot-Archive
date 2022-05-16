@@ -5,9 +5,9 @@ const options = [];
 const subcomands = [];
 module.exports = new Command("leave", "Leave a topic or club", options, subcomands);
 
-let getManagedChannels, getClubs, updateClub;
+let getManagedChannels, getClubs, updateList, updateClub;
 module.exports.initialize = function (helpers) {
-	({ getManagedChannels, getClubs, updateClub } = helpers);
+	({ getManagedChannels, getClubs, updateList, updateClub } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -32,7 +32,8 @@ module.exports.execute = (interaction) => {
 					.catch(console.error);
 				interaction.guild.channels.resolve(club.voiceChannelID).permissionOverwrites.delete(interaction.user, "HorizonsBot leave used")
 					.catch(console.error);
-				updateClub(club, interaction.guild.channels);
+				updateList(interaction.guild.channels, "clubs");
+				updateClub(club);
 				interaction.reply(`${interaction.user} has left this channel.`)
 					.catch(console.error);
 			}

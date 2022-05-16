@@ -1,15 +1,15 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "User", name: "target", description: "The user's mention", required: true, choices: {} },
-	{ type: "Boolean", name: "ban", description: "Prevent the user from rejoining?", required: false, choices: {} }
+	{ type: "User", name: "target", description: "The user's mention", required: true, choices: [] },
+	{ type: "Boolean", name: "ban", description: "Prevent the user from rejoining?", required: false, choices: [] }
 ];
 const subcomands = [];
 module.exports = new Command("kick", "(moderator) Remove a user from a topic or club", options, subcomands);
 
-let isModerator, getManagedChannels, getClubs, updateClub;
+let isModerator, getManagedChannels, getClubs, updateList, updateClub;
 module.exports.initialize = function (helpers) {
-	({ isModerator, getManagedChannels, getClubs, updateClub } = helpers);
+	({ isModerator, getManagedChannels, getClubs, updateList, updateClub } = helpers);
 }
 
 module.exports.execute = (interaction) => {
@@ -20,7 +20,8 @@ module.exports.execute = (interaction) => {
 			var club = getClubs()[interaction.channelId];
 			if (club) {
 				club.userIDs = club.userIDs.filter(memberId => memberId != user.id);
-				updateClub(club, interaction.guild.chanels);
+				updateList(interaction.guild.chanels, "clubs");
+				updateClub(club);
 			}
 			if (interaction.options.getBoolean("ban")) {
 				interaction.channel.permissionOverwrites.create(user.id, { VIEW_CHANNEL: false }, `Banned by ${interaction.user}`);

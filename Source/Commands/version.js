@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "Boolean", name: "full-notes", description: "Get the file with the full version notes?", required: true, choices: {} }
+	{ type: "Boolean", name: "full-notes", description: "Get the file with the full version notes?", required: true, choices: [] }
 ];
 const subcomands = [];
 module.exports = new Command("version", "Get HorizonsBot's version notes", options, subcomands);

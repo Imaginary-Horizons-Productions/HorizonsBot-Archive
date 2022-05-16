@@ -2,8 +2,8 @@ const Command = require('../../Classes/Command.js');
 const { MessageActionRow, MessageButton } = require('discord.js');
 
 const options = [
-	{ type: "User", name: "invitee", description: "The user to invite (copy-paste from another channel)", required: true, choices: {} },
-	{ type: "Channel", name: "channel", description: "The topic channel", required: true, choices: {} }
+	{ type: "User", name: "invitee", description: "The user to invite (copy-paste from another channel)", required: true, choices: [] },
+	{ type: "Channel", name: "channel", description: "The topic channel", required: true, choices: [] }
 ];
 const subcomands = [];
 module.exports = new Command("topic-invite", "Invite a user to a topic", options, subcomands);

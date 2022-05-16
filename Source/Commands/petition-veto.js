@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "String", name: "topic", description: "The petition to close", required: true, choices: {} },
+	{ type: "String", name: "topic", description: "The petition to close", required: true, choices: [] },
 ];
 const subcomands = [];
 module.exports = new Command("petition-veto", "(moderator) Veto a petition", options, subcomands);

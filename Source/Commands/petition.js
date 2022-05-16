@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 
 const options = [
-	{ type: "String", name: "topic-name", description: "Make sure the topic doesn't already exist", required: true, choices: {} }
+	{ type: "String", name: "topic-name", description: "Make sure the topic doesn't already exist", required: true, choices: [] }
 ];
 const subcomands = [];
 module.exports = new Command("petition", "Petition for a topic", options, subcomands);

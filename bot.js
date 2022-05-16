@@ -49,17 +49,8 @@ client.on('ready', () => {
 			});
 		}
 
-		// Update pinned lists
-		let channelManager = guild.channels;
-		if (helpers.listMessages.topics) {
-			helpers.updateList(channelManager, "topics");
-		}
-
-		if (helpers.listMessages.clubs) {
-			helpers.updateList(channelManager, "clubs");
-		}
-
 		// Generate topic collection
+		const channelManager = guild.channels;
 		require('./Config/topicList.json').forEach(id => {
 			channelManager.fetch(id).then(channel => {
 				helpers.addTopic(id, channel.name);
@@ -72,10 +63,20 @@ client.on('ready', () => {
 				helpers.setClubReminder(club, channelManager);
 				helpers.scheduleClubEvent(club, guild);
 			} else {
+				console.log("clear timeslot");
 				club.timeslot.nextMeeting = null;
 				club.timeslot.eventId = "";
-				helpers.updateClub(club, channelManager);
+				helpers.updateClub(club);
 			}
+		}
+
+		// Update pinned lists
+		if (helpers.listMessages.topics) {
+			helpers.updateList(channelManager, "topics");
+		}
+
+		if (helpers.listMessages.clubs) {
+			helpers.updateList(channelManager, "clubs");
 		}
 	})
 })

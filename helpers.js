@@ -171,11 +171,10 @@ exports.getClubs = function () {
 
 /** Update a club's details in the internal dictionary and in the club list embed
  * @param {Club} club
- * @param {guildChannelManager} channelManager
+ * @param {GuildChannelManager} channelManager
  */
-exports.updateClub = function (club, channelManager) {
+exports.updateClub = function (club) {
 	clubs[club.channelID] = club;
-	exports.updateList(channelManager, "clubs");
 	exports.saveObject(clubs, 'clubList.json');
 }
 
@@ -220,21 +219,18 @@ exports.getManagedChannels = function () {
  * @param {string} listType enumeration: "topics", "clubs"
  * @returns {Promise<Message>}
  */
-exports.updateList = function (channelManager, listType) {
-	let messageData = exports.listMessages[listType];
-	if (messageData) {
-		return channelManager.fetch(messageData.channelID).then(channel => {
-			return channel.messages.fetch(messageData.messageID).then(message => {
-				var builder = listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder;
-				builder(channelManager).then(messageOptions => {
-					message.edit(messageOptions);
-					if (messageOptions.files.length == 0) {
-						message.removeAttachments();
-					}
-				}).catch(console.error);
-				return message;
-			});
-		})
+exports.updateList = async function (channelManager, listType) {
+	const { channelID, messageID } = exports.listMessages[listType];
+	if (channelID && messageID) {
+		console.log(channelID, messageID);
+		const channel = await channelManager.fetch(channelID);
+		const message = await channel.messages.fetch(messageID);
+		const messageOptions = await (listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder)(channelManager);
+		message.edit(messageOptions);
+		if (messageOptions.files.length === 0) {
+			message.removeAttachments();
+		}
+		return message;
 	}
 }
 
@@ -501,7 +497,7 @@ exports.checkPetition = function (guild, topicName, author = null) {
  */
 exports.addTopicChannel = function (guild, topicName) {
 	return guild.channels.create(topicName, {
-		parent: "581886288102424592",
+		parent: "656186659758407691",//"800460987416313887", //TODONOW revert from testing settings
 		permissionOverwrites: [
 			{
 				id: guild.me,
@@ -509,7 +505,7 @@ exports.addTopicChannel = function (guild, topicName) {
 				type: 1
 			},
 			{
-				id: moderatorIds.roleId,
+				id: moderatorIds.roleId, // TODO #244 failing because not a role or member
 				allow: ["VIEW_CHANNEL"],
 				type: 1
 			},
@@ -577,7 +573,8 @@ exports.joinChannel = function (channel, user) {
 							channel.send(`Welcome to ${channel.name}, ${user}!`);
 						})
 						exports.updateClubDetails(club, channel);
-						exports.updateClub(club, channel.guild.channels);
+						exports.updateList(channel.guild.channels, "clubs");
+						exports.updateClub(club);
 					} else {
 						user.send(`You are already in ${club.title}.`)
 							.catch(console.error);
@@ -667,7 +664,8 @@ exports.updateClubDetails = (club, channel) => {
 		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 			detailSummaryMessage.pin();
 			club.detailSummaryId = detailSummaryMessage.id;
-			exports.updateClub(club, channel.guild.channels);
+			exports.updateList(channel.guild.channels, "clubs");
+			exports.updateClub(club);
 		});
 	}).catch(error => {
 		if (error.message === "Unknown Message") {
@@ -676,7 +674,8 @@ exports.updateClubDetails = (club, channel) => {
 			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 				detailSummaryMessage.pin();
 				club.detailSummaryId = detailSummaryMessage.id;
-				exports.updateClub(club, channel.guild.channels);
+				exports.updateList(channel.guild.channels, "clubs");
+				exports.updateClub(club);
 			});
 		} else {
 			console.error(error);
@@ -688,7 +687,7 @@ exports.updateClubDetails = (club, channel) => {
  * @param {Club} club
  * @param {Guild} guild
  */
- exports.createClubEvent = function (club, guild) {
+exports.createClubEvent = function (club, guild) {
 	guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
 		return guild.scheduledEvents.create({
 			name: club.title,
@@ -700,7 +699,8 @@ exports.updateClubDetails = (club, channel) => {
 		})
 	}).then(event => {
 		club.timeslot.eventId = event.id;
-		exports.updateClub(club, guild.channels);
+		exports.updateList(guild.channels, "clubs");
+		exports.updateClub(club);
 	});
 }
 
@@ -708,7 +708,7 @@ exports.updateClubDetails = (club, channel) => {
  * @param {Club} club
  * @param {Guild} guild
  */
- exports.scheduleClubEvent = function (club, guild) {
+exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = exports.getClubs()[clubId];
@@ -769,11 +769,13 @@ exports.setClubReminder = async function (club, channelManager) {
 				exports.setClubReminder(timeoutClub, timeoutChannelManager);
 			} else {
 				timeoutClub.timeslot.eventId = "";
+				exports.updateList(timeoutChannelManager, "clubs");
 				exports.updateClub(club, timeoutChannelManager);
 			}
 		}, msToReminder, club, invite?.url, channelManager);
 		exports.reminderTimeouts[club.channelID] = timeout;
-		exports.updateClub(club, channelManager);
+		exports.updateList(channelManager, "clubs");
+		exports.updateClub(club);
 	}
 }
 
