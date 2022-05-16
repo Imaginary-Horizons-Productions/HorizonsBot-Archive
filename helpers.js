@@ -496,7 +496,7 @@ exports.checkPetition = function (guild, topicName, author = null) {
  */
 exports.addTopicChannel = function (guild, topicName) {
 	return guild.channels.create(topicName, {
-		parent: "656186659758407691",//"800460987416313887", //TODONOW revert from testing settings
+		parent: "800460987416313887",
 		permissionOverwrites: [
 			{
 				id: guild.me,
@@ -504,9 +504,9 @@ exports.addTopicChannel = function (guild, topicName) {
 				type: 1
 			},
 			{
-				id: moderatorIds.roleId, // TODO #244 failing because not a role or member
+				id: exports.modRoleId,
 				allow: ["VIEW_CHANNEL"],
-				type: 1
+				type: 0
 			},
 			{
 				id: guild.id,
