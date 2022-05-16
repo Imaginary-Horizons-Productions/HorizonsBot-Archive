@@ -222,7 +222,6 @@ exports.getManagedChannels = function () {
 exports.updateList = async function (channelManager, listType) {
 	const { channelID, messageID } = exports.listMessages[listType];
 	if (channelID && messageID) {
-		console.log(channelID, messageID);
 		const channel = await channelManager.fetch(channelID);
 		const message = await channel.messages.fetch(messageID);
 		const messageOptions = await (listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder)(channelManager);

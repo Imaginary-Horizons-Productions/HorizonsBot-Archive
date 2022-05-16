@@ -63,7 +63,6 @@ client.on('ready', () => {
 				helpers.setClubReminder(club, channelManager);
 				helpers.scheduleClubEvent(club, guild);
 			} else {
-				console.log("clear timeslot");
 				club.timeslot.nextMeeting = null;
 				club.timeslot.eventId = "";
 				helpers.updateClub(club);
