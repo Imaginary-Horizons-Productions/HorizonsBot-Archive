@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { modRoleId, isModerator, addModerator, removeModerator } = require('../../helpers.js');
 
 const options = [];
 const subcomands = [
@@ -18,11 +19,6 @@ const subcomands = [
 	}
 ];
 module.exports = new Command("manage-mods", "(moderator) Promote/demote a user to moderator", options, subcomands);
-
-let modRoleId, isModerator, addModerator, removeModerator;
-module.exports.initialize = function (helpers) {
-	({ modRoleId, isModerator, addModerator, removeModerator } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	if (interaction.options.getSubcommand() === "promote") {

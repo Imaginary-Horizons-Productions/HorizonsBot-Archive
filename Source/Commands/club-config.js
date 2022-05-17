@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { isModerator, getClubs, updateClub, updateClubDetails } = require('../../helpers.js');
 
 const COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
 
@@ -15,11 +16,6 @@ const options = [
 ];
 const subcomands = [];
 module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information", options, subcomands);
-
-let isModerator, getClubs, updateList, updateClub, updateClubDetails;
-module.exports.initialize = function (helpers) {
-	({ isModerator, getClubs, updateList, updateClub, updateClubDetails } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel

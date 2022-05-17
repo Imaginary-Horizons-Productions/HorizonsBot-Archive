@@ -1,13 +1,9 @@
 const Command = require('../../Classes/Command.js');
+const { getClubs, isModerator, updateClubDetails, updateClub } = require('../../helpers.js');
 
 const options = [];
 const subcomands = [];
 module.exports = new Command("club-details", "(club leader or morderator) Post and pin the club's details embed", options, subcomands);
-
-let getClubs, isModerator, updateClubDetails, updateList, updateClub;
-module.exports.initialize = function (helpers) {
-	({ getClubs, isModerator, updateClubDetails, updateList, updateClub } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Posts and pins the club details embed

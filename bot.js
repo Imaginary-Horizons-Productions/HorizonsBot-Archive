@@ -1,6 +1,6 @@
 const { Client } = require('discord.js');
 const { getButton } = require('./Source/Buttons/_buttonDictionary.js');
-const { getCommand, initializeCommands } = require('./Source/Commands/_commandDictionary.js');
+const { getCommand } = require('./Source/Commands/_commandDictionary.js');
 const { getSelect } = require('./Source/Selects/_selectDictionary.js');
 const helpers = require('./helpers.js');
 const fsa = require("fs").promises;
@@ -23,7 +23,6 @@ client.login(require('./Config/_env.json').token)
 client.on('ready', () => {
 	console.log(`Connected as ${client.user.tag}\n`);
 
-	initializeCommands(true, helpers);
 	client.guilds.fetch(helpers.guildId).then(guild => {
 		// Post version notes
 		if (versionData.patchNotesChannelId) {

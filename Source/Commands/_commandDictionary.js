@@ -16,16 +16,11 @@ exports.commandSets = [
 
 let commandDictionary = {};
 
-exports.initializeCommands = function (isProduction, helpers) {
-	const commandFiles = exports.commandSets.reduce((allFiles, set) => allFiles.concat(set.fileNames), []);
+const commandFiles = exports.commandSets.reduce((allFiles, set) => allFiles.concat(set.fileNames), []);
 
-	for (const file of commandFiles) {
-		const command = require(`./${file}`);
-		if (isProduction) {
-			command.initialize(helpers);
-		}
-		commandDictionary[command.name] = command;
-	}
+for (const file of commandFiles) {
+	const command = require(`./${file}`);
+	commandDictionary[command.name] = command;
 }
 
 exports.getCommand = function (commandName) {

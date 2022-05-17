@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { joinChannel, findTopicID } = require('../../helpers.js');
 
 const options = [
 	// can't use channel mention because users can't mention channels that are invisible to them (even by constructing the mention manually)
@@ -6,11 +7,6 @@ const options = [
 ];
 const subcomands = [];
 module.exports = new Command("join", "Join a topic or club", options, subcomands);
-
-let joinChannel, findTopicID;
-module.exports.initialize = function (helpers) {
-	({ joinChannel, findTopicID } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions

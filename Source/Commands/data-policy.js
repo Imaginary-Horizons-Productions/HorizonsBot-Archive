@@ -1,13 +1,9 @@
 const Command = require('../../Classes/Command.js');
+const { embedTemplateBuilder } = require('../../helpers.js');
 
 const options = [];
 const subcomands = [];
 module.exports = new Command("data-policy", "Show what user data HorizonsBot collects and how it's used", options, subcomands);
-
-let embedTemplateBuilder;
-module.exports.initialize = function (helpers) {
-	({ embedTemplateBuilder } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Command specifications go here

@@ -1,22 +1,19 @@
 const fs = require("fs");
 const Command = require('../../Classes/Command.js');
+const { embedTemplateBuilder } = require("../../helpers.js");
 
 const options = [];
 const subcommands = [];
 module.exports = new Command("commands", "List HorizonsBot's commands", options, subcommands);
 
-let embedTemplateBuilder, wikiPage;
-module.exports.initialize = function (helpers) {
-	({ embedTemplateBuilder } = helpers);
-
-	fs.readFile("Wiki/Commands.md", { encoding: "utf-8" }, (error, data) => {
-		if (error) {
-			console.error(error);
-		} else {
-			wikiPage = data;
-		}
-	})
-}
+let wikiPage;
+fs.readFile("Wiki/Commands.md", { encoding: "utf-8" }, (error, data) => {
+	if (error) {
+		console.error(error);
+	} else {
+		wikiPage = data;
+	}
+})
 
 module.exports.execute = (interaction) => {
 	let embed = embedTemplateBuilder()
