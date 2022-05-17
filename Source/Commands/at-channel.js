@@ -21,6 +21,6 @@ module.exports.execute = (interaction) => {
 			interaction.reply({ content: "You may only use `/at-channel` once every 5 minutes. Please wait to send your next at.", ephemeral: true });
 		}
 	} else {
-		interaction.reply({ content: "You are currently not permitted to use /at-channel. Please speak to a moderator if you believe this to be in error.", ephemeral: true });
+		interaction.reply({ content: "You are not currently permitted to use `/at-channel`. Please speak to a moderator if you believe this to be in error.", ephemeral: true });
 	}
 }
