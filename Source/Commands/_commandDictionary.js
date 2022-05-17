@@ -11,7 +11,7 @@ exports.commandSets = [
 	new CommandSet("Club Commands", "Commands for managing clubs.",
 		["club-instructions.js", "club-invite.js", "club-add.js", "club-config.js", "club-next-meeting.js", "club-set-repeat.js", "club-set-image.js", "club-details.js", "club-promote-leader.js"]),
 	new CommandSet("Moderation Commands", "Commands for moderators.",
-		['manage-mods.js', "pin-list.js", "kick.js", "delete.js", "no-ats.js"])
+		['manage-mods.js', "pin-list.js", "kick.js", "delete.js", "at-permission.js"])
 ];
 
 let commandDictionary = {};
