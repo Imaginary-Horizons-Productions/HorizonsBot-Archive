@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { clubInvite } = require('../../helpers.js');
 
 const options = [
 	// can't use channel mention because users can't mention channels that are invisible to them (even by constructing the mention manually)
@@ -7,11 +8,6 @@ const options = [
 ];
 const subcommands = [];
 module.exports = new Command("club-invite", "Send a user (default: self) an invite to a club", options, subcommands);
-
-let clubInvite;
-module.exports.initialize = function (helpers) {
-	({ clubInvite } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Provide full details on the given club

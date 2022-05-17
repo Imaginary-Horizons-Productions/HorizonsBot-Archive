@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { getClubs, isModerator, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent } = require('../../helpers.js');
 
 const options = [
 	{ type: "Integer", name: "count", description: "The units of time between meetings", required: true, choices: [] },
@@ -7,11 +8,6 @@ const options = [
 ];
 const subcomands = [];
 module.exports = new Command("club-set-repeat", "(club leader or morderator) Set how frequently to send club meeting reminders", options, subcomands);
-
-let getClubs, isModerator, updateList, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent;
-module.exports.initialize = function (helpers) {
-	({ getClubs, isModerator, updateList, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Set the reminder period for the given club

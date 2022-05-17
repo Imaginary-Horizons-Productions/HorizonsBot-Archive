@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { atIds, timeConversion, noAts } = require('../../helpers.js');
 
 const options = [
 	{ type: "String", name: "message", description: "The text of the notification", required: true, choices: [] },
@@ -6,11 +7,6 @@ const options = [
 ];
 const subcomands = [];
 module.exports = new Command("at-channel", "Send a ping to the current channel", options, subcomands);
-
-let atIds, timeConversion, noAts;
-module.exports.initialize = function (helpers) {
-	({ atIds, timeConversion, noAts } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Send a rate-limited ping

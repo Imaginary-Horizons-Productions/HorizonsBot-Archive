@@ -1,13 +1,9 @@
 const Command = require('../../Classes/Command.js');
+const { customEmbeds, isModerator, saveObject } = require('../../helpers.js');
 
 const options = [{ type: "String", name: "message-id", description: "The id of the embed's message", required: true, choices: [] }];
 const subcomands = [];
 module.exports = new Command("embed-abandon", "(moderator) Stop managing the given embed", options, subcomands);
-
-let customEmbeds, isModerator, saveObject;
-module.exports.initialize = function (helpers) {
-	({ customEmbeds, isModerator, saveObject } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Stop managing the given embed(s)

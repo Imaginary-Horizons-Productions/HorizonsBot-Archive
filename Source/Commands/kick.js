@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { isModerator, getManagedChannels, getClubs, updateList, updateClub } = require('../../helpers.js');
 
 const options = [
 	{ type: "User", name: "target", description: "The user's mention", required: true, choices: [] },
@@ -6,11 +7,6 @@ const options = [
 ];
 const subcomands = [];
 module.exports = new Command("kick", "(moderator) Remove a user from a topic or club", options, subcomands);
-
-let isModerator, getManagedChannels, getClubs, updateList, updateClub;
-module.exports.initialize = function (helpers) {
-	({ isModerator, getManagedChannels, getClubs, updateList, updateClub } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Remove visibility of receiving channel from mentioned user

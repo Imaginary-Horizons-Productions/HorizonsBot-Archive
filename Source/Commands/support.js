@@ -1,13 +1,9 @@
 const Command = require('../../Classes/Command.js');
+const { embedTemplateBuilder } = require('../../helpers.js');
 
 const options = [];
 const subcomands = [];
 module.exports = new Command("support", "Show ways to support Imaginary Horizons", options, subcomands);
-
-let embedTemplateBuilder;
-module.exports.initialize = function (helpers) {
-	({ embedTemplateBuilder } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Lists ways users can support development

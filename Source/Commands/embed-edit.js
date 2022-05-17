@@ -1,4 +1,5 @@
 const Command = require('../../Classes/Command.js');
+const { customEmbeds, isModerator } = require('../../helpers.js');
 
 const options = [];
 const subcomands = [
@@ -89,11 +90,6 @@ const subcomands = [
 	}
 ];
 module.exports = new Command("embed-edit", "(moderator) Edit an existing embed", options, subcomands);
-
-let customEmbeds, isModerator;
-module.exports.initialize = function (helpers) {
-	({ customEmbeds, isModerator } = helpers);
-}
 
 const URL_REGEXP = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,})/, 'gi');
 

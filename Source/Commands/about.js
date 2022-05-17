@@ -1,13 +1,9 @@
 const Command = require('../../Classes/Command.js');
+const { embedTemplateBuilder } = require('../../helpers.js');
 
 const options = [];
 const subcommands = [];
 module.exports = new Command("about", "Get the HorizonsBot credits", options, subcommands);
-
-let embedTemplateBuilder;
-module.exports.initialize = function (helpers) {
-	({ embedTemplateBuilder } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Private message author with description of the bot and contributors

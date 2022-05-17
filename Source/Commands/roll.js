@@ -16,11 +16,6 @@ const options = [
 const subcomands = [];
 module.exports = new Command("roll", "Roll any number of dice with any number of sides", options, subcomands);
 
-// internal imports here
-module.exports.initialize = function (helpers) {
-	({} = helpers);
-}
-
 module.exports.execute = (interaction) => {
 	// Roll the specified dice
 	var rollInput = interaction.options.getString('dice');
