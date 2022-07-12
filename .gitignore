@@ -2,3 +2,4 @@ node_modules
 Config
 !/Templates/Config
 Backups
+.vscode
