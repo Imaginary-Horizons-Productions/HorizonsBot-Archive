@@ -1,13 +1,11 @@
 ## HorizonsBot Commands
-The general use commands. Required permissions are listed in (parenthesis) at the beginning of the description.
-### /about
-Get the HorizonsBot credits
-### /commands
-List HorizonsBot's commands
-### /support
-Show ways to support Imaginary Horizons
-### /data-policy
-Show what user data HorizonsBot collects and how it's used
+These commands are general use utilities for the server.
+### /at-channel
+Send a ping to the current channel
+#### message
+The text of the notification
+#### type (optional)
+Who to notify
 ### /list
 Get the topic or club list
 #### list-type
@@ -36,48 +34,28 @@ The timestamp to start from (default: now)
 3600 seconds
 #### minutes-from-start (optional)
 60 seconds
-### /at-channel
-Send a ping to the current channel
-#### message
-The text of the notification
-#### type (optional)
-Who to notify
+## Informantional Commands
+Use these commands to learn more about HorizonsBot or this server.
+### /rules
+Get the server rules
+### /commands
+List HorizonsBot's commands
+### /roles
+Get a rundown of the server's roles
+### /about
+Get the HorizonsBot credits
+### /data-policy
+Show what user data HorizonsBot collects and how it's used
+### /support
+Show ways to support Imaginary Horizons
+### /press-kit
+Get info on Imaginary Horizons as a brand
 ### /version
 Get HorizonsBot's version notes
 #### full-notes
 Get the file with the full version notes?
-## Custom Message Embeds
-To get a message's id, enable developer mode (User Settings > Appearance > Developer Mode), then right-click the message and select "Copy ID".
-### /embed-create
-(moderator) Make a new MessageEmbed, configurable with other commands
-### /embed-abandon
-(moderator) Stop managing the given embed
-#### message-id
-The id of the embed's message
-### /embed-edit
-(moderator) Edit an existing embed
-#### add-field (optional)
-(moderator) Add a field to the embed
-#### author (optional)
-(moderator) Assign a custom embed's author
-#### color (optional)
-(moderator) Assign a custom embed's color
-#### description (optional)
-(moderator) Assign a custom embed's description
-#### image (optional)
-(moderator) Set an custom embed's image
-#### message (optional)
-(moderator) Set a custom embed's message content
-#### thumbnail (optional)
-(moderator) Set a custom embed's thumbnail
-#### title (optional)
-(moderator) Set a custom embed's title
-#### url (optional)
-(moderator) Set a custom embed's title url
-#### splice-fields (optional)
-(moderator) Remove fields from a custom embed (replace unsupported)
 ## Topic Commands
-Commands for managing topics.
+This server has opt-in topic channels that are automatically generated when enough members petition for them.
 ### /petition
 Petition for a topic
 #### topic-name
@@ -101,7 +79,7 @@ The petition to check
 #### topic
 The petition to close
 ## Club Commands
-Commands for managing clubs.
+Clubs are private text and voice channels that include organization utilities like automatic reminders.
 ### /club-instructions
 Get up-to-date club setup instructions
 ### /club-invite
@@ -153,7 +131,7 @@ The image's url
 #### user
 The user's mention
 ## Moderation Commands
-Commands for moderators.
+Commands for moderators. Required permissions are listed in (parenthesis) at the beginning of the description.
 ### /manage-mods
 (moderator) Promote/demote a user to moderator
 #### promote (optional)
@@ -174,7 +152,9 @@ Prevent the user from rejoining?
 (moderator) Delete a topic or club on a delay
 #### delay
 Number of hours to delay deleting the channel
-### /no-ats
-Toggles whether a user can use /at-channel
-#### user
-The user's mention
+### /at-permission
+(moderator) Disallow/Re-allow a user to use /at-channel
+#### disallow (optional)
+(moderator) Prevent a user from using /at-channel
+#### allow (optional)
+(moderator) Re-allow a user to use /at-channel
