@@ -705,8 +705,10 @@ exports.createClubEvent = function (club, guild) {
 		});
 	} else {
 		club.timeslot.nextMeeting = null;
+		club.timeslot.eventId = "";
 		exports.updateList(guild.channels, "clubs");
 		exports.updateClub(club);
+		console.error(`Skipping scheduling Event in past via ${new Error().stack}`);
 	}
 }
 
