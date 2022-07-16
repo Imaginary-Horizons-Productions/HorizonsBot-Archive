@@ -58,14 +58,8 @@ client.on('ready', () => {
 
 		// Begin checking for club reminders
 		for (let club of Object.values(helpers.getClubs())) {
-			if (club.timeslot.nextMeeting * 1000 > Date.now()) {
-				helpers.setClubReminder(club, channelManager);
-				helpers.scheduleClubEvent(club, guild);
-			} else {
-				club.timeslot.nextMeeting = null;
-				club.timeslot.eventId = "";
-				helpers.updateClub(club);
-			}
+			helpers.setClubReminder(club, channelManager);
+			helpers.scheduleClubEvent(club, guild);
 		}
 
 		// Update pinned lists
