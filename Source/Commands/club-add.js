@@ -1,7 +1,7 @@
 const Command = require('../../Classes/Command.js');
 const Club = require('../../Classes/Club.js');
 const { clubInstructionsText } = require('./club-instructions.js');
-const { isModerator, modRoleId, updateClub, clubInviteBuilder } = require('../../helpers.js');
+const { isModerator, modRoleId, updateClub, clubInviteBuilder, updateList } = require('../../helpers.js');
 
 const options = [{ type: "User", name: "club-leader", description: "The user's mention", required: true, choices: [] }]
 const subcommands = [];

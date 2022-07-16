@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { getClubs, isModerator, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent } = require('../../helpers.js');
+const { getClubs, isModerator, updateClub, updateClubDetails, clearClubReminder, cancelClubEvent, updateList } = require('../../helpers.js');
 
 const options = [
 	{ type: "Integer", name: "count", description: "The units of time between meetings", required: true, choices: [] },
