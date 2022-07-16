@@ -683,25 +683,31 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-/** Create a scheduled event for a club's next meeting if the club is recruiting
+/** If the club isn't recruiting or the next meeting time is in the past clear the next meeting time instead of creating a GuildScheduledEvent
  * @param {Club} club
  * @param {Guild} guild
  */
 exports.createClubEvent = function (club, guild) {
-	guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
-		return guild.scheduledEvents.create({
-			name: club.title,
-			scheduledStartTime: club.timeslot.nextMeeting * 1000,
-			privacyLevel: 2,
-			entityType: "VOICE",
-			description: club.description,
-			channel: voiceChannel
-		})
-	}).then(event => {
-		club.timeslot.eventId = event.id;
+	if (club.timeslot.nextMeeting * 1000 > Date.now()) {
+		guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+			return guild.scheduledEvents.create({
+				name: club.title,
+				scheduledStartTime: club.timeslot.nextMeeting * 1000,
+				privacyLevel: 2,
+				entityType: "VOICE",
+				description: club.description,
+				channel: voiceChannel
+			})
+		}).then(event => {
+			club.timeslot.eventId = event.id;
+			exports.updateList(guild.channels, "clubs");
+			exports.updateClub(club);
+		});
+	} else {
+		club.timeslot.nextMeeting = null;
 		exports.updateList(guild.channels, "clubs");
 		exports.updateClub(club);
-	});
+	}
 }
 
 /** Create a timeout to create a scheduled event for a club after the current event passes
