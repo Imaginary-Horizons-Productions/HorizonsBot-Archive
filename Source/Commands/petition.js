@@ -11,8 +11,9 @@ module.exports.execute = (interaction) => {
 	// Record a user's petition for a text channel, create channel if sufficient number of petitions
 	let topicName = interaction.options.getString("topic-name").toLowerCase();
 	if (getTopicNames().includes(topicName)) {
-		let channelID = findTopicID(topicName);
-		joinChannel(interaction.guild.channels.resolve(channelID), interaction.user);
+		interaction.guild.channels.fetch(findTopicID(topicName)).then(textChannel => {
+			joinChannel(textChannel, interaction.user);
+		})
 		interaction.reply({ content: `A channel for ${topicName} already exists, you've been added to that channel.`, ephemeral: true })
 			.catch(console.error);
 	} else {
