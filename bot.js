@@ -1,6 +1,6 @@
 const { Client } = require('discord.js');
 const { getButton } = require('./Source/Buttons/_buttonDictionary.js');
-const { getCommand, initializeCommands } = require('./Source/Commands/_commandDictionary.js');
+const { getCommand } = require('./Source/Commands/_commandDictionary.js');
 const { getSelect } = require('./Source/Selects/_selectDictionary.js');
 const helpers = require('./helpers.js');
 const fsa = require("fs").promises;
@@ -23,7 +23,6 @@ client.login(require('./Config/_env.json').token)
 client.on('ready', () => {
 	console.log(`Connected as ${client.user.tag}\n`);
 
-	initializeCommands(true, helpers);
 	client.guilds.fetch(helpers.guildId).then(guild => {
 		// Post version notes
 		if (versionData.patchNotesChannelId) {
@@ -49,17 +48,8 @@ client.on('ready', () => {
 			});
 		}
 
-		// Update pinned lists
-		let channelManager = guild.channels;
-		if (helpers.listMessages.topics) {
-			helpers.updateList(channelManager, "topics");
-		}
-
-		if (helpers.listMessages.clubs) {
-			helpers.updateList(channelManager, "clubs");
-		}
-
 		// Generate topic collection
+		const channelManager = guild.channels;
 		require('./Config/topicList.json').forEach(id => {
 			channelManager.fetch(id).then(channel => {
 				helpers.addTopic(id, channel.name);
@@ -68,14 +58,17 @@ client.on('ready', () => {
 
 		// Begin checking for club reminders
 		for (let club of Object.values(helpers.getClubs())) {
-			if (club.timeslot.nextMeeting * 1000 > Date.now()) {
-				helpers.setClubReminder(club, channelManager);
-				helpers.scheduleClubEvent(club, guild);
-			} else {
-				club.timeslot.nextMeeting = null;
-				club.timeslot.eventId = "";
-				helpers.updateClub(club, channelManager);
-			}
+			helpers.setClubReminder(club, channelManager);
+			helpers.scheduleClubEvent(club, guild);
+		}
+
+		// Update pinned lists
+		if (helpers.listMessages.topics) {
+			helpers.updateList(channelManager, "topics");
+		}
+
+		if (helpers.listMessages.clubs) {
+			helpers.updateList(channelManager, "clubs");
 		}
 	})
 })

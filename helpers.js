@@ -1,11 +1,12 @@
 const fs = require('fs');
-const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, TextChannel } = require('discord.js');
+const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, TextChannel, ChannelManager } = require('discord.js');
+const Club = require('./Classes/Club');
 exports.guildId = require('./Config/_env.json').guildId;
 
 /** Convert an amount of time from a starting unit to a different one
  * @param {number} value
- * @param {string} startingUnit enumeration: "w", "d", "h", "m", "s", "ms"
- * @param {string} resultUnit enumeration: "w", "d", "h", "m", "s", "ms"
+ * @param {"w" | "d" | "h" | "m" | "s" | "ms"} startingUnit
+ * @param {"w" | "d" | "h" | "m" | "s" | "ms"} resultUnit
  * @returns {number} result
  */
 exports.timeConversion = function (value, startingUnit, resultUnit) {
@@ -171,11 +172,10 @@ exports.getClubs = function () {
 
 /** Update a club's details in the internal dictionary and in the club list embed
  * @param {Club} club
- * @param {guildChannelManager} channelManager
+ * @param {GuildChannelManager} channelManager
  */
-exports.updateClub = function (club, channelManager) {
+exports.updateClub = function (club) {
 	clubs[club.channelID] = club;
-	exports.updateList(channelManager, "clubs");
 	exports.saveObject(clubs, 'clubList.json');
 }
 
@@ -220,21 +220,17 @@ exports.getManagedChannels = function () {
  * @param {string} listType enumeration: "topics", "clubs"
  * @returns {Promise<Message>}
  */
-exports.updateList = function (channelManager, listType) {
-	let messageData = exports.listMessages[listType];
-	if (messageData) {
-		return channelManager.fetch(messageData.channelID).then(channel => {
-			return channel.messages.fetch(messageData.messageID).then(message => {
-				var builder = listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder;
-				builder(channelManager).then(messageOptions => {
-					message.edit(messageOptions);
-					if (messageOptions.files.length == 0) {
-						message.removeAttachments();
-					}
-				}).catch(console.error);
-				return message;
-			});
-		})
+exports.updateList = async function (channelManager, listType) {
+	const { channelID, messageID } = exports.listMessages[listType];
+	if (channelID && messageID) {
+		const channel = await channelManager.fetch(channelID);
+		const message = await channel.messages.fetch(messageID);
+		const messageOptions = await (listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder)(channelManager);
+		message.edit(messageOptions);
+		if (messageOptions.files.length === 0) {
+			message.removeAttachments();
+		}
+		return message;
 	}
 }
 
@@ -501,7 +497,7 @@ exports.checkPetition = function (guild, topicName, author = null) {
  */
 exports.addTopicChannel = function (guild, topicName) {
 	return guild.channels.create(topicName, {
-		parent: "581886288102424592",
+		parent: "800460987416313887",
 		permissionOverwrites: [
 			{
 				id: guild.me,
@@ -509,9 +505,9 @@ exports.addTopicChannel = function (guild, topicName) {
 				type: 1
 			},
 			{
-				id: moderatorIds.roleId,
+				id: exports.modRoleId,
 				allow: ["VIEW_CHANNEL"],
-				type: 1
+				type: 0
 			},
 			{
 				id: guild.id,
@@ -577,7 +573,8 @@ exports.joinChannel = function (channel, user) {
 							channel.send(`Welcome to ${channel.name}, ${user}!`);
 						})
 						exports.updateClubDetails(club, channel);
-						exports.updateClub(club, channel.guild.channels);
+						exports.updateList(channel.guild.channels, "clubs");
+						exports.updateClub(club);
 					} else {
 						user.send(`You are already in ${club.title}.`)
 							.catch(console.error);
@@ -667,7 +664,8 @@ exports.updateClubDetails = (club, channel) => {
 		message.edit({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 			detailSummaryMessage.pin();
 			club.detailSummaryId = detailSummaryMessage.id;
-			exports.updateClub(club, channel.guild.channels);
+			exports.updateList(channel.guild.channels, "clubs");
+			exports.updateClub(club);
 		});
 	}).catch(error => {
 		if (error.message === "Unknown Message") {
@@ -676,7 +674,8 @@ exports.updateClubDetails = (club, channel) => {
 			channel.send({ content: "You can send out invites with \`/club-invite\`. Prospective members will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {
 				detailSummaryMessage.pin();
 				club.detailSummaryId = detailSummaryMessage.id;
-				exports.updateClub(club, channel.guild.channels);
+				exports.updateList(channel.guild.channels, "clubs");
+				exports.updateClub(club);
 			});
 		} else {
 			console.error(error);
@@ -684,31 +683,40 @@ exports.updateClubDetails = (club, channel) => {
 	});
 }
 
-/** Create a scheduled event for a club's next meeting if the club is recruiting
+/** If the club isn't recruiting or the next meeting time is in the past clear the next meeting time instead of creating a GuildScheduledEvent
  * @param {Club} club
  * @param {Guild} guild
  */
- exports.createClubEvent = function (club, guild) {
-	guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
-		return guild.scheduledEvents.create({
-			name: club.title,
-			scheduledStartTime: club.timeslot.nextMeeting * 1000,
-			privacyLevel: 2,
-			entityType: "VOICE",
-			description: club.description,
-			channel: voiceChannel
-		})
-	}).then(event => {
-		club.timeslot.eventId = event.id;
-		exports.updateClub(club, guild.channels);
-	});
+exports.createClubEvent = function (club, guild) {
+	if (club.timeslot.nextMeeting * 1000 > Date.now()) {
+		guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+			return guild.scheduledEvents.create({
+				name: club.title,
+				scheduledStartTime: club.timeslot.nextMeeting * 1000,
+				privacyLevel: 2,
+				entityType: "VOICE",
+				description: club.description,
+				channel: voiceChannel
+			})
+		}).then(event => {
+			club.timeslot.eventId = event.id;
+			exports.updateList(guild.channels, "clubs");
+			exports.updateClub(club);
+		});
+	} else {
+		club.timeslot.nextMeeting = null;
+		club.timeslot.eventId = "";
+		exports.updateList(guild.channels, "clubs");
+		exports.updateClub(club);
+		console.error(`Skipping scheduling Event in past via ${new Error().stack}`);
+	}
 }
 
 /** Create a timeout to create a scheduled event for a club after the current event passes
  * @param {Club} club
  * @param {Guild} guild
  */
- exports.scheduleClubEvent = function (club, guild) {
+exports.scheduleClubEvent = function (club, guild) {
 	if (club.userIDs.length < club.seats) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = exports.getClubs()[clubId];
@@ -741,39 +749,66 @@ exports.cancelClubEvent = function (voiceChannelId, eventId, eventManager) {
  */
 exports.setClubReminder = async function (club, channelManager) {
 	if (club.timeslot.nextMeeting) {
-		let invite;
-		if (club.timeslot.eventId) {
-			invite = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite();
-		}
-		let msToReminder = (club.timeslot.nextMeeting * 1000) - exports.timeConversion(1, "d", "ms") - Date.now();
-		let timeout = setTimeout((timeoutClub, timeoutInviteURL, timeoutChannelManager) => {
-			timeoutChannelManager.fetch(timeoutClub.channelID).then(textChannel => {
-				let components = [];
-				if (timeoutInviteURL) {
+		let timeout = setTimeout(
+			reminderWaitLoop,
+			calculateReminderMS(club.timeslot.nextMeeting),
+			club,
+			channelManager);
+		exports.reminderTimeouts[club.channelID] = timeout;
+		exports.updateList(channelManager, "clubs");
+		exports.updateClub(club);
+	}
+}
+
+const MAX_SIGNED_INT = 2 ** 31 - 1;
+
+/** The number of ms until a day before the next meeting, but not more than the max allowable setTimeout duration
+ * @param {number} timestamp The unix timestamp of the next meeting (in seconds)
+ * @returns
+ */
+function calculateReminderMS(timestamp) {
+	return Math.min((timestamp * 1000) - exports.timeConversion(1, "d", "ms") - Date.now(), MAX_SIGNED_INT);
+}
+
+/** If the club reminder would be set for further than the a max signed int ms in the future (max allowable setTimeout duration), try to set the club reminder again later
+ * @param {Club} club
+ * @param {ChannelManager} channelManager
+ */
+function reminderWaitLoop(club, channelManager) {
+	if (club.timeslot.nextMeeting) {
+		if (calculateReminderMS(club.timeslot.nextMeeting) < MAX_SIGNED_INT) {
+			channelManager.fetch(club.channelID).then(async textChannel => {
+				const components = [];
+				let invite;
+				if (club.timeslot.eventId) {
+					invite = await (await channelManager.guild.scheduledEvents.fetch(club.timeslot.eventId)).channel.createInvite();
+				}
+				if (invite?.url) {
 					components.push(new MessageActionRow().addComponents(
 						new MessageButton()
 							.setLabel("Join Voice")
 							.setStyle("LINK")
-							.setURL(timeoutInviteURL)
+							.setURL(invite.url)
 					))
 				}
 				textChannel.send({
-					content: `@everyone ${timeoutClub.timeslot.message ? timeoutClub.timeslot.message : "Reminder: this club meets in about 24 hours"}`,
+					content: `@everyone ${club.timeslot.message ? club.timeslot.message : "Reminder: this club meets in about 24 hours"}`,
 					components
 				});
 			});
-			if (timeoutClub.timeslot.periodCount) {
-				let timeGap = exports.timeConversion(timeoutClub.timeslot.periodCount, timeoutClub.timeslot.periodUnits, "s");
-				timeoutClub.timeslot.nextMeeting = timeoutClub.timeslot.nextMeeting + timeGap;
-				exports.scheduleClubEvent(timeoutClub, timeoutChannelManager.guild); //TODO #228 recreating events might be failing here
-				exports.setClubReminder(timeoutClub, timeoutChannelManager);
+			if (club.timeslot.periodCount) {
+				const timeGap = exports.timeConversion(club.timeslot.periodCount, club.timeslot.periodUnits, "s");
+				club.timeslot.nextMeeting = club.timeslot.nextMeeting + timeGap;
+				exports.scheduleClubEvent(club, channelManager.guild); //TODO #228 recreating events might be failing here
+				exports.setClubReminder(club, channelManager);
 			} else {
-				timeoutClub.timeslot.eventId = "";
-				exports.updateClub(club, timeoutChannelManager);
+				club.timeslot.eventId = "";
+				exports.updateList(channelManager, "clubs");
+				exports.updateClub(club, channelManager);
 			}
-		}, msToReminder, club, invite?.url, channelManager);
-		exports.reminderTimeouts[club.channelID] = timeout;
-		exports.updateClub(club, channelManager);
+		} else {
+			exports.setClubReminder(club, channelManager);
+		}
 	}
 }
 

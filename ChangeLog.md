@@ -1,4 +1,9 @@
 # HorizonsBot Change Log
+#### HorizonsBot Version 1.17.1:
+ - Removed custom embed system
+ - New commands: `/roles`, `/rules`, and `/press-kit`
+ - Fixed several bugs and crashes
+
 #### HorizonsBot Version 1.17.0:
 - Reorganized several manager commands via subcommands
 - Fixed an issue where club reminders weren't getting cleared if meeting times changed

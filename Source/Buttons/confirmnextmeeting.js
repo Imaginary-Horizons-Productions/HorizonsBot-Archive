@@ -1,5 +1,5 @@
 const Button = require('../../Classes/Button.js');
-const { getClubs, setClubReminder, updateClubDetails, updateClub, cancelClubEvent, scheduleClubEvent, clearClubReminder, createClubEvent } = require('../../helpers.js');
+const { getClubs, setClubReminder, updateClubDetails, updateClub, cancelClubEvent, scheduleClubEvent, clearClubReminder, createClubEvent, updateList } = require('../../helpers.js');
 
 module.exports = new Button("confirmnextmeeting");
 
@@ -16,7 +16,8 @@ module.exports.execute = (interaction, [timestamp]) => {
 			scheduleClubEvent(club, interaction.guild);
 		}
 		updateClubDetails(club, interaction.channel);
-		updateClub(club, interaction.guild.channels);
+		updateList(interaction.guild.channels, "clubs");
+		updateClub(club);
 		interaction.update({ components: [] });
 		interaction.channel.send(`This club's next meeting has been set as <t:${timestamp}:F>.`);
 	} else {

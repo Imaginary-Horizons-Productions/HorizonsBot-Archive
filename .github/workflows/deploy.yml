@@ -27,13 +27,13 @@ jobs:
         run: npm ci
 
       - name: Update Commands
-        run: node .github/workflows/updateCommands.js
+        run: cp -R ./Templates/Config ./Config; node .github/workflows/updateCommands.js
 
       - name: Push Changes to Repo
         run: git add .; git commit -m "updated commands page on wiki" && git push origin main || true
 
       - name: Push Wiki Changes
-        uses: Andrew-Chen-Wang/github-wiki-action@v2
+        uses: Andrew-Chen-Wang/github-wiki-action@v3
         env:
           # Make sure you have that / at the end. We use rsync
           # WIKI_DIR's default is wiki/

@@ -1,14 +1,10 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
+const { getManagedChannels, getClubs, updateList, updateClub } = require('../../helpers.js');
 
 const options = [];
 const subcomands = [];
 module.exports = new Command("leave", "Leave a topic or club", options, subcomands);
-
-let getManagedChannels, getClubs, updateClub;
-module.exports.initialize = function (helpers) {
-	({ getManagedChannels, getClubs, updateClub } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	let userID = interaction.user.id;
@@ -32,7 +28,8 @@ module.exports.execute = (interaction) => {
 					.catch(console.error);
 				interaction.guild.channels.resolve(club.voiceChannelID).permissionOverwrites.delete(interaction.user, "HorizonsBot leave used")
 					.catch(console.error);
-				updateClub(club, interaction.guild.channels);
+				updateList(interaction.guild.channels, "clubs");
+				updateClub(club);
 				interaction.reply(`${interaction.user} has left this channel.`)
 					.catch(console.error);
 			}

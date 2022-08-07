@@ -4,11 +4,6 @@ const options = [];
 const subcommands = [];
 module.exports = new Command("club-instructions", "Get up-to-date club setup instructions", options, subcommands);
 
-// internal imports go here
-module.exports.initialize = function (helpers) {
-	({} = helpers);
-}
-
 module.exports.execute = (interaction) => {
 	// Send the user the club setup instructions
 	interaction.reply({ content: module.exports.clubInstructionsText(interaction.user), ephemeral: true });

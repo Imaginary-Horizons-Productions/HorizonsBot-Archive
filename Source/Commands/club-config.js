@@ -1,26 +1,21 @@
 const Command = require('../../Classes/Command.js');
+const { isModerator, getClubs, updateClub, updateClubDetails } = require('../../helpers.js');
 
 const COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
 
 const options = [
-	{ type: "String", name: "name", description: "What to call the club", required: false, choices: {} },
-	{ type: "String", name: "description", description: "Text shown in the channel topic", required: false, choices: {} },
-	{ type: "String", name: "game", description: "The text to set as the club game", required: false, choices: {} },
-	{ type: "Integer", name: "max-members", description: "The maximum number of members for the club", required: false, choices: {} },
+	{ type: "String", name: "name", description: "What to call the club", required: false, choices: [] },
+	{ type: "String", name: "description", description: "Text shown in the channel topic", required: false, choices: [] },
+	{ type: "String", name: "game", description: "The text to set as the club game", required: false, choices: [] },
+	{ type: "Integer", name: "max-members", description: "The maximum number of members for the club", required: false, choices: [] },
 	{
-		type: "String", name: "color", description: "The color of the details embed", required: false, choices: COLORS.reduce((object, color) => {
-			object[color.toLowerCase().replace(/_/g, " ")] = color;
-			return object;
-		}, {})
+		type: "String", name: "color", description: "The color of the details embed", required: false, choices: COLORS.reduce((array, color) => {
+			return [...array, { name: color.toLowerCase().replace(/_/g, " "), value: color }];
+		}, [])
 	}
 ];
 const subcomands = [];
 module.exports = new Command("club-config", "(club leader or moderator) Configure a club's information", options, subcomands);
-
-let isModerator, getClubs, updateClub, updateClubDetails;
-module.exports.initialize = function (helpers) {
-	({ isModerator, getClubs, updateClub, updateClubDetails } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
@@ -52,7 +47,8 @@ module.exports.execute = (interaction) => {
 				updatedSettings.push("max members");
 			}
 			updateClubDetails(club, interaction.channel);
-			updateClub(club, interaction.guild.channels);
+			updateList(interaction.guild.channels, "clubs");
+			updateClub(club);
 			interaction.reply({ content: `The following club setting(s) have been updated: ${updatedSettings.join(', ')}`, ephemeral: true })
 				.catch(console.error);
 		} else {

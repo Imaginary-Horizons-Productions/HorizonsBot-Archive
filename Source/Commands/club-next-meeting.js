@@ -1,18 +1,14 @@
 const { MessageActionRow, MessageButton } = require('discord.js');
 const Command = require('../../Classes/Command.js');
+const { getClubs, isModerator, timeConversion } = require('../../helpers.js');
 
 const options = [
-	{ type: "Number", name: "days-from-now", description: "86400 seconds", required: false, choices: {} },
-	{ type: "Number", name: "hours-from-now", description: "3600 seconds", required: false, choices: {} },
-	{ type: "Number", name: "minutes-from-now", description: "60 seconds", required: false, choices: {} }
+	{ type: "Number", name: "days-from-now", description: "86400 seconds", required: false, choices: [] },
+	{ type: "Number", name: "hours-from-now", description: "3600 seconds", required: false, choices: [] },
+	{ type: "Number", name: "minutes-from-now", description: "60 seconds", required: false, choices: [] }
 ];
 const subcommands = [];
 module.exports = new Command("club-next-meeting", "(club leader or morderator) Set the club's next meeting", options, subcommands);
-
-let getClubs, isModerator, timeConversion;
-module.exports.initialize = function (helpers) {
-	({ getClubs, isModerator, timeConversion } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Set the club's next meeting

@@ -1,20 +1,11 @@
 const Command = require('../../Classes/Command.js');
+const { topicListBuilder, clubListBuilder } = require('../../helpers.js');
 
 const options = [
-	{
-		type: "String", name: "list-type", description: "The list to get", required: true, choices: {
-			"Get the topic list": "topic",
-			"Get the club list": "club"
-		}
-	},
+	{ type: "String", name: "list-type", description: "The list to get", required: true, choices: [{ name: "Get the topic list", value: "topic" }, { name: "Get the club list", value: "club" }] },
 ];
 const subcomands = [];
 module.exports = new Command("list", "Get the topic or club list", options, subcomands);
-
-let topicListBuilder, clubListBuilder;
-module.exports.initialize = function (helpers) {
-	({ topicListBuilder, clubListBuilder } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Determine if user mentioned a topic or club, then provide appropriate permissions

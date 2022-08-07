@@ -1,15 +1,11 @@
 const Command = require('../../Classes/Command.js');
+const { isModerator, getPetitions, setPetitions } = require('../../helpers.js');
 
 const options = [
-	{ type: "String", name: "topic", description: "The petition to close", required: true, choices: {} },
+	{ type: "String", name: "topic", description: "The petition to close", required: true, choices: [] },
 ];
 const subcomands = [];
 module.exports = new Command("petition-veto", "(moderator) Veto a petition", options, subcomands);
-
-let isModerator, getPetitions, setPetitions;
-module.exports.initialize = function (helpers) {
-	({ isModerator, getPetitions, setPetitions } = helpers);
-}
 
 module.exports.execute = (interaction) => {
 	// Remove the given petition from the petition list
