@@ -1,4 +1,4 @@
-## HorizonsBot Commands
+## General Commands
 These commands are general use utilities for the server.
 ### /at-channel
 Send a ping to the current channel
@@ -40,6 +40,8 @@ Use these commands to learn more about HorizonsBot or this server.
 Get the server rules
 ### /commands
 List HorizonsBot's commands
+#### page (optional)
+Pick a single page of commands to view
 ### /roles
 Get a rundown of the server's roles
 ### /about
