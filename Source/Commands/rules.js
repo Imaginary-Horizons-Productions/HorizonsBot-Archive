@@ -7,6 +7,5 @@ module.exports = new Command("rules", "Get the server rules", options, subcomman
 
 module.exports.execute = (interaction) => {
 	// Private message the server rules to the user
-	//TODONOW server logo
 	interaction.reply({ embeds: [embed], ephemeral: true });
 }
