@@ -1,4 +1,6 @@
 # HorizonsBot Change Log
+#### HorizonsBot Version 1.17.2:
+ - Fixed a crash
 #### HorizonsBot Version 1.17.1:
  - Removed custom embed system
  - New commands: `/roles`, `/rules`, and `/press-kit`
