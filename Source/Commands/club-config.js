@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const { isModerator, getClubs, updateClub, updateClubDetails } = require('../../helpers.js');
+const { isModerator, getClubs, updateClub, updateClubDetails, updateList } = require('../../helpers.js');
 
 const COLORS = ["WHITE", "AQUA", "GREEN", "BLUE", "YELLOW", "PURPLE", "LUMINOUS_VIVID_PINK", "FUCHSIA", "GOLD", "ORANGE", "RED", "GREY", "NAVY", "DARK_AQUA", "DARK_GREEN", "DARK_BLUE", "DARK_PURPLE", "DARK_VIVID_PINK", "DARK_GOLD", "DARK_ORANGE", "DARK_RED", "DARK_GREY", "BLURPLE", "GREYPLE", "RANDOM"];
 
