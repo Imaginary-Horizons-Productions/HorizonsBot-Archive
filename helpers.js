@@ -162,7 +162,7 @@ exports.setPetitions = function (petitionListInput, channelManager) {
 const clubs = {};
 Object.values(require('./Config/clubList.json')).forEach(club => {
 	const serializedClub = { ...club, timeslot: Object.assign(new ClubTimeslot, club.timeslot) };
-	clubs[club.id] = serializedClub;
+	clubs[club.id] = Object.assign(new Club(), serializedClub);
 });
 /** Get the dictionary relating club text channel id to club class instances
  * @returns {{[TextChannel.id]: Club}} { [TextChannel.id]: Club }
