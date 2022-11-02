@@ -7,12 +7,12 @@ module.exports.execute = (interaction, [timestamp]) => {
 	// Join the topic or club channel specified in args
 	let club = getClubs()[interaction.channelId];
 	if (club) {
-		club.timeslot.nextMeeting = Number(timestamp);
-		clearClubReminder(club.channelID);
-		cancelClubEvent(club.voiceChannelID, club.timeslot.eventId, interaction.guild.scheduledEvents);
+		club.timeslot.setNextMeeting(Number(timestamp));
+		clearClubReminder(club.id);
+		cancelClubEvent(club.voiceChannelId, club.timeslot.eventId, interaction.guild.scheduledEvents);
 		setClubReminder(club, interaction.guild.channels);
 		createClubEvent(club, interaction.guild);
-		if (club.timeslot.periodCount && club.userIDs.length < club.seats) {
+		if (club.timeslot.periodCount && club.isRecruiting()) {
 			scheduleClubEvent(club, interaction.guild);
 		}
 		updateClubDetails(club, interaction.channel);

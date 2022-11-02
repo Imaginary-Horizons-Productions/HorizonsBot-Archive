@@ -15,7 +15,7 @@ module.exports.execute = (interaction) => {
 			var user = interaction.options.getUser("target");
 			var club = getClubs()[interaction.channelId];
 			if (club) {
-				club.userIDs = club.userIDs.filter(memberId => memberId != user.id);
+				club.userIds = club.userIds.filter(memberId => memberId != user.id);
 				updateList(interaction.guild.chanels, "clubs");
 				updateClub(club);
 			}

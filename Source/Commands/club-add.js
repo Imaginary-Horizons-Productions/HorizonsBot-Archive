@@ -67,11 +67,7 @@ module.exports.execute = (interaction) => {
 				],
 				type: "GUILD_VOICE"
 			}).then(voiceChannel => {
-				let club = new Club();
-				club.title = "new club";
-				club.hostID = host.id;
-				club.channelID = textChannel.id;
-				club.voiceChannelID = voiceChannel.id;
+				let club = new Club(textChannel.id, host.id, voiceChannel.id);
 				textChannel.send({ content: clubInstructionsText(host) });
 				let { embed, uiComponents } = clubInviteBuilder(club, false);
 				textChannel.send({ content: "When invites are sent with \`/club-invite\`, the invitee will be shown the following embed:", embeds: [embed], components: uiComponents, fetchReply: true }).then(detailSummaryMessage => {

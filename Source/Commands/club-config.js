@@ -21,12 +21,12 @@ module.exports.execute = (interaction) => {
 	// Rename the text voice channels associated with receiving channel
 	let club = getClubs()[interaction.channelId];
 	if (club) {
-		if (isModerator(interaction.user.id) || interaction.user.id == club.hostID) {
+		if (isModerator(interaction.user.id) || interaction.user.id == club.hostId) {
 			var updatedSettings = [];
 			if (interaction.options.getString("name")) {
 				club.title = interaction.options.getString("name");
 				interaction.channel.setName(club.title);
-				interaction.guild.channels.resolve(club.voiceChannelID).setName(club.title + " Voice");
+				interaction.guild.channels.resolve(club.voiceChannelId).setName(club.title + " Voice");
 				updatedSettings.push("name");
 			}
 			if (interaction.options.getString("description")) {

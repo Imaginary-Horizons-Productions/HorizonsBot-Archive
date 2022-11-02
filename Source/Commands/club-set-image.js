@@ -9,7 +9,7 @@ module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel
 	let club = getClubs()[interaction.channelId];
 	if (club) {
-		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
+		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostId)) {
 			let url = interaction.options.getString("url");
 			if (url) {
 				var validURL = new RegExp(/(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,})/, 'gi').test(url);

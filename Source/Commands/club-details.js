@@ -9,7 +9,7 @@ module.exports.execute = (interaction) => {
 	// Posts and pins the club details embed
 	let club = getClubs()[interaction.channelId];
 	if (club) {
-		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
+		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostId)) {
 			updateClubDetails(club, interaction.channel);
 			interaction.reply({ content: "The club's details have been updated.", ephemeral: true }).catch(console.error);
 			updateList(interaction.guild.channels, "clubs");

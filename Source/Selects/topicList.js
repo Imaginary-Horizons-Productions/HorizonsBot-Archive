@@ -5,8 +5,8 @@ module.exports = new Select("topicList");
 
 module.exports.execute = (interaction, args) => {
 	// Join the user to the selected topic channels
-	interaction.values.forEach(channelID => {
-		interaction.guild.channels.fetch(channelID).then(channel => {
+	interaction.values.forEach(channelId => {
+		interaction.guild.channels.fetch(channelId).then(channel => {
 			joinChannel(channel, interaction.user);
 		})
 	})

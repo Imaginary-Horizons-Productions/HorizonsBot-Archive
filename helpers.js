@@ -1,6 +1,6 @@
 const fs = require('fs');
-const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, TextChannel, ChannelManager } = require('discord.js');
-const Club = require('./Classes/Club');
+const { Collection, MessageEmbed, MessageActionRow, MessageSelectMenu, MessageButton, TextChannel, ChannelManager, GuildChannelManager, Message } = require('discord.js');
+const { Club, ClubTimeslot } = require('./Classes/Club');
 exports.guildId = require('./Config/_env.json').guildId;
 
 /** Convert an amount of time from a starting unit to a different one
@@ -96,19 +96,16 @@ exports.noAts = require("./Config/modData.json").noAts; // [userId]
 exports.atIds = new Set(); // contains userIds
 //#endregion
 
-// {messageID: channelID}
-exports.customEmbeds = require('./Config/embedsList.json');
+// {type: {messageId: number, channelId: number}}
+exports.listMessages = require('./Config/listMessageIds.json');
 
-// {type: {messageID: number, channelID: number}}
-exports.listMessages = require('./Config/listMessageIDs.json');
-
-// Collection <channelID, channelName>
+// Collection <channelId, channelName>
 let topics = new Collection();
 
 /** Get the array of topic channel ids
  * @returns {string[]}
  */
-exports.getTopicIDs = function () {
+exports.getTopicIds = function () {
 	return Array.from(topics.keys());
 }
 
@@ -123,7 +120,7 @@ exports.getTopicNames = function () {
  * @param {string} channelName
  * @returns {string}
  */
-exports.findTopicID = function (channelName) {
+exports.findTopicId = function (channelName) {
 	return topics.findKey(checkedName => checkedName === channelName);
 }
 
@@ -140,13 +137,13 @@ exports.addTopic = function (id, channelName) {
  */
 exports.removeTopic = function (channel) {
 	topics.delete(channel.id);
-	exports.saveObject(exports.getTopicIDs(), 'topicList.json');
+	exports.saveObject(exports.getTopicIds(), 'topicList.json');
 	exports.updateList(channel.guild.channels, "topics");
 }
 
 let petitions = require('./Config/petitionList.json');
 /** Get the dictionary relating topic petitions to their arrays of petitioner ids
- * @returns {object} {name: [petitioner IDs]}
+ * @returns {object} {name: User.id[]}
  */
 exports.getPetitions = function () {
 	return petitions;
@@ -162,9 +159,13 @@ exports.setPetitions = function (petitionListInput, channelManager) {
 	exports.updateList(channelManager, "topics");
 }
 
-let clubs = require('./Config/clubList.json');
+const clubs = {};
+Object.values(require('./Config/clubList.json')).forEach(club => {
+	const serializedClub = { ...club, timeslot: Object.assign(new ClubTimeslot, club.timeslot) };
+	clubs[club.id] = serializedClub;
+});
 /** Get the dictionary relating club text channel id to club class instances
- * @returns {object} { textChannelID: Club }
+ * @returns {{[TextChannel.id]: Club}} { [TextChannel.id]: Club }
  */
 exports.getClubs = function () {
 	return clubs;
@@ -175,7 +176,7 @@ exports.getClubs = function () {
  * @param {GuildChannelManager} channelManager
  */
 exports.updateClub = function (club) {
-	clubs[club.channelID] = club;
+	clubs[club.id] = club;
 	exports.saveObject(clubs, 'clubList.json');
 }
 
@@ -212,19 +213,19 @@ exports.embedTemplateBuilder = function (color = "#6b81eb") {
  * @returns {string[]}
  */
 exports.getManagedChannels = function () {
-	return exports.getTopicIDs().concat(Object.keys(exports.getClubs()));
+	return exports.getTopicIds().concat(Object.keys(exports.getClubs()));
 }
 
 /** Update the club or topics list message
  * @param {GuildChannelManager} channelManager
- * @param {string} listType enumeration: "topics", "clubs"
+ * @param {"topics" | "clubs"} listType
  * @returns {Promise<Message>}
  */
 exports.updateList = async function (channelManager, listType) {
-	const { channelID, messageID } = exports.listMessages[listType];
-	if (channelID && messageID) {
-		const channel = await channelManager.fetch(channelID);
-		const message = await channel.messages.fetch(messageID);
+	const { channelId, messageId } = exports.listMessages[listType];
+	if (channelId && messageId) {
+		const channel = await channelManager.fetch(channelId);
+		const message = await channel.messages.fetch(messageId);
 		const messageOptions = await (listType == "topics" ? exports.topicListBuilder : exports.clubListBuilder)(channelManager);
 		message.edit(messageOptions);
 		if (messageOptions.files.length === 0) {
@@ -235,7 +236,7 @@ exports.updateList = async function (channelManager, listType) {
 }
 
 /** Create the MessageActionRow containing the selects for joining clubs/topics and adding to petitions
- * @param {string} listType enumeration: "topics" or "clubs"
+ * @param {"topics" | "clubs"} listType
  * @returns {MessageActionRow}
  */
 function listSelectBuilder(listType) {
@@ -246,7 +247,7 @@ function listSelectBuilder(listType) {
 
 	if (listType === "topics") {
 		var topicNames = exports.getTopicNames();
-		var topicIds = exports.getTopicIDs();
+		var topicIds = exports.getTopicIds();
 		for (var i = 0; i < topicNames.length; i += 1) {
 			entries.push({
 				label: topicNames[i],
@@ -269,8 +270,8 @@ function listSelectBuilder(listType) {
 		entries = Object.values(exports.getClubs()).map(club => {
 			return {
 				label: club.title,
-				description: `${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members`,
-				value: club.channelID
+				description: `${club.userIds.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members`,
+				value: club.id
 			}
 		})
 		selectCutomId = "clubList";
@@ -320,7 +321,7 @@ exports.topicListBuilder = function (channelManager) {
 
 	// Generate Message Body
 	let description = "Here's a list of the opt-in topic channels for the server. Join them by using `/join` or by using the select menu under this message (jump to message in pins).\n";
-	let topics = exports.getTopicIDs();
+	let topics = exports.getTopicIds();
 
 	for (let i = 0; i < topics.length; i += 1) {
 		let id = topics[i];
@@ -384,8 +385,8 @@ exports.pinTopicsList = function (channelManager, channel) {
 	exports.topicListBuilder(channelManager).then(messageOptions => {
 		channel.send(messageOptions).then(message => {
 			exports.listMessages.topics = {
-				"messageID": message.id,
-				"channelID": message.channelId
+				"messageId": message.id,
+				"channelId": message.channelId
 			}
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
 			message.pin();
@@ -406,7 +407,7 @@ exports.clubListBuilder = function () {
 
 	Object.keys(clubs).forEach(id => {
 		let club = clubs[id];
-		description += `\n__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.channelID}\n**Host**: <@${club.hostID}>\n`;
+		description += `\n__**${club.title}**__ (${club.userIds.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)\n**ID**: ${club.id}\n**Host**: <@${club.hostId}>\n`;
 		if (club.system) {
 			description += `**Game**: ${club.system}\n`;
 		}
@@ -453,8 +454,8 @@ exports.pinClubsList = function (channelManager, channel) {
 	exports.clubListBuilder(channelManager).then(messageOptions => {
 		channel.send(messageOptions).then(message => {
 			exports.listMessages.clubs = {
-				"messageID": message.id,
-				"channelID": message.channelId
+				"messageId": message.id,
+				"channelId": message.channelId
 			}
 			message.pin();
 			exports.saveObject(exports.listMessages, "listMessageIDs.json");
@@ -537,7 +538,7 @@ exports.addTopicChannel = function (guild, topicName) {
 			}
 			delete petitions[topicName];
 			exports.addTopic(channel.id, channel.name);
-			exports.saveObject(exports.getTopicIDs(), 'topicList.json');
+			exports.saveObject(exports.getTopicIds(), 'topicList.json');
 			exports.setPetitions(petitions, guild.channels);
 		})
 		return channel;
@@ -550,30 +551,30 @@ exports.addTopicChannel = function (guild, topicName) {
  */
 exports.joinChannel = function (channel, user) {
 	if (!user.bot) {
-		let channelID = channel.id;
-		let permissionOverwrite = channel.permissionOverwrites.resolve(user.id);
+		const { id, permissionOverwrites, guild, name: channelName } = channel;
+		let permissionOverwrite = permissionOverwrites.resolve(user.id);
 		if (!permissionOverwrite || !permissionOverwrite.deny.has("VIEW_CHANNEL", false)) {
-			if (exports.getTopicIDs().includes(channelID)) {
-				channel.permissionOverwrites.create(user, {
+			if (exports.getTopicIds().includes(id)) {
+				permissionOverwrites.create(user, {
 					"VIEW_CHANNEL": true
 				}).then(() => {
-					channel.send(`Welcome to ${channel.name}, ${user}!`);
+					channel.send(`Welcome to ${channelName}, ${user}!`);
 				}).catch(console.error);
-			} else if (Object.keys(exports.getClubs()).includes(channelID)) {
-				let club = exports.getClubs()[channelID];
-				if (club.seats === -1 || club.userIDs.length < club.seats) {
-					if (club.hostID != user.id && !club.userIDs.includes(user.id)) {
-						club.userIDs.push(user.id);
-						channel.permissionOverwrites.create(user, {
+			} else if (Object.keys(exports.getClubs()).includes(id)) {
+				let club = exports.getClubs()[id];
+				if (club.seats === -1 || club.isRecruiting()) {
+					if (club.hostId != user.id && !club.userIds.includes(user.id)) {
+						club.userIds.push(user.id);
+						permissionOverwrites.create(user, {
 							"VIEW_CHANNEL": true
 						}).then(() => {
-							channel.guild.channels.resolve(club.voiceChannelID).permissionOverwrites.create(user, {
+							guild.channels.resolve(club.voiceChannelId).permissionOverwrites.create(user, {
 								"VIEW_CHANNEL": true
 							})
-							channel.send(`Welcome to ${channel.name}, ${user}!`);
+							channel.send(`Welcome to ${channelName}, ${user}!`);
 						})
 						exports.updateClubDetails(club, channel);
-						exports.updateList(channel.guild.channels, "clubs");
+						exports.updateList(guild.channels, "clubs");
 						exports.updateClub(club);
 					} else {
 						user.send(`You are already in ${club.title}.`)
@@ -585,7 +586,7 @@ exports.joinChannel = function (channel, user) {
 				}
 			}
 		} else {
-			user.send(`You are currently banned from ${channel.name}. Speak to a Moderator if you believe this is in error.`)
+			user.send(`You are currently banned from ${channelName}. Speak to a Moderator if you believe this is in error.`)
 				.catch(console.error);
 		}
 	}
@@ -599,9 +600,9 @@ exports.joinChannel = function (channel, user) {
 exports.clubInviteBuilder = function (club, includeJoinButton) {
 	// Generate Embed
 	let embed = exports.embedTemplateBuilder()
-		.setTitle(`__**${club.title}**__ (${club.userIDs.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
+		.setTitle(`__**${club.title}**__ (${club.userIds.length}${club.seats !== -1 ? `/${club.seats}` : ""} Members)`)
 		.setDescription(club.description)
-		.addField("Club Host", `<@${club.hostID}>`)
+		.addField("Club Host", `<@${club.hostId}>`)
 		.setImage(club.imageURL);
 	if (club.system) {
 		embed.addField("Game", club.system);
@@ -616,7 +617,7 @@ exports.clubInviteBuilder = function (club, includeJoinButton) {
 	// Generate Components
 	let buttons = [];
 	if (includeJoinButton) {
-		buttons.push(new MessageButton().setCustomId(`join-${club.channelID}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
+		buttons.push(new MessageButton().setCustomId(`join-${club.id}`).setLabel(`Join ${club.title}`).setStyle("SUCCESS"));
 	}
 	let uiComponents = [];
 	if (buttons.length > 0) {
@@ -638,7 +639,7 @@ exports.clubInvite = function (interaction, clubId, recipient) {
 			recipient = interaction.user;
 		}
 		if (!recipient.bot) {
-			if (recipient.id !== club.hostID && !club.userIDs.includes(recipient.id)) {
+			if (recipient.id !== club.hostId && !club.userIds.includes(recipient.id)) {
 				let { embed, uiComponents } = exports.clubInviteBuilder(club, true);
 				recipient.send({ embeds: [embed], components: uiComponents }).then(() => {
 					interaction.reply({ content: "Club details have been sent.", ephemeral: true });
@@ -689,7 +690,7 @@ exports.updateClubDetails = (club, channel) => {
  */
 exports.createClubEvent = function (club, guild) {
 	if (club.timeslot.nextMeeting * 1000 > Date.now()) {
-		guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+		guild.channels.fetch(club.voiceChannelId).then(voiceChannel => {
 			return guild.scheduledEvents.create({
 				name: club.title,
 				scheduledStartTime: club.timeslot.nextMeeting * 1000,
@@ -699,13 +700,13 @@ exports.createClubEvent = function (club, guild) {
 				channel: voiceChannel
 			})
 		}).then(event => {
-			club.timeslot.eventId = event.id;
+			club.timeslot.setEventId(event.id);
 			exports.updateList(guild.channels, "clubs");
 			exports.updateClub(club);
 		});
 	} else {
-		club.timeslot.nextMeeting = null;
-		club.timeslot.eventId = "";
+		club.timeslot.setNextMeeting(null);
+		club.timeslot.setEventId("");
 		exports.updateList(guild.channels, "clubs");
 		exports.updateClub(club);
 		console.error(`Skipping scheduling Event in past via ${new Error().stack}`);
@@ -717,14 +718,14 @@ exports.createClubEvent = function (club, guild) {
  * @param {Guild} guild
  */
 exports.scheduleClubEvent = function (club, guild) {
-	if (club.userIDs.length < club.seats) {
+	if (club.isRecruiting()) {
 		let timeout = setTimeout((clubId, timeoutGuild) => {
 			const club = exports.getClubs()[clubId];
-			if (club && club.userIDs.length < club.seats) {
+			if (club?.isRecruiting()) {
 				exports.createClubEvent(club, timeoutGuild);
 			}
-		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.channelID, guild);
-		exports.eventTimeouts[club.voiceChannelID] = timeout;
+		}, (club.timeslot.nextMeeting * 1000) - Date.now(), club.id, guild);
+		exports.eventTimeouts[club.voiceChannelId] = timeout;
 	}
 }
 
@@ -754,7 +755,7 @@ exports.setClubReminder = async function (club, channelManager) {
 			calculateReminderMS(club.timeslot.nextMeeting),
 			club,
 			channelManager);
-		exports.reminderTimeouts[club.channelID] = timeout;
+		exports.reminderTimeouts[club.id] = timeout;
 		exports.updateList(channelManager, "clubs");
 		exports.updateClub(club);
 	}
@@ -777,7 +778,7 @@ function calculateReminderMS(timestamp) {
 function reminderWaitLoop(club, channelManager) {
 	if (club.timeslot.nextMeeting) {
 		if (calculateReminderMS(club.timeslot.nextMeeting) < MAX_SIGNED_INT) {
-			channelManager.fetch(club.channelID).then(async textChannel => {
+			channelManager.fetch(club.id).then(async textChannel => {
 				const components = [];
 				let invite;
 				if (club.timeslot.eventId) {
@@ -798,11 +799,11 @@ function reminderWaitLoop(club, channelManager) {
 			});
 			if (club.timeslot.periodCount) {
 				const timeGap = exports.timeConversion(club.timeslot.periodCount, club.timeslot.periodUnits, "s");
-				club.timeslot.nextMeeting = club.timeslot.nextMeeting + timeGap;
-				exports.scheduleClubEvent(club, channelManager.guild); //TODO #228 recreating events might be failing here
+				club.timeslot.setNextMeeting(club.timeslot.nextMeeting + timeGap);
+				exports.scheduleClubEvent(club, channelManager.guild);
 				exports.setClubReminder(club, channelManager);
 			} else {
-				club.timeslot.eventId = "";
+				club.timeslot.setEventId("");
 				exports.updateList(channelManager, "clubs");
 				exports.updateClub(club, channelManager);
 			}

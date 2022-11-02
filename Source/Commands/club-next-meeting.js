@@ -14,7 +14,7 @@ module.exports.execute = (interaction) => {
 	// Set the club's next meeting
 	let club = getClubs()[interaction.channelId];
 	if (club) {
-		if (isModerator(interaction.user.id) || interaction.user.id == club.hostID) {
+		if (isModerator(interaction.user.id) || interaction.user.id == club.hostId) {
 			let days = interaction.options.getNumber("days-from-now") ?? 0;
 			let hours = interaction.options.getNumber("hours-from-now") ?? 0;
 			let minutes = interaction.options.getNumber("minutes-from-now") ?? 0;

@@ -78,20 +78,20 @@ let clubBuriedness = 0;
 
 client.on('messageCreate', receivedMessage => {
 	// Count messages for pin bumping
-	if (helpers.listMessages.topics && receivedMessage.channelId === helpers.listMessages.topics.channelID) {
+	if (helpers.listMessages.topics && receivedMessage.channelId === helpers.listMessages.topics.channelId) {
 		topicBuriedness += 1;
 		if (topicBuriedness > 9) {
-			receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageID).then(oldMessage => {
+			receivedMessage.channel.messages.fetch(helpers.listMessages.topics.messageId).then(oldMessage => {
 				oldMessage.delete();
 			})
 			helpers.pinTopicsList(receivedMessage.guild.channels, receivedMessage.channel);
 			topicBuriedness = 0;
 		}
 	}
-	if (helpers.listMessages.clubs && receivedMessage.channelId == helpers.listMessages.clubs.channelID) {
+	if (helpers.listMessages.clubs && receivedMessage.channelId == helpers.listMessages.clubs.id) {
 		clubBuriedness += 1;
 		if (clubBuriedness > 9) {
-			receivedMessage.channel.messages.fetch(helpers.listMessages.clubs.messageID).then(oldMessage => {
+			receivedMessage.channel.messages.fetch(helpers.listMessages.clubs.messageId).then(oldMessage => {
 				oldMessage.delete();
 			})
 			helpers.pinClubsList(receivedMessage.guild.channels, receivedMessage.channel);
@@ -117,10 +117,10 @@ client.on('guildMemberRemove', member => {
 
 	// Remove member's clubs
 	for (let club of Object.values(helpers.getClubs())) {
-		if (memberId == club.hostID) {
-			guild.channels.resolve(club.channelID).delete("Club host left server");
-		} else if (club.userIDs.includes(memberId)) {
-			club.userIDs = club.userIDs.filter(id => id != memberId);
+		if (memberId == club.hostId) {
+			guild.channels.resolve(club.id).delete("Club host left server");
+		} else if (club.userIds.includes(memberId)) {
+			club.userIds = club.userIds.filter(id => id != memberId);
 			helpers.updateList(guild.channels, "clubs");
 		}
 	}
@@ -135,32 +135,32 @@ client.on('guildMemberRemove', member => {
 })
 
 client.on('channelDelete', channel => {
-	let channelID = channel.id;
+	const { id, guild } = channel;
 	let topics = helpers.getTopicIDs();
 	let clubs = helpers.getClubs();
-	if (topics && topics.includes(channelID)) {
+	if (topics && topics.includes(id)) {
 		helpers.removeTopic(channel);
 	} else if (clubs) {
-		if (Object.values(clubs).map(club => club.voiceChannelID).includes(channelID)) {
+		if (Object.values(clubs).map(club => club.voiceChannelId).includes(id)) {
 			for (var club of Object.values(clubs)) {
-				if (club.voiceChannelID == channelID) {
-					let textChannel = channel.guild.channels.resolve(club.channelID);
+				if (club.voiceChannelId == id) {
+					let textChannel = guild.channels.resolve(club.id);
 					if (textChannel) {
 						textChannel.delete();
-						helpers.removeClub(club.channelID);
+						helpers.removeClub(club.id);
 					}
 					break;
 				}
 			}
-		} else if (Object.keys(clubs).includes(channelID)) {
-			let voiceChannel = channel.guild.channels.resolve(clubs[channelID].voiceChannelID);
+		} else if (Object.keys(clubs).includes(id)) {
+			let voiceChannel = guild.channels.resolve(clubs[id].voiceChannelId);
 			if (voiceChannel) {
 				voiceChannel.delete();
-				helpers.removeClub(channelID);
+				helpers.removeClub(id);
 			}
 		} else {
 			return;
 		}
-		helpers.updateList(channel.guild.channels, "clubs");
+		helpers.updateList(guild.channels, "clubs");
 	}
 })

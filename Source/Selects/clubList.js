@@ -5,7 +5,7 @@ module.exports = new Select("clubList");
 
 module.exports.execute = (interaction, args) => {
 	// Provide club details embed to the user for the selected clubs
-	interaction.values.forEach(channelID => {
-		clubInvite(interaction, channelID, interaction.user); // resolves the interaction
+	interaction.values.forEach(channelId => {
+		clubInvite(interaction, channelId, interaction.user); // resolves the interaction
 	})
 }

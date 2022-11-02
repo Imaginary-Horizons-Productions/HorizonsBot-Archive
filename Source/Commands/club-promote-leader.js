@@ -9,12 +9,12 @@ module.exports.execute = (interaction) => {
 	// Set the decription for the receiving club channel
 	let club = getClubs()[interaction.channelId];
 	if (club) {
-		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostID)) {
+		if (isModerator(interaction.user.id) || (club && interaction.user.id == club.hostId)) {
 			let promotee = interaction.options.getUser("user");
-			club.hostID = promotee.id;
+			club.hostId = promotee.id;
 			interaction.channel.permissionOverwrites.edit(interaction.user, { "VIEW_CHANNEL": true, "MANAGE_MESSAGES": null }, { type: 1 })
 			interaction.channel.permissionOverwrites.edit(promotee, { "VIEW_CHANNEL": true, "MANAGE_MESSAGES": true }, { type: 1 })
-			interaction.guild.channels.fetch(club.voiceChannelID).then(voiceChannel => {
+			interaction.guild.channels.fetch(club.voiceChannelId).then(voiceChannel => {
 				voiceChannel.permissionOverwrites.edit(interaction.user, { "VIEW_CHANNEL": true, "MANAGE_CHANNELS": null, "MANAGE_EVENTS": null }, { type: 1 });
 				voiceChannel.permissionOverwrites.edit(promotee, { "VIEW_CHANNEL": true, "MANAGE_CHANNELS": true, "MANAGE_EVENTS": true }, { type: 1 });
 			})
