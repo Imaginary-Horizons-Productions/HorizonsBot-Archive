@@ -1,5 +1,5 @@
 const Command = require('../../Classes/Command.js');
-const Club = require('../../Classes/Club.js');
+const { Club } = require('../../Classes/Club.js');
 const { clubInstructionsText } = require('./club-instructions.js');
 const { isModerator, modRoleId, updateClub, clubInviteBuilder, updateList } = require('../../helpers.js');
 
