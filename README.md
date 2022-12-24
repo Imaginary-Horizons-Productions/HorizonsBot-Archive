@@ -1,4 +1,6 @@
 # HorizonsBot
+This project is archived. Check out the currently being maintained version of the project [here](https://github.com/Imaginary-Horizons-Productions/HorizonsBot).
+
 HorizonsBot is the helper bot for the Imaginary Horizons Discord community server. It automates channel petitions and periodic club attendance reminders.
 
 Check out [the wiki](https://github.com/Imaginary-Horizons-Productions/HorizonsBot/wiki) for dev setup, style notes and a list of commands.
